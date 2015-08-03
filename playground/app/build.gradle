@@ -1,0 +1,66 @@
+def buildNumber = 'bld' + (System.env.BUILD_NUMBER ?: 'SNAPSHOT')
+apply plugin: 'com.android.application'
+
+
+
+
+
+android {
+    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+    defaultConfig {
+        applicationId project.APP_APPLICATIONID
+        minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
+        versionCode Integer.parseInt(project.APP_VERSIONCODE)
+        versionName project.APP_VERSIONNAME
+    }
+    buildTypes {
+        debug {
+            versionNameSuffix buildNumber
+        }
+        release {
+
+        }
+    }
+
+    productFlavors {
+        dev {
+            applicationId project.APP_STAGE_APPLICATIONID
+            minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
+            targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
+            versionCode Integer.parseInt(project.APP_VERSIONCODE)
+            versionName project.APP_VERSIONNAME
+        }
+        live {
+            applicationId project.APP_APPLICATIONID
+            minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
+            targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
+            versionCode Integer.parseInt(project.APP_VERSIONCODE)
+            versionName project.APP_VERSIONNAME
+        }
+    }
+
+    lintOptions {
+        htmlReport false
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.google.android.gms:play-services:7.5.0'
+    compile 'com.android.support:cardview-v7:22.2.1'
+    compile 'com.android.support:recyclerview-v7:22.2.1'
+    compile 'com.android.support:design:22.2.1'
+}
+
+// Rename final apks
+android.applicationVariants.all {  variant ->
+    variant.outputs.each  { output ->
+        output.outputFile = new File(
+                output.outputFile.parent, output.outputFile.name.replace("_Android", "")
+                .replace(".apk", "-${android.defaultConfig.versionName}${buildNumber}.apk"))
+    }
+}
+
