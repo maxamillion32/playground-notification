@@ -34,6 +34,7 @@ package com.playground.notification.app;
 import android.app.Application;
 
 import com.chopping.net.TaskHelper;
+import com.playground.notification.utils.Prefs;
 
 
 /**
@@ -65,6 +66,7 @@ public final class App extends Application {
 //			e.printStackTrace();
 //		}
 		TaskHelper.init(getApplicationContext());
+        Prefs.createInstance(this);
 //		DB.getInstance(this).open();
 	}
 }
