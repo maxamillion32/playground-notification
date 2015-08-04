@@ -1,28 +1,117 @@
 package com.playground.notification.app.activities;
 
-import android.support.v4.app.FragmentActivity;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.ViewGroup;
 
+import com.chopping.bus.CloseDrawerEvent;
+import com.chopping.utils.Utils;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.playground.notification.R;
+import com.playground.notification.app.fragments.AboutDialogFragment;
+import com.playground.notification.app.fragments.AppListImpFragment;
+import com.playground.notification.bus.EULAConfirmedEvent;
+import com.playground.notification.bus.EULARejectEvent;
+import com.playground.notification.databinding.ActivityMapsBinding;
+import com.playground.notification.utils.Prefs;
 
-public class MapsActivity extends FragmentActivity {
+public class MapsActivity extends AppActivity {
 
 	private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+	/**
+	 * Use navigation-drawer for this fork.
+	 */
+	private ActionBarDrawerToggle mDrawerToggle;
+	/**
+	 * Navigation drawer.
+	 */
+	private DrawerLayout mDrawerLayout;
+	/**
+	 * Data-binding.
+	 */
+	private ActivityMapsBinding mBinding;
+	//------------------------------------------------
+	//Subscribes, event-handlers
+	//------------------------------------------------
 
+	/**
+	 * Handler for {@link com.chopping.bus.CloseDrawerEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.chopping.bus.CloseDrawerEvent}.
+	 */
+	public void onEvent(CloseDrawerEvent e) {
+		mDrawerLayout.closeDrawers();
+	}
+
+
+	/**
+	 * Handler for {@link  EULARejectEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link  EULARejectEvent}.
+	 */
+	public void onEvent(EULARejectEvent e) {
+		finish();
+	}
+
+	/**
+	 * Handler for {@link  EULAConfirmedEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link  EULAConfirmedEvent}.
+	 */
+	public void onEvent(EULAConfirmedEvent e) {
+	}
+
+	//------------------------------------------------
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_maps);
+
+
+		//Init data-binding.
+		mBinding = DataBindingUtil.setContentView(this, R.layout.activity_maps);
+		//Init application basic elements.
+		setUpErrorHandling((ViewGroup) findViewById(R.id.error_content));
+
+		setSupportActionBar(mBinding.toolbar);
 		setUpMapIfNeeded();
+		initDrawer();
+	}
+
+
+	/**
+	 * Initialize the navigation drawer.
+	 */
+	private void initDrawer() {
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setHomeButtonEnabled(true);
+			actionBar.setDisplayHomeAsUpEnabled(true);
+			mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+			mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.application_name,
+					R.string.app_name);
+			mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if (mDrawerToggle != null) {
+			mDrawerToggle.syncState();
+		}
 		setUpMapIfNeeded();
 	}
 
@@ -59,5 +148,63 @@ public class MapsActivity extends FragmentActivity {
 	 */
 	private void setUpMap() {
 		mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+	}
+
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.menu_main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(final Menu menu) {
+		//Share application.
+		MenuItem menuAppShare = menu.findItem(R.id.action_share_app);
+		android.support.v7.widget.ShareActionProvider provider =
+				(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuAppShare);
+		String subject = getString(R.string.lbl_share_app_title);
+		String text = getString(R.string.lbl_share_app_content, getString(R.string.application_name),
+				Prefs.getInstance().getAppDownloadInfo());
+		provider.setShareIntent(Utils.getDefaultShareIntent(provider, subject, text));
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
+
+		switch (item.getItemId()) {
+		case R.id.action_about:
+			showDialogFragment(AboutDialogFragment.newInstance(this), null);
+			break;
+
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+
+	@Override
+	protected void onAppConfigLoaded() {
+		super.onAppConfigLoaded();
+		showAppList();
+	}
+
+	@Override
+	protected void onAppConfigIgnored() {
+		super.onAppConfigIgnored();
+		showAppList();
+	}
+
+	/**
+	 * Show all external applications links.
+	 */
+	private void showAppList() {
+		getSupportFragmentManager().beginTransaction().replace(R.id.app_list_fl, AppListImpFragment.newInstance(this))
+				.commit();
 	}
 }

@@ -31,10 +31,19 @@
 
 package com.playground.notification.app;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import android.app.Application;
+import android.text.TextUtils;
 
 import com.chopping.net.TaskHelper;
+import com.playground.notification.R;
 import com.playground.notification.utils.Prefs;
+
+import cn.bmob.v3.Bmob;
+import retrofit.Callback;
+import retrofit.RetrofitError;
 
 
 /**
@@ -47,6 +56,7 @@ public final class App extends Application {
 	 * Application's instance.
 	 */
 	public static App Instance;
+
 	{
 		Instance = this;
 	}
@@ -54,19 +64,41 @@ public final class App extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-//		Stetho.initialize(Stetho.newInitializerBuilder(this).enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-//				.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this)).build());
-//
-//		BookmarkManger.createInstance(this);
-//		Properties prop = new Properties();
-//		try {
-//			prop.load(getClassLoader().getResourceAsStream("app.properties"));
-//			Bmob.initialize(this, prop.getProperty("bmob_app"));
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		//		Stetho.initialize(Stetho.newInitializerBuilder(this).enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+		//				.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this)).build());
+
+		Properties prop = new Properties();
+		try {
+			prop.load(getClassLoader().getResourceAsStream("app.properties"));
+			Bmob.initialize(this, prop.getProperty("bmob_app"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		TaskHelper.init(getApplicationContext());
-        Prefs.createInstance(this);
-//		DB.getInstance(this).open();
+		Prefs.createInstance(this);
+
+		//Short the link of app-download and make a download-info, store to preference.
+		//You'll see text like
+		//<code>
+		//			Download: http://tinyurl/asdfasdf
+		//</code>
+		//in sharing text.
+		String url = Prefs.getInstance().getAppDownloadInfo();
+		if (TextUtils.isEmpty(url) || !url.contains("tinyurl")) {
+			com.tinyurl4j.Api.getTinyUrl(getString(R.string.lbl_store_url, getPackageName()),
+					new Callback<com.tinyurl4j.data.Response>() {
+						@Override
+						public void success(com.tinyurl4j.data.Response response, retrofit.client.Response response2) {
+							Prefs.getInstance().setAppDownloadInfo(getString(R.string.lbl_share_download_app, getString(
+									R.string.application_name), response.getResult()));
+						}
+
+						@Override
+						public void failure(RetrofitError error) {
+							Prefs.getInstance().setAppDownloadInfo(getString(R.string.lbl_share_download_app, getString(
+									R.string.application_name), getString(R.string.lbl_store_url, getPackageName())));
+						}
+					});
+		}
 	}
 }
