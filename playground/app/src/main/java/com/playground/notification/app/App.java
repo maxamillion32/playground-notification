@@ -29,9 +29,11 @@
 //                  奔驰宝马贵者趣，公交自行程序员。
 //                  别人笑我忒疯癫，我笑自己命太贱。
 
-package com.playground.notification;
+package com.playground.notification.app;
 
 import android.app.Application;
+
+import com.chopping.net.TaskHelper;
 
 
 /**
@@ -62,7 +64,7 @@ public final class App extends Application {
 //		} catch (IOException e) {
 //			e.printStackTrace();
 //		}
-//		TaskHelper.init(getApplicationContext());
+		TaskHelper.init(getApplicationContext());
 //		DB.getInstance(this).open();
 	}
 }
