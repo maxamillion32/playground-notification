@@ -1,11 +1,14 @@
 package com.playground.notification.app.activities;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -19,6 +22,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.playground.notification.R;
 import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.AppListImpFragment;
+import com.playground.notification.app.fragments.GPlusFragment;
 import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
 import com.playground.notification.databinding.ActivityMapsBinding;
@@ -70,10 +74,28 @@ public class MapsActivity extends AppActivity {
 	 * @param e
 	 * 		Event {@link  EULAConfirmedEvent}.
 	 */
-	public void onEvent(EULAConfirmedEvent e) {
+	public void onEvent(EULAConfirmedEvent e) {	ConnectGoogleActivity.showInstance(this);
 	}
 
 	//------------------------------------------------
+
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case ConnectGoogleActivity.REQ:
+			if (resultCode == RESULT_OK) {
+				//TODO Return from google-login.
+			} else {
+				ActivityCompat.finishAffinity(this);
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -87,6 +109,20 @@ public class MapsActivity extends AppActivity {
 		setSupportActionBar(mBinding.toolbar);
 		setUpMapIfNeeded();
 		initDrawer();
+
+
+		//User that have used this application and done clear(logout), should go back to login-page.
+		Prefs prefs = Prefs.getInstance();
+		if (prefs.isEULAOnceConfirmed() && TextUtils.isEmpty(prefs.getGoogleId())) {
+			ConnectGoogleActivity.showInstance(this);
+		} else if (prefs.isEULAOnceConfirmed() && !TextUtils.isEmpty(prefs.getGoogleId())) {
+			//TODO Should do something.....
+		}
+
+
+		//Navi-head
+		getSupportFragmentManager().beginTransaction().replace(R.id.gplus_container, GPlusFragment.newInstance(
+				getApplication())).commit();
 	}
 
 

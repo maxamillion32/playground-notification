@@ -10,4 +10,9 @@
     <string name="lbl_share_app_title">Tolle App für Sie</string>
     <string name="lbl_share_app_content">Lieber Papa und Mama\n\Hier ist %1$s, ein sämtliches Werkzeug, Ihnen Spielplatz automatisch zu informieren\n\n%2$s</string>
 
+
+    <string name="lbl_hello">Hallo %1$s!</string>
+    <string name="lbl_welcome">Willkommen bei %1$s\n. Ein Radar &amp; Broadcast für alle Kinderspielplätze neben dir.</string>
+    <string name="lbl_connect_google">Verbindung an Google…</string>
+    <string name="lbl_logout_gplus">Abmelden</string>
 </resources>

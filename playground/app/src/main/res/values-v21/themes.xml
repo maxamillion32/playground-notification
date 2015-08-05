@@ -11,5 +11,9 @@
         <item name="android:statusBarColor">@color/common_transparent</item>
     </style>
 
+    <style name="AppTheme.FirstPage">
+        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
+    </style>
+
 
 </resources>

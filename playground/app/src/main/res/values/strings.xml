@@ -39,4 +39,10 @@
     <string name="lbl_share_app_title">Super App for you</string>
     <string name="lbl_share_app_content">Dear Papa and Mama\n\nHere is %1$s, a powerful tool to help you and notify you when you\'ve been near to a play-field for you kids.\n\n%2$s</string>
     <string name="lbl_store_url">https://play.google.com/store/apps/details?id=%1$s</string>
+
+
+    <string name="lbl_hello">Hello %1$s!</string>
+    <string name="lbl_welcome">Welcome to %1$s\n. I provide vision of play-fields around you and notify you when you\'re near them.</string>
+    <string name="lbl_connect_google">Connecting on Google…</string>
+    <string name="lbl_logout_gplus">Logout</string>
 </resources>
