@@ -61,6 +61,8 @@ public final class App extends Application {
 		Instance = this;
 	}
 
+	private String mDl;
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -69,8 +71,9 @@ public final class App extends Application {
 
 		Properties prop = new Properties();
 		try {
-			prop.load(getClassLoader().getResourceAsStream("app.properties"));
-			Bmob.initialize(this, prop.getProperty("bmob_app"));
+			prop.load(getClassLoader().getResourceAsStream("key.properties"));
+			Bmob.initialize(this, prop.getProperty("bmobkey"));
+			mDl = prop.getProperty("dl");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -100,5 +103,9 @@ public final class App extends Application {
 						}
 					});
 		}
+	}
+
+	public String getDl() {
+		return mDl;
 	}
 }

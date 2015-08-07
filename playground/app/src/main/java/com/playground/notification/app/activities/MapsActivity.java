@@ -1,9 +1,20 @@
 package com.playground.notification.app.activities;
 
+import android.app.DownloadManager;
+import android.app.DownloadManager.Request;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -73,6 +84,39 @@ public class MapsActivity extends AppActivity {
 	 * Connect to google-api.
 	 */
 	private GoogleApiClient mGoogleApiClient;
+	/**
+	 * Receiver for downloading reports.
+	 */
+	private BroadcastReceiver mDownloadReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+			DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+			DownloadManager.Query query = new DownloadManager.Query();
+			query.setFilterById(downloadId);
+			Cursor cursor = downloadManager.query(query);
+			if (cursor.moveToFirst()) {
+				int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+				int status = cursor.getInt(columnIndex);
+				switch (status) {
+				case DownloadManager.STATUS_SUCCESSFUL:
+					break;
+				case DownloadManager.STATUS_FAILED:
+					break;
+				}
+			}
+			dismissProgressIndicator();
+		}
+	};
+
+
+
+	/**
+	 * Progress-indicator.
+	 */
+	private ProgressDialog mProgressDialog;
+
+
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -118,11 +162,28 @@ public class MapsActivity extends AppActivity {
 		case ConnectGoogleActivity.REQ:
 			if (resultCode == RESULT_OK) {
 				//TODO Return from google-login.
+				showProgressIndicator();
+				downloadDB();
 			} else {
 				ActivityCompat.finishAffinity(this);
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	/**
+	 * Download all grounds-db.
+	 */
+	private void downloadDB() {
+		DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+		DownloadManager.Request request = new DownloadManager.Request(Uri.parse(Utils.uriStr2URI(
+				App.Instance.getDl()).toASCIIString()));
+		request.setDestinationInExternalFilesDir(App.Instance, Environment.DIRECTORY_DCIM, "playgrounds.db");
+		request.setVisibleInDownloadsUi(true);//Can see the downloaded file in "download" app.
+		if (Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
+			request.setNotificationVisibility(Request.VISIBILITY_HIDDEN);
+		}
+		downloadManager.enqueue(request);
 	}
 
 
@@ -238,10 +299,19 @@ public class MapsActivity extends AppActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		IntentFilter intentFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+		registerReceiver(mDownloadReceiver, intentFilter);
+
 		if (mDrawerToggle != null) {
 			mDrawerToggle.syncState();
 		}
 		setUpMapIfNeeded();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		unregisterReceiver(mDownloadReceiver);
 	}
 
 	/**
@@ -368,4 +438,19 @@ public class MapsActivity extends AppActivity {
 		Utils.showShortToast(App.Instance, "updateCurLocal");
 	}
 
+	/**
+	 * Remove progress-indicator.
+	 */
+	private void dismissProgressIndicator() {
+		if(mProgressDialog != null && mProgressDialog.isShowing()) {
+			mProgressDialog.hide();
+		}
+	}
+	/**
+	 * Show progress-indicator.
+	 */
+	private void showProgressIndicator() {
+		dismissProgressIndicator();
+		mProgressDialog = ProgressDialog.show(this, getString(R.string.lbl_download), getString(R.string.lbl_wait));
+	}
 }

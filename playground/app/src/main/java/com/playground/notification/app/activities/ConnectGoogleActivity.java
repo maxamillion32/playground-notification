@@ -63,7 +63,7 @@ public final class ConnectGoogleActivity extends AppActivity {
 	 */
 	private static int REQUEST_CODE_RESOLVE_ERR = 0x98;
 
-	private boolean mVisiable;
+	private boolean mVisible;
 	/**
 	 * Show single instance of {@link ConnectGoogleActivity}
 	 *
@@ -79,7 +79,7 @@ public final class ConnectGoogleActivity extends AppActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mVisiable = false;
+		mVisible = false;
 		mBinding = DataBindingUtil.setContentView(this, LAYOUT);
 		setUpErrorHandling((ViewGroup) findViewById(R.id.error_content));
 		mBinding.googleLoginBtn.setSize(SignInButton.SIZE_WIDE);
@@ -94,7 +94,7 @@ public final class ConnectGoogleActivity extends AppActivity {
 						new ResultCallback<LoadPeopleResult>() {
 							@Override
 							public void onResult(LoadPeopleResult loadPeopleResult) {
-								if(!mVisiable) {
+								if(!mVisible) {
 									if (loadPeopleResult.getStatus().getStatusCode() == CommonStatusCodes.SUCCESS) {
 										Prefs prefs = Prefs.getInstance();
 										Person person = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
@@ -226,6 +226,6 @@ public final class ConnectGoogleActivity extends AppActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		mVisiable = true;
+		mVisible = true;
 	}
 }
