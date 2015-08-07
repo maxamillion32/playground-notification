@@ -3,6 +3,8 @@
     <string name="application_name">Spielplätze</string>
 
     <string name="action_share">Teile</string>
+    <string name="action_go">Gehe?</string>
+
      <string name="lbl_play_service">Diese App braucht Google Play Service, Sie müssen erst herunterladen dann
         weiter.</string>
 

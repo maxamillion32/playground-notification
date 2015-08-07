@@ -12,6 +12,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.chopping.bus.CloseDrawerEvent;
@@ -136,6 +138,7 @@ public class MapsActivity extends AppActivity {
 
 		initGoogleMap();
 		initDrawer();
+		initBoard();
 
 		//User that have used this application and done clear(logout), should go back to login-page.
 		Prefs prefs = Prefs.getInstance();
@@ -144,6 +147,18 @@ public class MapsActivity extends AppActivity {
 		} else if (prefs.isEULAOnceConfirmed() && !TextUtils.isEmpty(prefs.getGoogleId())) {
 			//TODO Should do something.....
 		}
+	}
+
+	/**
+	 * Initialize information board.
+	 */
+	private void initBoard() {
+		mBinding.boardVg.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Utils.showShortToast(App.Instance, "Click on board");
+			}
+		});
 	}
 
 	/**
