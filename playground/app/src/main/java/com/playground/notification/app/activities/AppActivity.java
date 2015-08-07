@@ -4,7 +4,10 @@ import android.app.AlertDialog.Builder;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -24,6 +27,17 @@ import com.playground.notification.utils.Prefs;
  * @author Xinyue Zhao
  */
 public   class AppActivity extends BaseActivity{
+	/**
+	 * Height of App-bar.
+	 */
+	private int mAppBarHeight;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		calcAppBarHeight();
+	}
+
 	/**
 	 * Show  {@link android.support.v4.app.DialogFragment}.
 	 *
@@ -94,6 +108,29 @@ public   class AppActivity extends BaseActivity{
 				}
 			}).create().show();
 		}
+	}
+
+
+	/**
+	 * Calculate height of actionbar.
+	 */
+	protected void calcAppBarHeight() {
+		int[] abSzAttr;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			abSzAttr = new int[] { android.R.attr.actionBarSize };
+		} else {
+			abSzAttr = new int[] { R.attr.actionBarSize };
+		}
+		TypedArray a = obtainStyledAttributes(abSzAttr);
+		mAppBarHeight = a.getDimensionPixelSize(0, -1);
+	}
+
+	/**
+	 *
+	 * @return  Height of App-bar.
+	 */
+	public int getAppBarHeight() {
+		return mAppBarHeight;
 	}
 
 	@Override
