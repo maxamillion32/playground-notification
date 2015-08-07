@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Spielplatz Meldung</string>
-    <string name="application_name">Spielplatz Meldung</string>
+    <string name="app_name">Spielplätze</string>
+    <string name="application_name">Spielplätze</string>
 
     <string name="action_share">Teile</string>
      <string name="lbl_play_service">Diese App braucht Google Play Service, Sie müssen erst herunterladen dann
@@ -8,7 +8,7 @@
 
 
     <string name="lbl_share_app_title">Tolle App für Sie</string>
-    <string name="lbl_share_app_content">Lieber Papa und Mama\n\Hier ist %1$s, ein sämtliches Werkzeug, Ihnen Spielplatz automatisch zu informieren\n\n%2$s</string>
+    <string name="lbl_share_app_content">Lieber Papa und Mama\n\Hier ist %1$s, ein sämtliches Werkzeug, Ihnen Spielplätze automatisch zu informieren\n\n%2$s</string>
 
 
     <string name="lbl_hello">Hallo %1$s!</string>
