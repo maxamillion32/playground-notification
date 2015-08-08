@@ -44,6 +44,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -76,6 +77,11 @@ public class MapsActivity extends AppActivity {
 
 	private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 	private TouchableMapFragment mMapFragment;
+	/**
+	 * {@code true}: force to load markers, ignore the touch&move effect of map.
+	 * Default is {@code true}, because as initializing the map, the markers should be loaded.
+	 */
+	private volatile  boolean mForcedToLoad = true;
 	/**
 	 * Use navigation-drawer for this fork.
 	 */
@@ -374,6 +380,13 @@ public class MapsActivity extends AppActivity {
 
 
 		mMap.setPadding(0, getAppBarHeight(), 0, 0);
+		mMap.setOnMyLocationButtonClickListener(new OnMyLocationButtonClickListener() {
+			@Override
+			public boolean onMyLocationButtonClick() {
+				mForcedToLoad = true;
+				return false;
+			}
+		});
 		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
 			@Override
 			public void onCameraChange(CameraPosition cameraPosition) {
@@ -389,7 +402,8 @@ public class MapsActivity extends AppActivity {
 	 * Draw grounds on map.
 	 */
 	private void populateGrounds() {
-		if (mMapFragment.isTouchAndMove()) {
+		if (mForcedToLoad || mMapFragment.isTouchAndMove()) {
+			mForcedToLoad = false;
 			AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Cursor>() {
 				private LatLngBounds mLatLngBounds;
 
@@ -417,6 +431,7 @@ public class MapsActivity extends AppActivity {
 							String label = cursor.getString(cursor.getColumnIndex("label"));
 							mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(label));
 						}
+					} catch (IllegalStateException e) {
 					} finally {
 						cursor.close();
 						DB.getInstance(App.Instance).close();
@@ -495,7 +510,7 @@ public class MapsActivity extends AppActivity {
 		if (mMap != null) {
 			CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),
 					location.getLongitude()), 16);
-			mMap.animateCamera(update);
+			mMap.moveCamera(update);
 		}
 		Utils.showShortToast(App.Instance, "updateCurLocal");
 	}
