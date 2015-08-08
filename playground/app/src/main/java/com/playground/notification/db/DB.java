@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.android.gms.maps.model.LatLng;
+
 
 /**
  * Defines methods that operate on database.
@@ -73,21 +75,15 @@ public final class DB {
 		mDatabaseHelper.close();
 	}
 
-
-	public synchronized Cursor search() {
+	/**
+	 * Get locations between northeast and southwest.
+	 * @return The result of locations between.
+	 */
+	public synchronized Cursor search(LatLng northeast, LatLng southwest) {
 		if (mDB == null || !mDB.isOpen()) {
 			open();
 		}
-//		if(!TextUtils.isEmpty(keyword)) {
-//			String whereClause = tableName + " MATCH ?";
-//			String[] whereArgs = new String[] { "'" + keyword + "'" };
-//			return mDB.query(tableName, null, whereClause, whereArgs, null, null, null);
-//		} else
-
-		{
-			return mDB.query("grounds", null, null, null, null, null, null);
-		}
+		String mainQuery = "SELECT * FROM grounds WHERE " + "latitude <= " + northeast.latitude + " AND latitude >= " + southwest.latitude + " AND longitude <= " +  northeast.longitude + " AND longitude >= " +  southwest.longitude;
+		return mDB.rawQuery(mainQuery, null);
 	}
-
-
 }

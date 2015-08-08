@@ -1,5 +1,7 @@
 package com.playground.notification.app.activities;
 
+import java.io.File;
+
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.app.ProgressDialog;
@@ -41,9 +43,12 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
@@ -54,7 +59,9 @@ import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
 import com.playground.notification.databinding.ActivityMapsBinding;
 import com.playground.notification.db.DB;
+import com.playground.notification.db.DatabaseHelper;
 import com.playground.notification.utils.Prefs;
+import com.playground.notification.views.TouchableMapFragment;
 
 public class MapsActivity extends AppActivity {
 
@@ -68,6 +75,7 @@ public class MapsActivity extends AppActivity {
 	private static final int MENU = R.menu.menu_main;
 
 	private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+	private TouchableMapFragment mMapFragment;
 	/**
 	 * Use navigation-drawer for this fork.
 	 */
@@ -115,12 +123,10 @@ public class MapsActivity extends AppActivity {
 	};
 
 
-
 	/**
 	 * Progress-indicator.
 	 */
 	private ProgressDialog mProgressDialog;
-
 
 
 	//------------------------------------------------
@@ -181,8 +187,8 @@ public class MapsActivity extends AppActivity {
 	 */
 	private void downloadDB() {
 		DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-		DownloadManager.Request request = new DownloadManager.Request(Uri.parse(Utils.uriStr2URI(
-				App.Instance.getDl()).toASCIIString()));
+		DownloadManager.Request request = new DownloadManager.Request(Uri.parse(Utils.uriStr2URI(App.Instance.getDl())
+				.toASCIIString()));
 		request.setDestinationInExternalFilesDir(App.Instance, Environment.DIRECTORY_DCIM, "playgrounds.db");
 		request.setVisibleInDownloadsUi(true);//Can see the downloaded file in "download" app.
 		if (Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
@@ -336,7 +342,8 @@ public class MapsActivity extends AppActivity {
 		// Do a null check to confirm that we have not already instantiated the map.
 		if (mMap == null) {
 			// Try to obtain the map from the SupportMapFragment.
-			mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+			mMap = (mMapFragment = (TouchableMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
+					.getMap();
 			// Check if we were successful in obtaining the map.
 			if (mMap != null) {
 				setUpMap();
@@ -367,35 +374,56 @@ public class MapsActivity extends AppActivity {
 
 
 		mMap.setPadding(0, getAppBarHeight(), 0, 0);
+		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
+			@Override
+			public void onCameraChange(CameraPosition cameraPosition) {
+				File dbFile = App.Instance.getDatabasePath(DatabaseHelper.DATABASE_NAME);
+				if (dbFile.exists()) {
+					populateGrounds();
+				}
+			}
+		});
 	}
 
 	/**
 	 * Draw grounds on map.
 	 */
 	private void populateGrounds() {
-		AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Cursor>() {
-			@Override
-			protected Cursor doInBackground(Void... params) {
-				Cursor cursor = DB.getInstance(App.Instance).search();
-				return cursor;
-			}
+		if (mMapFragment.isTouchAndMove()) {
+			AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Cursor>() {
+				private LatLngBounds mLatLngBounds;
 
-			@Override
-			protected void onPostExecute(Cursor cursor) {
-				super.onPostExecute(cursor);
-				try {
-					while (cursor.moveToNext()) {
-						double lat = cursor.getDouble(cursor.getColumnIndex("latitude"));
-						double lng = cursor.getDouble(cursor.getColumnIndex("longitude"));
-						String label = cursor.getString(cursor.getColumnIndex("label"));
-						mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(label));
-					}
-				} finally {
-					cursor.close();
-					DB.getInstance(App.Instance).close();
+				@Override
+				protected void onPreExecute() {
+					super.onPreExecute();
+					mLatLngBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
 				}
-			}
-		});
+
+				@Override
+				protected Cursor doInBackground(Void... params) {
+					Cursor cursor = DB.getInstance(App.Instance).search(mLatLngBounds.northeast,
+							mLatLngBounds.southwest);
+					return cursor;
+				}
+
+				@Override
+				protected void onPostExecute(Cursor cursor) {
+					super.onPostExecute(cursor);
+					try {
+						mMap.clear();
+						while (cursor.moveToNext()) {
+							double lat = cursor.getDouble(cursor.getColumnIndex("latitude"));
+							double lng = cursor.getDouble(cursor.getColumnIndex("longitude"));
+							String label = cursor.getString(cursor.getColumnIndex("label"));
+							mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(label));
+						}
+					} finally {
+						cursor.close();
+						DB.getInstance(App.Instance).close();
+					}
+				}
+			});
+		}
 	}
 
 
@@ -476,10 +504,11 @@ public class MapsActivity extends AppActivity {
 	 * Remove progress-indicator.
 	 */
 	private void dismissProgressIndicator() {
-		if(mProgressDialog != null && mProgressDialog.isShowing()) {
+		if (mProgressDialog != null && mProgressDialog.isShowing()) {
 			mProgressDialog.hide();
 		}
 	}
+
 	/**
 	 * Show progress-indicator.
 	 */
