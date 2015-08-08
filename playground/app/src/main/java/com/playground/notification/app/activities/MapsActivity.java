@@ -11,11 +11,13 @@ import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -42,6 +44,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.app.fragments.AboutDialogFragment;
@@ -50,6 +53,7 @@ import com.playground.notification.app.fragments.GPlusFragment;
 import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
 import com.playground.notification.databinding.ActivityMapsBinding;
+import com.playground.notification.db.DB;
 import com.playground.notification.utils.Prefs;
 
 public class MapsActivity extends AppActivity {
@@ -105,6 +109,7 @@ public class MapsActivity extends AppActivity {
 					break;
 				}
 			}
+			populateGrounds();
 			dismissProgressIndicator();
 		}
 	};
@@ -362,6 +367,35 @@ public class MapsActivity extends AppActivity {
 
 
 		mMap.setPadding(0, getAppBarHeight(), 0, 0);
+	}
+
+	/**
+	 * Draw grounds on map.
+	 */
+	private void populateGrounds() {
+		AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Cursor>() {
+			@Override
+			protected Cursor doInBackground(Void... params) {
+				Cursor cursor = DB.getInstance(App.Instance).search();
+				return cursor;
+			}
+
+			@Override
+			protected void onPostExecute(Cursor cursor) {
+				super.onPostExecute(cursor);
+				try {
+					while (cursor.moveToNext()) {
+						double lat = cursor.getDouble(cursor.getColumnIndex("latitude"));
+						double lng = cursor.getDouble(cursor.getColumnIndex("longitude"));
+						String label = cursor.getString(cursor.getColumnIndex("label"));
+						mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(label));
+					}
+				} finally {
+					cursor.close();
+					DB.getInstance(App.Instance).close();
+				}
+			}
+		});
 	}
 
 
