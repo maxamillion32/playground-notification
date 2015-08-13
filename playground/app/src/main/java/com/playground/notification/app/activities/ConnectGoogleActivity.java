@@ -194,7 +194,7 @@ public final class ConnectGoogleActivity extends AppActivity {
 
 	@Override
 	protected void onStop() {
-		if (mGoogleApiClient.isConnected()) {
+		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
 			mGoogleApiClient.disconnect();
 		}
 		super.onStop();

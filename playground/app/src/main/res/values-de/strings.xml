@@ -18,6 +18,4 @@
     <string name="lbl_connect_google">Verbindung an Google…</string>
     <string name="lbl_logout_gplus">Abmelden</string>
 
-    <string name="lbl_download">Daten werden heruntergeladen</string>
-    <string name="lbl_wait">Bitte warten…</string>
 </resources>

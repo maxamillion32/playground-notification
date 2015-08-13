@@ -1,25 +1,14 @@
 package com.playground.notification.app.activities;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-import android.app.DownloadManager;
-import android.app.DownloadManager.Request;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -52,6 +41,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.playground.notification.R;
+import com.playground.notification.api.Api;
 import com.playground.notification.app.App;
 import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.AppListImpFragment;
@@ -59,10 +49,15 @@ import com.playground.notification.app.fragments.GPlusFragment;
 import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
 import com.playground.notification.databinding.ActivityMapsBinding;
-import com.playground.notification.db.DB;
-import com.playground.notification.db.DatabaseHelper;
+import com.playground.notification.ds.Playground;
+import com.playground.notification.ds.Playgrounds;
+import com.playground.notification.ds.Request;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.views.TouchableMapFragment;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class MapsActivity extends AppActivity {
 
@@ -78,10 +73,10 @@ public class MapsActivity extends AppActivity {
 	private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 	private TouchableMapFragment mMapFragment;
 	/**
-	 * {@code true}: force to load markers, ignore the touch&move effect of map.
-	 * Default is {@code true}, because as initializing the map, the markers should be loaded.
+	 * {@code true}: force to load markers, ignore the touch&move effect of map. Default is {@code true}, because as
+	 * initializing the map, the markers should be loaded.
 	 */
-	private volatile  boolean mForcedToLoad = true;
+	private volatile boolean mForcedToLoad = true;
 	/**
 	 * Use navigation-drawer for this fork.
 	 */
@@ -102,31 +97,6 @@ public class MapsActivity extends AppActivity {
 	 * Connect to google-api.
 	 */
 	private GoogleApiClient mGoogleApiClient;
-	/**
-	 * Receiver for downloading reports.
-	 */
-	private BroadcastReceiver mDownloadReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-			DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-			DownloadManager.Query query = new DownloadManager.Query();
-			query.setFilterById(downloadId);
-			Cursor cursor = downloadManager.query(query);
-			if (cursor.moveToFirst()) {
-				int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
-				int status = cursor.getInt(columnIndex);
-				switch (status) {
-				case DownloadManager.STATUS_SUCCESSFUL:
-					break;
-				case DownloadManager.STATUS_FAILED:
-					break;
-				}
-			}
-			populateGrounds();
-			dismissProgressIndicator();
-		}
-	};
 
 
 	/**
@@ -178,29 +148,14 @@ public class MapsActivity extends AppActivity {
 		switch (requestCode) {
 		case ConnectGoogleActivity.REQ:
 			if (resultCode == RESULT_OK) {
-				//TODO Return from google-login.
-				showProgressIndicator();
-				downloadDB();
+				//Return from google-login.
+				initGoogleMap();
+				populateGrounds();
 			} else {
 				ActivityCompat.finishAffinity(this);
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
-	}
-
-	/**
-	 * Download all grounds-db.
-	 */
-	private void downloadDB() {
-		DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-		DownloadManager.Request request = new DownloadManager.Request(Uri.parse(Utils.uriStr2URI(App.Instance.getDl())
-				.toASCIIString()));
-		request.setDestinationInExternalFilesDir(App.Instance, Environment.DIRECTORY_DCIM, "playgrounds.db");
-		request.setVisibleInDownloadsUi(true);//Can see the downloaded file in "download" app.
-		if (Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
-			request.setNotificationVisibility(Request.VISIBILITY_HIDDEN);
-		}
-		downloadManager.enqueue(request);
 	}
 
 
@@ -214,7 +169,6 @@ public class MapsActivity extends AppActivity {
 		//Init application basic elements.
 		setUpErrorHandling((ViewGroup) findViewById(R.id.error_content));
 
-		initGoogleMap();
 		initDrawer();
 		initBoard();
 
@@ -223,7 +177,7 @@ public class MapsActivity extends AppActivity {
 		if (prefs.isEULAOnceConfirmed() && TextUtils.isEmpty(prefs.getGoogleId())) {
 			ConnectGoogleActivity.showInstance(this);
 		} else if (prefs.isEULAOnceConfirmed() && !TextUtils.isEmpty(prefs.getGoogleId())) {
-			//TODO Should do something.....
+			initGoogleMap();
 		}
 	}
 
@@ -278,7 +232,7 @@ public class MapsActivity extends AppActivity {
 	@Override
 	public void onStart() {
 		super.onStart();
-		if (!mGoogleApiClient.isConnected()) {
+		if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
 			mGoogleApiClient.connect();
 		}
 	}
@@ -286,7 +240,10 @@ public class MapsActivity extends AppActivity {
 	@Override
 	public void onStop() {
 		super.onStop();
-		if (mGoogleApiClient.isConnected()) {
+		if (mMap != null) {
+			mMap.clear();
+		}
+		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
 			mGoogleApiClient.disconnect();
 		}
 	}
@@ -316,8 +273,6 @@ public class MapsActivity extends AppActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		IntentFilter intentFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-		registerReceiver(mDownloadReceiver, intentFilter);
 
 		if (mDrawerToggle != null) {
 			mDrawerToggle.syncState();
@@ -325,11 +280,6 @@ public class MapsActivity extends AppActivity {
 		setUpMapIfNeeded();
 	}
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		unregisterReceiver(mDownloadReceiver);
-	}
 
 	/**
 	 * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly installed) and the
@@ -390,10 +340,7 @@ public class MapsActivity extends AppActivity {
 		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
 			@Override
 			public void onCameraChange(CameraPosition cameraPosition) {
-				File dbFile = App.Instance.getDatabasePath(DatabaseHelper.DATABASE_NAME);
-				if (dbFile.exists()) {
-					populateGrounds();
-				}
+				populateGrounds();
 			}
 		});
 	}
@@ -404,38 +351,39 @@ public class MapsActivity extends AppActivity {
 	private void populateGrounds() {
 		if (mForcedToLoad || mMapFragment.isTouchAndMove()) {
 			mForcedToLoad = false;
-			AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Cursor>() {
-				private LatLngBounds mLatLngBounds;
+			mBinding.loadPinPb.setVisibility(View.VISIBLE);
 
-				@Override
-				protected void onPreExecute() {
-					super.onPreExecute();
-					mLatLngBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
-				}
+			LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+			List<String> filter = new ArrayList<>();
+			filter.add("playground");
+			Request request = new Request();
+			request.setTimestamps(System.currentTimeMillis());
+			request.setWidth(App.Instance.getScreenSize().Width);
+			request.setHeight(App.Instance.getScreenSize().Height);
+			request.setFilter(filter);
+			request.setResult(new ArrayList<String>());
+			request.setNorth(bounds.northeast.latitude);
+			request.setEast(bounds.northeast.longitude);
+			request.setSouth(bounds.southwest.latitude);
+			request.setWest(bounds.southwest.longitude);
 
+			Api.getPlaygrounds(request, new Callback<Playgrounds>() {
 				@Override
-				protected Cursor doInBackground(Void... params) {
-					Cursor cursor = DB.getInstance(App.Instance).search(mLatLngBounds.northeast,
-							mLatLngBounds.southwest);
-					return cursor;
-				}
-
-				@Override
-				protected void onPostExecute(Cursor cursor) {
-					super.onPostExecute(cursor);
-					try {
-						mMap.clear();
-						while (cursor.moveToNext()) {
-							double lat = cursor.getDouble(cursor.getColumnIndex("latitude"));
-							double lng = cursor.getDouble(cursor.getColumnIndex("longitude"));
-							String label = cursor.getString(cursor.getColumnIndex("label"));
-							mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(label));
-						}
-					} catch (IllegalStateException e) {
-					} finally {
-						cursor.close();
-						DB.getInstance(App.Instance).close();
+				public void success(Playgrounds playgrounds, Response response) {
+					List<Playground> grounds = playgrounds.getPlaygroundList();
+					for (Playground ground : grounds) {
+						LatLng center = mMap.getProjection().getVisibleRegion().latLngBounds.getCenter();
+						LatLng to = new LatLng(ground.getLatitude(), ground.getLongitude());
+						MarkerOptions options = new MarkerOptions().position(to);
+						com.playground.notification.utils.Utils.changeMarkerIcon(options, center, to);
+						mMap.addMarker(options);
 					}
+					mBinding.loadPinPb.setVisibility(View.GONE);
+				}
+
+				@Override
+				public void failure(RetrofitError error) {
+					mBinding.loadPinPb.setVisibility(View.GONE);
 				}
 			});
 		}
@@ -513,22 +461,5 @@ public class MapsActivity extends AppActivity {
 			mMap.moveCamera(update);
 		}
 		Utils.showShortToast(App.Instance, "updateCurLocal");
-	}
-
-	/**
-	 * Remove progress-indicator.
-	 */
-	private void dismissProgressIndicator() {
-		if (mProgressDialog != null && mProgressDialog.isShowing()) {
-			mProgressDialog.hide();
-		}
-	}
-
-	/**
-	 * Show progress-indicator.
-	 */
-	private void showProgressIndicator() {
-		dismissProgressIndicator();
-		mProgressDialog = ProgressDialog.show(this, getString(R.string.lbl_download), getString(R.string.lbl_wait));
 	}
 }

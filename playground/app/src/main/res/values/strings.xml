@@ -47,7 +47,4 @@
     <string name="lbl_connect_google">Connecting on Google…</string>
     <string name="lbl_logout_gplus">Logout</string>
 
-
-    <string name="lbl_download">Download data…</string>
-    <string name="lbl_wait">Please waiting…</string>
 </resources>

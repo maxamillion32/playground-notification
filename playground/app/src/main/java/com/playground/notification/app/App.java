@@ -38,7 +38,10 @@ import android.app.Application;
 import android.text.TextUtils;
 
 import com.chopping.net.TaskHelper;
+import com.chopping.utils.DeviceUtils;
+import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.playground.notification.R;
+import com.playground.notification.api.Api;
 import com.playground.notification.utils.Prefs;
 
 import cn.bmob.v3.Bmob;
@@ -61,7 +64,7 @@ public final class App extends Application {
 		Instance = this;
 	}
 
-	private String mDl;
+	private ScreenSize mScreenSize;
 
 	@Override
 	public void onCreate() {
@@ -73,7 +76,6 @@ public final class App extends Application {
 		try {
 			prop.load(getClassLoader().getResourceAsStream("key.properties"));
 			Bmob.initialize(this, prop.getProperty("bmobkey"));
-			mDl = prop.getProperty("dl");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -103,9 +105,12 @@ public final class App extends Application {
 						}
 					});
 		}
+		mScreenSize = DeviceUtils.getScreenSize(this);
+		Api.initialize(App.Instance, "http://spielplatz-radar.de");
 	}
 
-	public String getDl() {
-		return mDl;
+
+	public ScreenSize getScreenSize() {
+		return mScreenSize;
 	}
 }
