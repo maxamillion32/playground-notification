@@ -1,5 +1,11 @@
 package com.playground.notification.utils;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
+
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -39,5 +45,17 @@ public final class Utils {
 				marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_more));
 			}
 		}
+	}
+
+
+	/**
+	 * Open a html page with external browser.
+	 * @param cxt The {@link Context}.
+	 * @param url The url to the site.
+	 */
+	public static void openExternalBrowser(Activity cxt, String url) {
+		Intent i = new Intent(Intent.ACTION_VIEW);
+		i.setData(Uri.parse(url));
+		ActivityCompat.startActivity(cxt, i, null);
 	}
 }

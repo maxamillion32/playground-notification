@@ -18,4 +18,5 @@
     <string name="lbl_connect_google">Verbindung an Google…</string>
     <string name="lbl_logout_gplus">Abmelden</string>
 
+    <string name="lbl_data_source">Datenquelle: </string>
 </resources>

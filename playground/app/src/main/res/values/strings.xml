@@ -3,6 +3,8 @@
     <string name="application_name">PlayFields</string>
     <string name="title_activity_maps">@string/application_name</string>
 
+    <string name="support">spielplatz-radar.de</string>
+
     <string name="action_share">Share</string>
     <string name="action_about">About</string>
     <string name="action_go">Going?</string>
@@ -47,4 +49,6 @@
     <string name="lbl_connect_google">Connecting on Google…</string>
     <string name="lbl_logout_gplus">Logout</string>
 
+
+    <string name="lbl_data_source">Data-source: </string>
 </resources>

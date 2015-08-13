@@ -19,6 +19,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ import com.playground.notification.R;
 import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
 import com.playground.notification.utils.Prefs;
+import com.playground.notification.utils.Utils;
 
 import de.greenrobot.event.EventBus;
 
@@ -110,6 +112,13 @@ public final class AboutDialogFragment extends DialogFragment {
 		TextView aboutBodyView = (TextView) dialogV.findViewById(R.id.dialog_text_tv);
 		aboutBodyView.setText(aboutBody);
 		aboutBodyView.setMovementMethod(new LinkMovementMethod());
+
+		dialogV.findViewById(R.id.powered_by_ll).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Utils.openExternalBrowser(getActivity(), "http://" + getString(R.string.support));
+			}
+		});
 
 		return new AlertDialog.Builder(getActivity()).setTitle(R.string.action_about).setView(dialogV)
 				.setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
