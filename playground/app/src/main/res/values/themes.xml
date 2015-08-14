@@ -39,7 +39,10 @@
 
     <style name="AppTheme" parent="BaseTheme" />
 
-
+    <style name="CheckboxTheme" parent="BaseTheme" >
+        <item name="colorAccent">@color/primary_dark_color</item>
+        <item name="android:colorAccent">@color/primary_dark_color</item>
+    </style>
 
     <!--For actionbar or toolbar.-->
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.Light">

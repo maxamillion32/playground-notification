@@ -102,6 +102,7 @@
                             android:layout_gravity="center_vertical|end"
                             android:checked="true"
                             android:clickable="false"
+                            android:theme="@style/CheckboxTheme"
                             android:visibility='@{mode.equals("walking") ? View.VISIBLE : View.GONE}' />
                     </FrameLayout>
 
@@ -125,6 +126,7 @@
                             android:layout_gravity="center_vertical|right"
                             android:checked="true"
                             android:clickable="false"
+                            android:theme="@style/CheckboxTheme"
                             android:visibility='@{mode.equals("driving") ? View.VISIBLE : View.GONE}' />
                     </FrameLayout>
 
@@ -148,6 +150,7 @@
                             android:layout_gravity="center_vertical|right"
                             android:checked="true"
                             android:clickable="false"
+                            android:theme="@style/CheckboxTheme"
                             android:visibility='@{mode.equals("bicycling") ? View.VISIBLE : View.GONE}' />
                     </FrameLayout>
 
@@ -170,6 +173,7 @@
                             android:layout_gravity="center_vertical|right"
                             android:checked="true"
                             android:clickable="false"
+                            android:theme="@style/CheckboxTheme"
                             android:visibility='@{mode.equals("transit") ? View.VISIBLE : View.GONE}' />
                     </FrameLayout>
                 </LinearLayout>
