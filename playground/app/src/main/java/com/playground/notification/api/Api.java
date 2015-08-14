@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.playground.notification.ds.Playgrounds;
 import com.playground.notification.ds.Request;
+import com.playground.notification.ds.google.Matrix;
 import com.squareup.okhttp.OkHttpClient;
 
 import retrofit.Callback;
@@ -17,8 +18,10 @@ import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 import retrofit.http.Body;
+import retrofit.http.GET;
 import retrofit.http.POST;
 import retrofit.http.Path;
+import retrofit.http.Query;
 
 /**
  * Api to get all Faroo-feeds.
@@ -45,6 +48,10 @@ public final class Api {
 	 */
 	private static String sHost = null;
 	/**
+	 * The host of Google 's API.
+	 */
+	private static String sGoogle = "https://maps.googleapis.com/";
+	/**
 	 * Response-cache size with default value.
 	 */
 	private static long sCacheSize = 1024 * 10;
@@ -57,7 +64,7 @@ public final class Api {
 	 * API methods.
 	 */
 	private static S s;
-
+	private static G g;
 	/**
 	 * Init the http-client and cache.
 	 */
@@ -83,6 +90,10 @@ public final class Api {
 		RestAdapter adapter = new RestAdapter.Builder().setClient(sClient).setRequestInterceptor(sInterceptor)
 				.setLogLevel(RestAdapter.LogLevel.FULL).setEndpoint(sHost).build();
 		s = adapter.create(S.class);
+
+		adapter = new RestAdapter.Builder().setClient(sClient).setRequestInterceptor(sInterceptor)
+				.setLogLevel(RestAdapter.LogLevel.FULL).setEndpoint(sGoogle).build();
+		g = adapter.create(G.class);
 	}
 
 	/**
@@ -110,12 +121,30 @@ public final class Api {
 	static private interface S {
 		@POST("/q/{api}")
 		void getPlaygrounds(@Path("api") String api, @Body Request req, Callback<Playgrounds> callback);
+
+	}
+
+	/**
+	 * Api port.
+	 */
+	static private interface G {
+		@GET("/maps/api/distancematrix/json")
+		void getMatrix(@Query("origins") String origins, @Query("destinations") String destinations,
+				@Query("language") String language, @Query("mode") String mode, @Query("key") String key,
+				Callback<Matrix> callback);
 	}
 
 
-	public static final void getPlaygrounds( String api, Request req, Callback<Playgrounds> callback) {
+	public static final void getPlaygrounds(String api, Request req, Callback<Playgrounds> callback) {
 		assertCall();
 		s.getPlaygrounds(api, req, callback);
+	}
+
+
+	public static final void getMatrix(String origins, String destinations, String language, String mode, String key,
+			Callback<Matrix> callback) {
+		assertCall();
+		g.getMatrix(origins, destinations, language, mode, key, callback);
 	}
 
 

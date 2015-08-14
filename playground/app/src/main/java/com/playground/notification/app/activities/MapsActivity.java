@@ -1,9 +1,10 @@
 package com.playground.notification.app.activities;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
@@ -33,12 +34,14 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.playground.notification.R;
 import com.playground.notification.api.Api;
@@ -46,6 +49,7 @@ import com.playground.notification.app.App;
 import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.AppListImpFragment;
 import com.playground.notification.app.fragments.GPlusFragment;
+import com.playground.notification.app.fragments.PlaygroundDetailFragment;
 import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
 import com.playground.notification.databinding.ActivityMapsBinding;
@@ -59,7 +63,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class MapsActivity extends AppActivity {
+public class MapsActivity extends AppActivity  {
 
 	/**
 	 * Main layout for this component.
@@ -99,11 +103,7 @@ public class MapsActivity extends AppActivity {
 	private GoogleApiClient mGoogleApiClient;
 
 
-	/**
-	 * Progress-indicator.
-	 */
-	private ProgressDialog mProgressDialog;
-
+	private Map<Marker, Playground> mMarkerList = new LinkedHashMap<>();
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -242,6 +242,7 @@ public class MapsActivity extends AppActivity {
 		super.onStop();
 		if (mMap != null) {
 			mMap.clear();
+			mMarkerList.clear();
 		}
 		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
 			mGoogleApiClient.disconnect();
@@ -371,13 +372,27 @@ public class MapsActivity extends AppActivity {
 				@Override
 				public void success(Playgrounds playgrounds, Response response) {
 					List<Playground> grounds = playgrounds.getPlaygroundList();
-					for (Playground ground : grounds) {
-						LatLng center = mMap.getProjection().getVisibleRegion().latLngBounds.getCenter();
+					final LatLng center = mMap.getProjection().getVisibleRegion().latLngBounds.getCenter();
+					for (final Playground ground : grounds) {
 						LatLng to = new LatLng(ground.getLatitude(), ground.getLongitude());
 						MarkerOptions options = new MarkerOptions().position(to);
 						com.playground.notification.utils.Utils.changeMarkerIcon(options, center, to);
-						mMap.addMarker(options);
+						mMarkerList.put(mMap.addMarker(options), ground);
 					}
+
+					mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+						@Override
+						public boolean onMarkerClick(Marker marker) {
+							for(Marker m : mMarkerList.keySet()) {
+								if(m.equals(marker)) {
+									showDialogFragment(PlaygroundDetailFragment.newInstance(App.Instance, center.latitude,
+											center.longitude, mMarkerList.get(m)), null);
+									break;
+								}
+							}
+							return true;
+						}
+					});
 					mBinding.loadPinPb.setVisibility(View.GONE);
 				}
 
