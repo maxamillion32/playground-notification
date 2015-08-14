@@ -5,6 +5,15 @@
     <string name="action_share">Teile</string>
     <string name="action_go">Gehe?</string>
 
+    <string name="btn_confirm">Sicher</string>
+    <string name="btn_yes">Ja</string>
+    <string name="btn_no">Nein</string>
+    <string name="btn_agree">Stimmt zu.</string>
+    <string name="btn_not_agree">Stimmt nicht zu.</string>
+    <string name="btn_begin">Starten</string>
+    <string name="btn_close_app">App schließen</string>
+    <string name="btn_close">Schließen</string>
+
      <string name="lbl_play_service">Diese App braucht Google Play Service, Sie müssen erst herunterladen dann
         weiter.</string>
 

@@ -41,7 +41,6 @@ import com.chopping.net.TaskHelper;
 import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.playground.notification.R;
-import com.playground.notification.api.Api;
 import com.playground.notification.utils.Prefs;
 
 import cn.bmob.v3.Bmob;
@@ -64,7 +63,16 @@ public final class App extends Application {
 		Instance = this;
 	}
 
+	/**
+	 * Display-size.
+	 */
 	private ScreenSize mScreenSize;
+
+
+	/**
+	 * API key for requiring distance-matrix.
+	 */
+	private String mDistanceMatrixKey;
 
 	@Override
 	public void onCreate() {
@@ -76,6 +84,7 @@ public final class App extends Application {
 		try {
 			prop.load(getClassLoader().getResourceAsStream("key.properties"));
 			Bmob.initialize(this, prop.getProperty("bmobkey"));
+			mDistanceMatrixKey = prop.getProperty("distancematrixkey");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -106,10 +115,19 @@ public final class App extends Application {
 					});
 		}
 		mScreenSize = DeviceUtils.getScreenSize(this);
-		Api.initialize(App.Instance, "http://spielplatz-radar.de");
+	}
+
+	/**
+	 * API key for requiring distance-matrix.
+	 */
+	public String getDistanceMatrixKey() {
+		return mDistanceMatrixKey;
 	}
 
 
+	/**
+	 * @return Display-size.
+	 */
 	public ScreenSize getScreenSize() {
 		return mScreenSize;
 	}

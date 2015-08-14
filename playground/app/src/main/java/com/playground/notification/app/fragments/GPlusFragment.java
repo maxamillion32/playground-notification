@@ -96,7 +96,7 @@ public final class GPlusFragment extends BaseFragment {
 		Prefs prefs = Prefs.getInstance();
 		if (!TextUtils.isEmpty(prefs.getGoogleId())) {
 			prefs.setGoogleId(null);
-			prefs.setGoogleDisplyName(null);
+			prefs.setGoogleDisplayName(null);
 			prefs.setGoogleThumbUrl(null);
 		}
 	}
@@ -109,7 +109,7 @@ public final class GPlusFragment extends BaseFragment {
 		if (!TextUtils.isEmpty(prefs.getGoogleThumbUrl())) {
 			picasso.load(Utils.uriStr2URI(prefs.getGoogleThumbUrl()).toASCIIString()).into(mPhotoIv);
 		}
-		mNameTv.setText(getString(R.string.lbl_hello, prefs.getGoogleDisplyName()));
+		mNameTv.setText(getString(R.string.lbl_hello, prefs.getGoogleDisplayName()));
 		super.onResume();
 	}
 

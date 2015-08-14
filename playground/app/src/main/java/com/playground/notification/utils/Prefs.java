@@ -34,6 +34,15 @@ public final class Prefs extends BasicPrefs {
 	private static final String KEY_GOOGLE_THUMB_URL = "key.google.thumb.url";
 
 	/**
+	 * API host defined in config.
+	 */
+	private static final String KEY_API_HOST = "api_host";
+	/**
+	 * API search defined in config.
+	 */
+	private static final String KEY_API_SEARCH = "api_search";
+
+	/**
 	 * The Instance.
 	 */
 	private static Prefs sInstance;
@@ -135,14 +144,14 @@ public final class Prefs extends BasicPrefs {
 	/**
 	 * The display-name of Google's user.
 	 */
-	public void setGoogleDisplyName(String displayName) {
+	public void setGoogleDisplayName(String displayName) {
 		setString(KEY_GOOGLE_DISPLAY_NAME, displayName);
 	}
 
 	/**
 	 * The display-name of Google's user.
 	 */
-	public String getGoogleDisplyName() {
+	public String getGoogleDisplayName() {
 		return getString(KEY_GOOGLE_DISPLAY_NAME, null);
 	}
 
@@ -158,5 +167,19 @@ public final class Prefs extends BasicPrefs {
 	 */
 	public String getGoogleThumbUrl() {
 		return getString(KEY_GOOGLE_THUMB_URL, null);
+	}
+
+	/**
+	 * API host defined in config.
+	 */
+	public String getApiHost() {
+		return getString(KEY_API_HOST, null);
+	}
+
+	/**
+	 * API search defined in config.
+	 */
+	public String getApiSearch() {
+		return getString(KEY_API_SEARCH, null);
 	}
 }

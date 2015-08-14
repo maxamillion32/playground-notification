@@ -367,7 +367,7 @@ public class MapsActivity extends AppActivity {
 			request.setSouth(bounds.southwest.latitude);
 			request.setWest(bounds.southwest.longitude);
 
-			Api.getPlaygrounds(request, new Callback<Playgrounds>() {
+			Api.getPlaygrounds(Prefs.getInstance().getApiSearch(), request, new Callback<Playgrounds>() {
 				@Override
 				public void success(Playgrounds playgrounds, Response response) {
 					List<Playground> grounds = playgrounds.getPlaygroundList();
@@ -431,12 +431,14 @@ public class MapsActivity extends AppActivity {
 	protected void onAppConfigLoaded() {
 		super.onAppConfigLoaded();
 		showAppList();
+		Api.initialize(App.Instance, Prefs.getInstance().getApiHost());
 	}
 
 	@Override
 	protected void onAppConfigIgnored() {
 		super.onAppConfigIgnored();
 		showAppList();
+		Api.initialize(App.Instance, Prefs.getInstance().getApiHost());
 	}
 
 	/**

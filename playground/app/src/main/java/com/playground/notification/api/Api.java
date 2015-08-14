@@ -18,6 +18,7 @@ import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 import retrofit.http.Body;
 import retrofit.http.POST;
+import retrofit.http.Path;
 
 /**
  * Api to get all Faroo-feeds.
@@ -107,14 +108,14 @@ public final class Api {
 	 * Api port.
 	 */
 	static private interface S {
-		@POST("/q/map_items")
-		void getPlaygrounds(@Body Request req, Callback<Playgrounds> callback);
+		@POST("/q/{api}")
+		void getPlaygrounds(@Path("api") String api, @Body Request req, Callback<Playgrounds> callback);
 	}
 
 
-	public static final void getPlaygrounds(Request req, Callback<Playgrounds> callback) {
+	public static final void getPlaygrounds( String api, Request req, Callback<Playgrounds> callback) {
 		assertCall();
-		s.getPlaygrounds(req, callback);
+		s.getPlaygrounds(api, req, callback);
 	}
 
 

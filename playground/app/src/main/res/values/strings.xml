@@ -17,6 +17,7 @@
     <string name="btn_not_agree">I do not agree.</string>
     <string name="btn_begin">Begin now</string>
     <string name="btn_close_app">Close app</string>
+    <string name="btn_close">Close</string>
 
     <string name="lbl_play_service">This application needs Google Play Service, you must install it first.</string>
 
@@ -49,6 +50,6 @@
     <string name="lbl_connect_google">Connecting on Google…</string>
     <string name="lbl_logout_gplus">Logout</string>
 
-
+    <string name="lbl_location">Location</string>
     <string name="lbl_data_source">Data-source: </string>
 </resources>

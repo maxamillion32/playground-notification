@@ -100,7 +100,7 @@ public final class ConnectGoogleActivity extends AppActivity {
 										Person person = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
 										if (person != null) {
 											prefs.setGoogleId(person.getId());
-											prefs.setGoogleDisplyName(person.getDisplayName());
+											prefs.setGoogleDisplayName(person.getDisplayName());
 
 											Picasso picasso = Picasso.with(App.Instance);
 											if (person.getImage() != null && person.getImage().hasUrl()) {
