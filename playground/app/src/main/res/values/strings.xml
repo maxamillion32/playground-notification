@@ -52,4 +52,9 @@
 
     <string name="lbl_location">Location</string>
     <string name="lbl_data_source">Data-source: </string>
+
+    <string name="lbl_driving">driving</string>
+    <string name="lbl_walking">walking</string>
+    <string name="lbl_bicycling">bicycling</string>
+    <string name="lbl_transit">transit</string>
 </resources>

@@ -28,4 +28,9 @@
     <string name="lbl_logout_gplus">Abmelden</string>
 
     <string name="lbl_data_source">Datenquelle: </string>
+
+    <string name="lbl_driving">Auto fahren</string>
+    <string name="lbl_walking">Zu Fuß</string>
+    <string name="lbl_bicycling">Fahrrad</string>
+    <string name="lbl_transit">Bus, Bahn</string>
 </resources>

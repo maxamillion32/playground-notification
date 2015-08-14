@@ -10,7 +10,6 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.playground.notification.R;
@@ -83,24 +82,20 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		Bundle args = getArguments();
-		Playground playground = (Playground) args.getSerializable(EXTRAS_GROUND);
+		final Playground playground = (Playground) args.getSerializable(EXTRAS_GROUND);
 		if (playground != null) {
-			double lat = args.getDouble(EXTRAS_LAT);
-			double lng = args.getDouble(EXTRAS_LNG);
+			final double lat = args.getDouble(EXTRAS_LAT);
+			final double lng = args.getDouble(EXTRAS_LNG);
 
 			mBinding = DataBindingUtil.bind(view.findViewById(R.id.playground_detail_vg));
-			mBinding.closeVg.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					dismiss();
-				}
-			});
 			Api.getMatrix(lat + "," + lng, playground.getLatitude() + "," + playground.getLongitude(),
 					Locale.getDefault().getLanguage(), "walking", App.Instance.getDistanceMatrixKey(),
 					new Callback<Matrix>() {
 						@Override
 						public void success(Matrix matrix, Response response) {
 							mBinding.setMatrix(matrix);
+							mBinding.setMode("walking");
+							mBinding.setModeSelectedHandler(new ModeSelectedHandler(lat, lng, playground, mBinding));
 						}
 
 						@Override
@@ -111,5 +106,42 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 		}
 	}
 
+	/**
+	 * Event-handler for all radiao-buttons on UI.
+	 */
+	public static class ModeSelectedHandler {
+		private double mLat;
+		private double mLng;
+		private Playground mGround;
+		private PlaygroundDetailBinding mBinding;
+
+		public ModeSelectedHandler(double fromLat, double fromLng, Playground playground,
+				PlaygroundDetailBinding binding) {
+			mLat = fromLat;
+			mLng = fromLng;
+			mGround = playground;
+			mBinding = binding;
+		}
+
+		public void onModeSelected(View view) {
+			mBinding.setMode(view.getTag().toString());
+			mBinding.changingPb.setVisibility(View.VISIBLE);
+			Api.getMatrix(mLat + "," + mLng, mGround.getLatitude() + "," + mGround.getLongitude(),
+					Locale.getDefault().getLanguage(), mBinding.getMode(), App.Instance.getDistanceMatrixKey(),
+					new Callback<Matrix>() {
+						@Override
+						public void success(Matrix matrix, Response response) {
+							mBinding.setMatrix(matrix);
+							mBinding.setModeSelectedHandler(new ModeSelectedHandler(mLat, mLng, mGround, mBinding));
+							mBinding.changingPb.setVisibility(View.GONE);
+						}
+
+						@Override
+						public void failure(RetrofitError error) {
+							mBinding.changingPb.setVisibility(View.GONE);
+						}
+					});
+		}
+	}
 
 }

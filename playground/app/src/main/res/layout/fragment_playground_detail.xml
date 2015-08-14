@@ -7,13 +7,26 @@
     <data class="PlaygroundDetailBinding">
 
         <import type="android.view.View" />
+
         <import type="com.playground.notification.ds.google.Matrix" />
+
         <import type="com.playground.notification.ds.google.Row" />
+
         <import type="com.playground.notification.ds.google.Element" />
+
+        <import type="com.playground.notification.app.fragments.PlaygroundDetailFragment.ModeSelectedHandler" />
 
         <variable
             name="matrix"
             type="Matrix" />
+
+        <variable
+            name="modeSelectedHandler"
+            type="ModeSelectedHandler" />
+
+        <variable
+            name="mode"
+            type="String" />
     </data>
 
     <RelativeLayout
@@ -21,144 +34,205 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
+        <ScrollView
             android:id="@+id/info_vg"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin">
-
-            <com.pnikosis.materialishprogress.ProgressWheel
-                android:id="@+id/loading_pb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:matProg_barColor="@color/primary_dark_color"
-                app:matProg_fillRadius="true"
-                app:matProg_progressIndeterminate="true"
-                android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
-
-            <TextView
-                android:id="@+id/location_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/common_padding"
-                android:text="@{matrix.destination.get(0)}"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}"/>
-
-            <RadioGroup
-                android:id="@+id/matrix_vg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/common_padding"
-                android:layout_marginTop="@dimen/common_padding"
-                android:checkedButton="@+id/ic_walking_rb"
-                android:orientation="horizontal"
-                android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}">
-
-                <RadioButton
-                    android:id="@+id/ic_walking_rb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/common_padding"
-                    android:button="@drawable/ic_walking" />
-
-                <RadioButton
-                    android:id="@+id/ic_driving_rb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/common_padding"
-                    android:layout_marginRight="@dimen/common_padding"
-                    android:button="@drawable/ic_driving" />
-
-                <RadioButton
-                    android:id="@+id/ic_bicycling_rb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/common_padding"
-                    android:layout_marginRight="@dimen/common_padding"
-                    android:button="@drawable/ic_bicycling" />
-
-                <RadioButton
-                    android:id="@+id/ic_transit_rb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:button="@drawable/ic_transit" />
-
-            </RadioGroup>
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/common_padding"
-                android:layout_marginTop="@dimen/common_padding"
-                android:orientation="horizontal">
+                android:layout_alignParentTop="true"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin">
 
-                <TextView
-                    android:id="@+id/duration_tv"
+                <com.pnikosis.materialishprogress.ProgressWheel
+                    android:id="@+id/loading_pb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"
+                    app:matProg_barColor="@color/primary_dark_color"
+                    app:matProg_fillRadius="true"
+                    app:matProg_progressIndeterminate="true" />
+
+                <TextView
+                    android:id="@+id/location_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/common_padding"
-                    android:layout_marginRight="@dimen/common_padding"
-                    android:text="@{matrix.rows.get(0).elements.get(0).duration.text}"
+                    android:inputType="textMultiLine|textNoSuggestions"
+                    android:lines="3"
+                    android:maxLines="3"
+                    android:minLines="3"
+                    android:text="@{matrix.destination.get(0)}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
                     android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=","
-                    android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
-
-                <TextView
-                    android:id="@+id/distance_tv"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/travel_vg"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/common_padding"
-                    android:text="@{matrix.rows.get(0).elements.get(0).distance.text}"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:layout_marginTop="@dimen/common_padding"
+                    android:checkedButton="@+id/ic_walking_rb"
+                    android:orientation="vertical"
+                    android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/common_padding">
+
+                        <RadioButton
+                            android:id="@+id/ic_walking_rb"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:button="@drawable/ic_walking"
+                            android:onClick="@{modeSelectedHandler.onModeSelected}"
+                            android:tag="walking"
+                            android:text="@{@string/lbl_walking}" />
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical|end"
+                            android:checked="true"
+                            android:clickable="false"
+                            android:visibility='@{mode.equals("walking") ? View.VISIBLE : View.GONE}' />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/common_padding">
+
+                        <RadioButton
+                            android:id="@+id/ic_driving_rb"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:button="@drawable/ic_driving"
+                            android:onClick="@{modeSelectedHandler.onModeSelected}"
+                            android:tag="driving"
+                            android:text="@{@string/lbl_driving}" />
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical|right"
+                            android:checked="true"
+                            android:clickable="false"
+                            android:visibility='@{mode.equals("driving") ? View.VISIBLE : View.GONE}' />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/common_padding">
+
+                        <RadioButton
+                            android:id="@+id/ic_bicycling_rb"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:button="@drawable/ic_bicycling"
+                            android:onClick="@{modeSelectedHandler.onModeSelected}"
+                            android:tag="bicycling"
+                            android:text="@{@string/lbl_bicycling}" />
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical|right"
+                            android:checked="true"
+                            android:clickable="false"
+                            android:visibility='@{mode.equals("bicycling") ? View.VISIBLE : View.GONE}' />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <RadioButton
+                            android:id="@+id/ic_transit_rb"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:button="@drawable/ic_transit"
+                            android:onClick="@{modeSelectedHandler.onModeSelected}"
+                            android:tag="transit"
+                            android:text="@{@string/lbl_transit}" />
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical|right"
+                            android:checked="true"
+                            android:clickable="false"
+                            android:visibility='@{mode.equals("transit") ? View.VISIBLE : View.GONE}' />
+                    </FrameLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/common_padding"
+                    android:layout_marginTop="@dimen/common_padding"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/duration_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/common_padding"
+                        android:layout_marginRight="@dimen/common_padding"
+                        android:text="@{matrix.rows.get(0).elements.get(0).duration.text}"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=","
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}" />
+
+                    <TextView
+                        android:id="@+id/distance_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/common_padding"
+                        android:text="@{matrix.rows.get(0).elements.get(0).distance.text}"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}" />
+                </LinearLayout>
+
+                <RatingBar
+                    android:id="@+id/location_rb"
+                    style="?android:attr/ratingBarStyleIndicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="@dimen/common_padding"
+                    android:layout_marginTop="@dimen/common_padding"
+                    android:elevation="@dimen/common_elevation"
                     android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}" />
+
+
             </LinearLayout>
-
-            <RatingBar
-                android:id="@+id/location_rb"
-                style="?android:attr/ratingBarStyleIndicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginBottom="@dimen/common_padding"
-                android:layout_marginTop="@dimen/common_padding"
-                android:elevation="@dimen/common_elevation"
-                android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}" />
+        </ScrollView>
 
 
-        </LinearLayout>
-
-        <com.playground.notification.views.MaterialRippleLayout
-            android:id="@+id/close_vg"
-            style="@style/MaterialRippleLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <com.pnikosis.materialishprogress.ProgressWheel
+            android:id="@+id/changing_pb"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/info_vg"
-            android:layout_marginBottom="@dimen/common_padding"
-            android:layout_marginTop="@dimen/common_padding"
-            android:background="@color/common_transparent"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/btn_close"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@color/primary_dark_color" />
-        </com.playground.notification.views.MaterialRippleLayout>
+            android:layout_alignParentTop="true"
+            android:visibility="gone"
+            app:matProg_barColor="@color/primary_dark_color"
+            app:matProg_fillRadius="true"
+            app:matProg_progressIndeterminate="true" />
     </RelativeLayout>
 </layout>
