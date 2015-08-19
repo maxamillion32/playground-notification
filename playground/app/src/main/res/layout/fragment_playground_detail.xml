@@ -49,15 +49,7 @@
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin">
 
-                <com.pnikosis.materialishprogress.ProgressWheel
-                    android:id="@+id/loading_pb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"
-                    app:matProg_barColor="@color/primary_dark_color"
-                    app:matProg_fillRadius="true"
-                    app:matProg_progressIndeterminate="true" />
+
 
                 <TextView
                     android:id="@+id/location_tv"
@@ -70,7 +62,7 @@
                     android:minLines="3"
                     android:text="@{matrix.destination.get(0)}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}" />
+                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}" />
 
                 <LinearLayout
                     android:id="@+id/travel_vg"
@@ -80,7 +72,7 @@
                     android:layout_marginTop="@dimen/common_padding"
                     android:checkedButton="@+id/ic_walking_rb"
                     android:orientation="vertical"
-                    android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}">
+                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}">
 
                     <FrameLayout
                         android:layout_width="match_parent"
@@ -103,7 +95,7 @@
                             android:checked="true"
                             android:clickable="false"
                             android:theme="@style/CheckboxTheme"
-                            android:visibility='@{mode.equals("walking") ? View.VISIBLE : View.GONE}' />
+                            android:visibility='@{mode.equals("walking") ? View.VISIBLE : View.INVISIBLE}' />
                     </FrameLayout>
 
                     <FrameLayout
@@ -127,7 +119,7 @@
                             android:checked="true"
                             android:clickable="false"
                             android:theme="@style/CheckboxTheme"
-                            android:visibility='@{mode.equals("driving") ? View.VISIBLE : View.GONE}' />
+                            android:visibility='@{mode.equals("driving") ? View.VISIBLE : View.INVISIBLE}' />
                     </FrameLayout>
 
                     <FrameLayout
@@ -151,7 +143,7 @@
                             android:checked="true"
                             android:clickable="false"
                             android:theme="@style/CheckboxTheme"
-                            android:visibility='@{mode.equals("bicycling") ? View.VISIBLE : View.GONE}' />
+                            android:visibility='@{mode.equals("bicycling") ? View.VISIBLE : View.INVISIBLE}' />
                     </FrameLayout>
 
                     <FrameLayout
@@ -174,7 +166,7 @@
                             android:checked="true"
                             android:clickable="false"
                             android:theme="@style/CheckboxTheme"
-                            android:visibility='@{mode.equals("transit") ? View.VISIBLE : View.GONE}' />
+                            android:visibility='@{mode.equals("transit") ? View.VISIBLE : View.INVISIBLE}' />
                     </FrameLayout>
                 </LinearLayout>
 
@@ -193,14 +185,14 @@
                         android:layout_marginRight="@dimen/common_padding"
                         android:text="@{matrix.rows.get(0).elements.get(0).duration.text}"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}" />
+                        android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=","
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}" />
+                        android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}" />
 
                     <TextView
                         android:id="@+id/distance_tv"
@@ -209,7 +201,7 @@
                         android:layout_marginBottom="@dimen/common_padding"
                         android:text="@{matrix.rows.get(0).elements.get(0).distance.text}"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}" />
+                        android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}" />
                 </LinearLayout>
 
                 <RatingBar
@@ -221,10 +213,65 @@
                     android:layout_marginBottom="@dimen/common_padding"
                     android:layout_marginTop="@dimen/common_padding"
                     android:elevation="@dimen/common_elevation"
-                    android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}" />
+                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}" />
 
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"
+                    android:weightSum="2">
+
+
+                    <com.playground.notification.views.MaterialRippleLayout
+                        android:id="@+id/fav_btn"
+                        style="@style/MaterialRippleLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginTop="5dp"
+                        android:layout_weight="1"
+                        android:background="@color/common_transparent"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:paddingTop="5dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/common_transparent"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_favorite_outline" />
+                    </com.playground.notification.views.MaterialRippleLayout>
+
+                    <com.playground.notification.views.MaterialRippleLayout
+                        android:id="@+id/ring_btn"
+                        style="@style/MaterialRippleLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginTop="5dp"
+                        android:layout_weight="1"
+                        android:background="@color/common_transparent"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:paddingTop="5dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/common_transparent"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_geo_fence_no_check" />
+                    </com.playground.notification.views.MaterialRippleLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
+
+
         </ScrollView>
 
 
@@ -235,6 +282,17 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:visibility="gone"
+            app:matProg_barColor="@color/primary_dark_color"
+            app:matProg_fillRadius="true"
+            app:matProg_progressIndeterminate="true" />
+
+
+        <com.pnikosis.materialishprogress.ProgressWheel
+            android:id="@+id/loading_pb"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"
             app:matProg_barColor="@color/primary_dark_color"
             app:matProg_fillRadius="true"
             app:matProg_progressIndeterminate="true" />
