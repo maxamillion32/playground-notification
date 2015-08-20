@@ -242,10 +242,7 @@ public class MapsActivity extends AppActivity  {
 						Utils.showShortToast(App.Instance, "onConnectionFailed: " + connectionResult.getErrorCode());
 					}
 				}).build();
-
-		if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
-			mGoogleApiClient.connect();
-		}
+		mGoogleApiClient.connect();
 	}
 
 
