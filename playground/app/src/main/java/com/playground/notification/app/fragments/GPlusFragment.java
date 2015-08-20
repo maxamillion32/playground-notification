@@ -19,6 +19,7 @@ import com.chopping.utils.Utils;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.app.activities.ConnectGoogleActivity;
+import com.playground.notification.utils.FavoriteManager;
 import com.playground.notification.utils.Prefs;
 import com.squareup.picasso.Picasso;
 
@@ -98,6 +99,7 @@ public final class GPlusFragment extends BaseFragment {
 			prefs.setGoogleId(null);
 			prefs.setGoogleDisplayName(null);
 			prefs.setGoogleThumbUrl(null);
+			FavoriteManager.getInstance().clean();
 		}
 	}
 

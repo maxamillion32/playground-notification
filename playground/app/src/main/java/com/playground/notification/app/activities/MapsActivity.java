@@ -56,6 +56,7 @@ import com.playground.notification.databinding.ActivityMapsBinding;
 import com.playground.notification.ds.Playground;
 import com.playground.notification.ds.Playgrounds;
 import com.playground.notification.ds.Request;
+import com.playground.notification.utils.FavoriteManager;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.views.TouchableMapFragment;
 
@@ -140,6 +141,7 @@ public class MapsActivity extends AppActivity  {
 		ConnectGoogleActivity.showInstance(this);
 	}
 
+
 	//------------------------------------------------
 
 
@@ -149,8 +151,7 @@ public class MapsActivity extends AppActivity  {
 		case ConnectGoogleActivity.REQ:
 			if (resultCode == RESULT_OK) {
 				//Return from google-login.
-				initGoogleMap();
-				populateGrounds();
+				onYouCanUseApp();
 			} else {
 				ActivityCompat.finishAffinity(this);
 			}
@@ -171,14 +172,28 @@ public class MapsActivity extends AppActivity  {
 
 		initDrawer();
 		initBoard();
+	}
 
+	/**
+	 * Ready to use application.
+	 */
+	private void initUseApp() {
 		//User that have used this application and done clear(logout), should go back to login-page.
 		Prefs prefs = Prefs.getInstance();
 		if (prefs.isEULAOnceConfirmed() && TextUtils.isEmpty(prefs.getGoogleId())) {
 			ConnectGoogleActivity.showInstance(this);
 		} else if (prefs.isEULAOnceConfirmed() && !TextUtils.isEmpty(prefs.getGoogleId())) {
-			initGoogleMap();
+			onYouCanUseApp();
 		}
+	}
+
+	/**
+	 * Callback for available using of application.
+	 */
+	private void onYouCanUseApp() {
+		initGoogle();
+		populateGrounds();
+		FavoriteManager.getInstance().init();
 	}
 
 	/**
@@ -194,9 +209,9 @@ public class MapsActivity extends AppActivity  {
 	}
 
 	/**
-	 * Initialize all map infrastructures
+	 * Initialize all map infrastructures, location request etc.
 	 */
-	private void initGoogleMap() {
+	private void initGoogle() {
 		setUpMapIfNeeded();
 		mLocationRequest = LocationRequest.create();
 		mGoogleApiClient = new GoogleApiClient.Builder(App.Instance).addApi(LocationServices.API)
@@ -227,15 +242,12 @@ public class MapsActivity extends AppActivity  {
 						Utils.showShortToast(App.Instance, "onConnectionFailed: " + connectionResult.getErrorCode());
 					}
 				}).build();
-	}
 
-	@Override
-	public void onStart() {
-		super.onStart();
 		if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
 			mGoogleApiClient.connect();
 		}
 	}
+
 
 	@Override
 	public void onStop() {
@@ -447,6 +459,8 @@ public class MapsActivity extends AppActivity  {
 		super.onAppConfigLoaded();
 		showAppList();
 		Api.initialize(App.Instance, Prefs.getInstance().getApiHost());
+
+		initUseApp();
 	}
 
 	@Override
@@ -454,6 +468,8 @@ public class MapsActivity extends AppActivity  {
 		super.onAppConfigIgnored();
 		showAppList();
 		Api.initialize(App.Instance, Prefs.getInstance().getApiHost());
+
+		initUseApp();
 	}
 
 	/**

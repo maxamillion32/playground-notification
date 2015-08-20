@@ -61,7 +61,10 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
+    compile 'com.squareup.okio:okio:1.4.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
+
+    compile 'cn.bmob.android:bmob-sdk:3.4.3'
 }
 
 // Rename final apks

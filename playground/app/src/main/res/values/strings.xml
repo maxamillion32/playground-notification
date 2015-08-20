@@ -58,8 +58,8 @@
     <string name="lbl_bicycling">Bicycling</string>
     <string name="lbl_transit">Transit</string>
     
-    <string name="lbl_favorite">Favorite</string>
-    <string name="lbl_remove_favorite">Not favorite</string>
+    <string name="lbl_favorite">Save favorite</string>
+    <string name="lbl_remove_favorite">Remove favorite</string>
     <string name="lbl_near_ring">Add to near-ring</string>
     <string name="lbl_remove_near_ring">Remove from near-ring</string>
 </resources>

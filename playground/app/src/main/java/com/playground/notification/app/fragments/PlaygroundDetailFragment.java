@@ -10,14 +10,17 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.app.App;
 import com.playground.notification.databinding.PlaygroundDetailBinding;
+import com.playground.notification.ds.Favorite;
 import com.playground.notification.ds.Playground;
 import com.playground.notification.ds.google.Matrix;
+import com.playground.notification.utils.FavoriteManager;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -40,6 +43,8 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 	 * Data-binding.
 	 */
 	private PlaygroundDetailBinding mBinding;
+
+
 
 	/**
 	 * New an instance of {@link GPlusFragment}.
@@ -66,6 +71,8 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 		return (PlaygroundDetailFragment) PlaygroundDetailFragment.instantiate(context,
 				PlaygroundDetailFragment.class.getName(), args);
 	}
+
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -103,6 +110,21 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 
 						}
 					});
+			mBinding.favBtn.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					FavoriteManager mgr = FavoriteManager.getInstance();
+					Favorite favFound = mgr.findBookmarked(playground);
+					if(favFound == null) {
+						mgr.addNewRemoteFavorite(playground, mBinding.favIv, mBinding.playgroundDetailVg);
+					} else {
+						mgr.removeRemoteBookmark(favFound, mBinding.favIv, mBinding.playgroundDetailVg);
+					}
+				}
+			});
+			if(FavoriteManager.getInstance().isFavorite(playground)) {
+				mBinding.favIv.setImageResource(R.drawable.ic_favorite);
+			}
 		}
 	}
 

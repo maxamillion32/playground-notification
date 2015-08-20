@@ -35,7 +35,7 @@
     <string name="lbl_transit">Bus, Bahn</string>
 
     <string name="lbl_favorite">Favorisiert</string>
-    <string name="lbl_remove_favorite">Nicht Favorisiert</string>
-    <string name="lbl_near_ring">Near-Ring hinzufügen</string>
-    <string name="lbl_remove_near_ring">Aus Near-Ring entfernen</string>
+    <string name="lbl_remove_favorite">Nicht favorisiert</string>
+    <string name="lbl_near_ring">Near-Ring hinzugefügt</string>
+    <string name="lbl_remove_near_ring">Aus Near-Ring entfernt</string>
 </resources>
