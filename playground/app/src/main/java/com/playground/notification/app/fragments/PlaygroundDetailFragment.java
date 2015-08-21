@@ -17,10 +17,10 @@ import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.app.App;
 import com.playground.notification.databinding.PlaygroundDetailBinding;
-import com.playground.notification.ds.Favorite;
 import com.playground.notification.ds.Playground;
 import com.playground.notification.ds.google.Matrix;
-import com.playground.notification.utils.FavoriteManager;
+import com.playground.notification.ds.sync.SyncPlayground;
+import com.playground.notification.sync.FavoriteManager;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -114,15 +114,15 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 				@Override
 				public void onClick(View v) {
 					FavoriteManager mgr = FavoriteManager.getInstance();
-					Favorite favFound = mgr.findBookmarked(playground);
+					SyncPlayground favFound = mgr.findInCache(playground);
 					if(favFound == null) {
-						mgr.addNewRemoteFavorite(playground, mBinding.favIv, mBinding.playgroundDetailVg);
+						mgr.addFavorite(playground, mBinding.favIv, mBinding.playgroundDetailVg);
 					} else {
-						mgr.removeRemoteBookmark(favFound, mBinding.favIv, mBinding.playgroundDetailVg);
+						mgr.removeFavorite(favFound, mBinding.favIv, mBinding.playgroundDetailVg);
 					}
 				}
 			});
-			if(FavoriteManager.getInstance().isFavorite(playground)) {
+			if(FavoriteManager.getInstance().isCached(playground)) {
 				mBinding.favIv.setImageResource(R.drawable.ic_favorite);
 			}
 		}

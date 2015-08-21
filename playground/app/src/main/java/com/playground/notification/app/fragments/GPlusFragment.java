@@ -19,7 +19,7 @@ import com.chopping.utils.Utils;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.app.activities.ConnectGoogleActivity;
-import com.playground.notification.utils.FavoriteManager;
+import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.utils.Prefs;
 import com.squareup.picasso.Picasso;
 
