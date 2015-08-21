@@ -57,6 +57,7 @@ import com.playground.notification.ds.Playground;
 import com.playground.notification.ds.Playgrounds;
 import com.playground.notification.ds.Request;
 import com.playground.notification.sync.FavoriteManager;
+import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.views.TouchableMapFragment;
 
@@ -194,6 +195,7 @@ public class MapsActivity extends AppActivity  {
 		initGoogle();
 		populateGrounds();
 		FavoriteManager.getInstance().init();
+		NearRingManager.getInstance().init();
 	}
 
 	/**

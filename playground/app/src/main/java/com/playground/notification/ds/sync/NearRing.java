@@ -3,12 +3,12 @@ package com.playground.notification.ds.sync;
 
 import com.playground.notification.ds.Playground;
 
-public final class Near extends SyncPlayground {
-	public Near(String uid, Playground ground) {
+public final class NearRing extends SyncPlayground {
+	public NearRing(String uid, Playground ground) {
 		super(uid, ground);
 	}
 
-	public Near(Playground ground) {
+	public NearRing(Playground ground) {
 		super(ground);
 	}
 }

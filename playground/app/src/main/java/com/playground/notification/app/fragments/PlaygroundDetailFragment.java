@@ -21,6 +21,7 @@ import com.playground.notification.ds.Playground;
 import com.playground.notification.ds.google.Matrix;
 import com.playground.notification.ds.sync.SyncPlayground;
 import com.playground.notification.sync.FavoriteManager;
+import com.playground.notification.sync.NearRingManager;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -122,14 +123,31 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 					}
 				}
 			});
+			mBinding.ringBtn.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					NearRingManager mgr = NearRingManager.getInstance();
+					SyncPlayground ringFound = mgr.findInCache(playground);
+					if (ringFound == null) {
+						mgr.addNearRing(playground, mBinding.ringIv, mBinding.playgroundDetailVg);
+					} else {
+						mgr.removeNearRing(ringFound, mBinding.ringIv, mBinding.playgroundDetailVg);
+					}
+				}
+			});
+
 			if(FavoriteManager.getInstance().isCached(playground)) {
 				mBinding.favIv.setImageResource(R.drawable.ic_favorite);
+			}
+			if(NearRingManager.getInstance().isCached(playground)) {
+				mBinding.ringIv.setImageResource(R.drawable.ic_geo_fence);
 			}
 		}
 	}
 
+
 	/**
-	 * Event-handler for all radiao-buttons on UI.
+	 * Event-handler for all radio-buttons on UI.
 	 */
 	public static class ModeSelectedHandler {
 		private double mLat;

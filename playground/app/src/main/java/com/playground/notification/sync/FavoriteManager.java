@@ -45,6 +45,9 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 	private FavoriteManager() {
 	}
 
+	/**
+	 * Init the manager.
+	 */
 	public void init() {
 		//Load from backend.
 		BmobQuery<Favorite> q = new BmobQuery<>();
