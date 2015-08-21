@@ -346,13 +346,13 @@ public class MapsActivity extends AppActivity {
 	 * Force to exit application for no location-service.
 	 */
 	private void exitAppDialog() {
-		new AlertDialog.Builder(MapsActivity.this).setTitle(R.string.application_name).setMessage(
+		new AlertDialog.Builder(MapsActivity.this).setCancelable(false).setTitle(R.string.application_name).setMessage(
 				R.string.lbl_no_location_service).setPositiveButton(R.string.btn_confirm,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						ActivityCompat.finishAfterTransition(MapsActivity.this);
 					}
-				}).create();
+				}).create().show();
 	}
 
 
