@@ -1,2 +1,4 @@
 # playground-notification
-A playground notification app for german parents.
+A playground notification app for parents.
+
+In DEV.....
