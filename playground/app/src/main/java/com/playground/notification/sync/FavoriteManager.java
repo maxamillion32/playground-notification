@@ -56,7 +56,11 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 		q.findObjects(App.Instance, new FindListener<Favorite>() {
 			@Override
 			public void onSuccess(List<Favorite> list) {
+				if (getCachedList().size() > 0) {
+					getCachedList().clear();
+				}
 				getCachedList().addAll(list);
+				setInit();
 				EventBus.getDefault().post(new FavoriteListInitEvent());
 			}
 
@@ -99,7 +103,7 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 		remove(delFav, v, viewForSnack);
 	}
 
-@Override
+	@Override
 	protected int getAddSuccessText() {
 		return R.string.lbl_favorite;
 	}

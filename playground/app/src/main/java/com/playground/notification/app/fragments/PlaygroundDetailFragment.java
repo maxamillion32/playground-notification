@@ -7,7 +7,6 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -63,8 +62,6 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 	 */
 	public static PlaygroundDetailFragment newInstance(Context context, double fromLat, double fromLng,
 			Playground playground) {
-		Log.d("asdfasdf", String.format("from: %f, %f to %f, %f", fromLat, fromLng, playground.getLatitude(),
-				playground.getLongitude()));
 		Bundle args = new Bundle();
 		args.putDouble(EXTRAS_LAT, fromLat);
 		args.putDouble(EXTRAS_LNG, fromLng);

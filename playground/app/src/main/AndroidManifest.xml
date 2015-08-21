@@ -50,6 +50,11 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
 
+        <activity
+            android:name=".app.activities.ViewPagerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/PagerTheme"/>
+
         <!--Event handler for changing system packages.-->
         <receiver
             android:name="com.chopping.application.InstalledAppReceiver"

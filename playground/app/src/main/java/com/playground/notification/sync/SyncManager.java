@@ -22,6 +22,7 @@ import cn.bmob.v3.listener.SaveListener;
 
 public  abstract class SyncManager<T extends SyncPlayground> {
 	private List<T> mCachedList = new LinkedList<>();
+	private boolean mInit;
 	/**
 	 * No one can create this class.
 	 */
@@ -171,4 +172,12 @@ public  abstract class SyncManager<T extends SyncPlayground> {
 	protected abstract int getAddedIcon();
 
 	protected abstract int getRemovedIcon();
+
+	protected void setInit() {
+		mInit = true;
+	}
+
+	public boolean isInit() {
+		return mInit;
+	}
 }

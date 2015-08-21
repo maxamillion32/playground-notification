@@ -32,7 +32,8 @@
     <RelativeLayout
         android:id="@+id/playground_detail_vg"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/common_white">
 
         <ScrollView
             android:id="@+id/info_vg"
@@ -48,7 +49,6 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin">
-
 
 
                 <TextView
@@ -219,7 +219,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"
+                    android:orientation="horizontal"
+                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"
                     android:weightSum="2">
 
 
@@ -237,11 +238,12 @@
                         android:paddingRight="5dp"
                         android:paddingTop="5dp">
 
-                        <ImageView  android:id="@+id/fav_iv"
+                        <ImageView
+                            android:id="@+id/fav_iv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@color/common_transparent"
                             android:layout_gravity="center"
+                            android:background="@color/common_transparent"
                             android:src="@drawable/ic_favorite_outline" />
                     </com.playground.notification.views.MaterialRippleLayout>
 
@@ -259,11 +261,12 @@
                         android:paddingRight="5dp"
                         android:paddingTop="5dp">
 
-                        <ImageView android:id="@+id/ring_iv"
+                        <ImageView
+                            android:id="@+id/ring_iv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@color/common_transparent"
                             android:layout_gravity="center"
+                            android:background="@color/common_transparent"
                             android:src="@drawable/ic_geo_fence_no_check" />
                     </com.playground.notification.views.MaterialRippleLayout>
 

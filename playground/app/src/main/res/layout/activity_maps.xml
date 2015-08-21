@@ -81,7 +81,8 @@
             android:theme="@style/NavDrawerItem"
             app:headerLayout="@layout/nav_header"
             app:itemIconTint="@color/primary_accent"
-            app:itemTextColor="@color/primary_accent" />
+            app:itemTextColor="@color/primary_accent"
+            app:menu="@menu/drawer_view" />
 
         <ScrollView
             android:layout_width="match_parent"

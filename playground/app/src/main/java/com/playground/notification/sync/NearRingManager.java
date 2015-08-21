@@ -56,7 +56,11 @@ public final class NearRingManager extends SyncManager<NearRing> {
 		q.findObjects(App.Instance, new FindListener<NearRing>() {
 			@Override
 			public void onSuccess(List<NearRing> list) {
+				if (getCachedList().size() > 0) {
+					getCachedList().clear();
+				}
 				getCachedList().addAll(list);
+				setInit();
 				EventBus.getDefault().post(new NearRingListInitEvent());
 			}
 
