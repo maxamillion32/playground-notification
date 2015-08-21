@@ -65,4 +65,5 @@
     <string name="lbl_remove_favorite">Remove favorite</string>
     <string name="lbl_near_ring">Add to near-ring</string>
     <string name="lbl_remove_near_ring">Remove from near-ring</string>
+    <string name="lbl_no_location_service">The application must be exited for the reason that the location service can not be turned on.</string>
 </resources>

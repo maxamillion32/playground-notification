@@ -5,7 +5,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender.SendIntentException;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
 import android.os.Bundle;
@@ -15,6 +19,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
@@ -29,9 +34,15 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -70,6 +81,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class MapsActivity extends AppActivity {
+	private static final int REQ = 0x98;
 
 	/**
 	 * Main layout for this component.
@@ -182,9 +194,23 @@ public class MapsActivity extends AppActivity {
 		case ConnectGoogleActivity.REQ:
 			if (resultCode == RESULT_OK) {
 				//Return from google-login.
-				onYouCanUseApp();
+				//onYouCanUseApp();
 			} else {
 				ActivityCompat.finishAffinity(this);
+			}
+			break;
+		case REQ:
+			switch (resultCode) {
+			case Activity.RESULT_OK:
+				//				if (!mGoogleApiClient.isConnected()) {
+				//					if (!mGoogleApiClient.isConnecting()) {
+				//						mGoogleApiClient.connect();
+				//					}
+				//				}
+				break;
+			case Activity.RESULT_CANCELED:
+				exitAppDialog();
+				break;
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -246,18 +272,26 @@ public class MapsActivity extends AppActivity {
 	 */
 	private void initGoogle() {
 		setUpMapIfNeeded();
+
+		//Location request.
 		mLocationRequest = LocationRequest.create();
+		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		mLocationRequest.setInterval(AlarmManager.INTERVAL_HALF_HOUR);
+		mLocationRequest.setFastestInterval(AlarmManager.INTERVAL_HALF_HOUR);
+
 		mGoogleApiClient = new GoogleApiClient.Builder(App.Instance).addApi(LocationServices.API)
 				.addConnectionCallbacks(new ConnectionCallbacks() {
 					@Override
 					public void onConnected(Bundle bundle) {
-						LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest,
-								new LocationListener() {
-									@Override
-									public void onLocationChanged(Location location) {
-										updateCurLocal(location);
-									}
-								});
+						if (mGoogleApiClient.isConnected()) {
+							LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest,
+									new LocationListener() {
+										@Override
+										public void onLocationChanged(Location location) {
+											updateCurLocal(location);
+										}
+									});
+						}
 						Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 						if (location != null) {
 							updateCurLocal(location);
@@ -275,7 +309,50 @@ public class MapsActivity extends AppActivity {
 						Utils.showShortToast(App.Instance, "onConnectionFailed: " + connectionResult.getErrorCode());
 					}
 				}).build();
+
 		mGoogleApiClient.connect();
+
+		//Setting turn/off location service of system.
+		LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(
+				mLocationRequest);
+		builder.setAlwaysShow(true);
+		builder.setNeedBle(true);
+		PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(
+				mGoogleApiClient, builder.build());
+		result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+			@Override
+			public void onResult(LocationSettingsResult result) {
+				final Status status = result.getStatus();
+				//				final LocationSettingsStates states = result.getLocationSettingsStates();
+				switch (status.getStatusCode()) {
+				case LocationSettingsStatusCodes.SUCCESS:
+					break;
+				case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+					try {
+						status.startResolutionForResult(MapsActivity.this, REQ);
+					} catch (SendIntentException e) {
+						exitAppDialog();
+					}
+					break;
+				case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+					exitAppDialog();
+					break;
+				}
+			}
+		});
+	}
+
+	/**
+	 * Force to exit application for no location-service.
+	 */
+	private void exitAppDialog() {
+		new AlertDialog.Builder(MapsActivity.this).setTitle(R.string.application_name).setMessage(
+				R.string.lbl_no_location_service).setPositiveButton(R.string.btn_confirm,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						ActivityCompat.finishAfterTransition(MapsActivity.this);
+					}
+				}).create();
 	}
 
 
@@ -308,24 +385,20 @@ public class MapsActivity extends AppActivity {
 				public void onDrawerOpened(View drawerView) {
 					super.onDrawerOpened(drawerView);
 					FavoriteManager favoriteManager = FavoriteManager.getInstance();
-					if (favoriteManager.isInit() ) {
-						mBinding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-						mBinding.drawerLayout.setEnabled(true);
-						mBinding.navView.getMenu().findItem(R.id.action_favorite).setTitle(getString(R.string.action_favorite,
-								favoriteManager.getCachedList().size()));
+					if (favoriteManager.isInit()) {
+						mBinding.navView.getMenu().findItem(R.id.action_favorite).setTitle(getString(
+								R.string.action_favorite, favoriteManager.getCachedList().size()));
 					} else {
-						mBinding.navView.getMenu().findItem(R.id.action_favorite).setTitle(getString(R.string.action_favorite,
-								0));
+						mBinding.navView.getMenu().findItem(R.id.action_favorite).setTitle(getString(
+								R.string.action_favorite, 0));
 					}
 					NearRingManager nearRingManager = NearRingManager.getInstance();
-					if (nearRingManager.isInit() ) {
-						mBinding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-						mBinding.drawerLayout.setEnabled(true);
-						mBinding.navView.getMenu().findItem(R.id.action_near_ring).setTitle(getString(R.string.action_near_ring,
-								nearRingManager.getCachedList().size()));
+					if (nearRingManager.isInit()) {
+						mBinding.navView.getMenu().findItem(R.id.action_near_ring).setTitle(getString(
+								R.string.action_near_ring, nearRingManager.getCachedList().size()));
 					} else {
-						mBinding.navView.getMenu().findItem(R.id.action_near_ring).setTitle(getString(R.string.action_near_ring,
-								0));
+						mBinding.navView.getMenu().findItem(R.id.action_near_ring).setTitle(getString(
+								R.string.action_near_ring, 0));
 					}
 				}
 			};
@@ -382,8 +455,6 @@ public class MapsActivity extends AppActivity {
 	 * This should only be called once and when we are sure that {@link #mMap} is not null.
 	 */
 	private void setUpMap() {
-		//mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-
 		mMap.setMyLocationEnabled(true);
 		mMap.setTrafficEnabled(true);
 		mMap.setIndoorEnabled(true);

@@ -32,7 +32,8 @@
 
         <activity
             android:name=".app.activities.MapsActivity"
-            android:label="@string/title_activity_maps">
+            android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,12 +49,13 @@
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent" />
 
         <activity
             android:name=".app.activities.ViewPagerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/PagerTheme"/>
+            android:theme="@style/PagerTheme" />
 
         <!--Event handler for changing system packages.-->
         <receiver
