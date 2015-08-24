@@ -277,58 +277,62 @@ public class MapsActivity extends AppActivity {
 		}
 
 		//Location request.
-		mLocationRequest = LocationRequest.create();
-		mLocationRequest.setInterval(AlarmManager.INTERVAL_HALF_HOUR);
-		mLocationRequest.setFastestInterval(AlarmManager.INTERVAL_HALF_HOUR);
-		int ty = 0;
-		switch (Prefs.getInstance().getBatteryLifeType()) {
-		case "0":
-			ty = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
-			break;
-		case "1":
-			ty = LocationRequest.PRIORITY_HIGH_ACCURACY;
-			break;
-		case "2":
-			ty = LocationRequest.PRIORITY_LOW_POWER;
-			break;
-		case "3":
-			ty = LocationRequest.PRIORITY_NO_POWER;
-			break;
+		if(mLocationRequest == null) {
+			mLocationRequest = LocationRequest.create();
+			mLocationRequest.setInterval(AlarmManager.INTERVAL_HALF_HOUR);
+			mLocationRequest.setFastestInterval(AlarmManager.INTERVAL_HALF_HOUR);
+			int ty = 0;
+			switch (Prefs.getInstance().getBatteryLifeType()) {
+			case "0":
+				ty = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
+				break;
+			case "1":
+				ty = LocationRequest.PRIORITY_HIGH_ACCURACY;
+				break;
+			case "2":
+				ty = LocationRequest.PRIORITY_LOW_POWER;
+				break;
+			case "3":
+				ty = LocationRequest.PRIORITY_NO_POWER;
+				break;
+			}
+			mLocationRequest.setPriority(ty);
 		}
-		mLocationRequest.setPriority(ty);
 
-		mGoogleApiClient = new GoogleApiClient.Builder(App.Instance).addApi(LocationServices.API)
-				.addConnectionCallbacks(new ConnectionCallbacks() {
-					@Override
-					public void onConnected(Bundle bundle) {
-						if (mGoogleApiClient.isConnected()) {
-							LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest,
-									new LocationListener() {
-										@Override
-										public void onLocationChanged(Location location) {
-											updateCurLocal(location);
-										}
-									});
+		if(mGoogleApiClient == null) {
+			mGoogleApiClient = new GoogleApiClient.Builder(App.Instance).addApi(LocationServices.API).addConnectionCallbacks(
+					new ConnectionCallbacks() {
+						@Override
+						public void onConnected(Bundle bundle) {
+							if (mGoogleApiClient.isConnected()) {
+								LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+										mLocationRequest, new LocationListener() {
+											@Override
+											public void onLocationChanged(Location location) {
+												updateCurLocal(location);
+											}
+										});
+							}
+							Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+							if (location != null) {
+								updateCurLocal(location);
+							}
 						}
-						Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-						if (location != null) {
-							updateCurLocal(location);
+
+						@Override
+						public void onConnectionSuspended(int i) {
+							Utils.showShortToast(App.Instance, "onConnectionSuspended");
+
 						}
-					}
+					}).addOnConnectionFailedListener(new OnConnectionFailedListener() {
+				@Override
+				public void onConnectionFailed(ConnectionResult connectionResult) {
+					Utils.showShortToast(App.Instance, "onConnectionFailed: " + connectionResult.getErrorCode());
+				}
+			}).build();
 
-					@Override
-					public void onConnectionSuspended(int i) {
-						Utils.showShortToast(App.Instance, "onConnectionSuspended");
-
-					}
-				}).addOnConnectionFailedListener(new OnConnectionFailedListener() {
-					@Override
-					public void onConnectionFailed(ConnectionResult connectionResult) {
-						Utils.showShortToast(App.Instance, "onConnectionFailed: " + connectionResult.getErrorCode());
-					}
-				}).build();
-
-		mGoogleApiClient.connect();
+			mGoogleApiClient.connect();
+		}
 
 		//Setting turn/off location service of system.
 		LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(
