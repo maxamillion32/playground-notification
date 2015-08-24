@@ -506,11 +506,8 @@ public class MapsActivity extends AppActivity {
 	 * Extra settings on map.
 	 */
 	private void mapSettings( ) {
-
 		Prefs prefs = Prefs.getInstance();
-		if (prefs.isTrafficShowing()) {
-			mMap.setTrafficEnabled(true);
-		}
+		mMap.setTrafficEnabled(prefs.isTrafficShowing());
 		mMap.setMapType(prefs.getMapType().equals("0") ? GoogleMap.MAP_TYPE_NORMAL : GoogleMap.MAP_TYPE_SATELLITE);
 	}
 

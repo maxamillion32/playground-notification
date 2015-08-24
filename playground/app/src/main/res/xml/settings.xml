@@ -5,7 +5,7 @@
 
 
     <PreferenceCategory
-        android:layout="@layout/setting_entry"
+        android:layout="@layout/setting_category"
         android:title="@string/settings_map">
         <ListPreference
             android:entries="@array/map_types"
@@ -33,7 +33,7 @@
 
 
     <PreferenceCategory
-        android:layout="@layout/setting_entry"
+        android:layout="@layout/setting_category"
         android:title="@string/settings_details">
 
         <ListPreference

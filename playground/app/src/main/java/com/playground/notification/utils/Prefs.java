@@ -191,12 +191,6 @@ public final class Prefs extends BasicPrefs {
 	}
 
 
-	//All settings
-//	private static final String KEY_MAP_TYPES = "key.map.types";
-//	private static final String KEY_BATTERY_TYPES = "key.battery.types";
-//	private static final String KEY_TRAFFIC_SHOWING = "key.traffic.showing";
-//	private static final String KEY_UNITS = "key.units";
-//	private static final String KEY_TRANSPORTATION = "key.transportation";
 
 	public String getMapType() {
 		return getString(KEY_MAP_TYPES, "0");

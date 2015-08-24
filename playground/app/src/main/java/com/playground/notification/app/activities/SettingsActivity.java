@@ -2,10 +2,13 @@ package com.playground.notification.app.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +18,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 
 import com.playground.notification.R;
+import com.playground.notification.utils.Prefs;
 
 
 /**
@@ -63,6 +67,73 @@ public final class SettingsActivity extends PreferenceActivity implements Prefer
 
 		((MarginLayoutParams) findViewById(android.R.id.list).getLayoutParams()).topMargin = (int) (getActionBarHeight(
 				this) * 1.2);
+
+		initSettings();
+	}
+
+	/**
+	 * Init list.
+	 */
+	private void initSettings() {
+		Prefs prefs = Prefs.getInstance();
+
+		ListPreference mapType = (ListPreference) findPreference(Prefs.KEY_MAP_TYPES);
+		mapType.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				updateSummary(preference, newValue, R.array.map_types);
+				return true;
+			}
+		});
+		String value = prefs.getMapType();
+		updateSummary(mapType, value, R.array.map_types);
+
+
+		ListPreference batteryType = (ListPreference) findPreference(Prefs.KEY_BATTERY_TYPES);
+		batteryType.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				updateSummary(preference, newValue, R.array.battery_life_types);
+				return true;
+			}
+		});
+		value = prefs.getBatteryLifeType();
+		batteryType.setValue(value);
+		updateSummary(batteryType, value, R.array.battery_life_types);
+
+		ListPreference unitsType = (ListPreference) findPreference(Prefs.KEY_UNITS);
+		unitsType.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				updateSummary(preference, newValue, R.array.units_types);
+				return true;
+			}
+		});
+		value = prefs.getUnitsType();
+		unitsType.setValue(value);
+		updateSummary(unitsType, value, R.array.units_types);
+
+		ListPreference transMethodType = (ListPreference) findPreference(Prefs.KEY_TRANSPORTATION);
+		transMethodType.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				updateSummary(preference, newValue, R.array.transportation_types);
+				return true;
+			}
+		});
+		value = prefs.getTransportationMethod();
+		transMethodType.setValue(value);
+		updateSummary(transMethodType, value, R.array.transportation_types);
+	}
+
+	/**
+	 * Update settings summary.
+	 */
+	private void updateSummary(Preference preference, Object newValue, int valuesResId) {
+		Resources res = getResources();
+		int pos = Integer.valueOf(newValue.toString());
+		String summary = (res.getStringArray(valuesResId))[pos];
+		preference.setSummary(summary);
 	}
 
 
