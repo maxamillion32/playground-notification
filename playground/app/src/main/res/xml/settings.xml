@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+
+    <PreferenceCategory
+        android:layout="@layout/setting_entry"
+        android:title="@string/settings_map">
+        <ListPreference
+            android:entries="@array/map_types"
+            android:entryValues="@array/map_values"
+            android:key="key.map.types"
+            android:defaultValue="0"
+            android:layout="@layout/setting_item"
+            android:title="@string/settings_map_types" />
+        <ListPreference
+            android:entries="@array/battery_life_types"
+            android:entryValues="@array/battery_life_values"
+            android:key="key.battery.types"
+            android:defaultValue="0"
+            android:layout="@layout/setting_item"
+            android:title="@string/settings_battery" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="key.traffic.showing"
+            android:layout="@layout/setting_item"
+            android:summaryOff="@string/btn_no"
+            android:summaryOn="@string/btn_yes"
+            android:title="@string/settings_traffic" />
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:layout="@layout/setting_entry"
+        android:title="@string/settings_details">
+
+        <ListPreference
+            android:entries="@array/units_types"
+            android:entryValues="@array/units_values"
+            android:key="key.units"
+            android:defaultValue="0"
+            android:layout="@layout/setting_item"
+            android:title="@string/details_units" />
+
+        <ListPreference
+            android:entries="@array/transportation_types"
+            android:entryValues="@array/transportation_values"
+            android:key="key.transportation"
+            android:defaultValue="1"
+            android:layout="@layout/setting_item"
+            android:title="@string/details_transportation" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

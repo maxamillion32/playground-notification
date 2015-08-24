@@ -34,7 +34,7 @@ package com.playground.notification.app;
 import java.io.IOException;
 import java.util.Properties;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
 import com.chopping.net.TaskHelper;
@@ -53,7 +53,7 @@ import retrofit.RetrofitError;
  *
  * @author Xinyue Zhao
  */
-public final class App extends Application {
+public final class App extends MultiDexApplication {
 	/**
 	 * Application's instance.
 	 */

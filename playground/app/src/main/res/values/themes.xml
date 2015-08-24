@@ -73,7 +73,20 @@
         <item name="android:background">@color/primary_accent</item>
     </style>
 
-    <style name="AppTheme.FirstPage"  >
+    <style name="AppTheme.FirstPage" />
+
+
+    <style name="SettingsThemeBase" parent="AppTheme">
+
+        <item name="android:windowBackground">@color/common_white</item>
+        <item name="android:textColorPrimary">@color/primary_accent</item>
+        <item name="android:textColorSecondary">@color/primary_accent</item>
+        <item name="android:colorAccent">@color/primary_accent</item>
+        <item name="colorAccent">@color/primary_accent</item>
+    </style>
+
+    <style name="SettingsTheme" parent="SettingsThemeBase">
+
     </style>
 
 </resources>

@@ -130,7 +130,7 @@ public final class Api {
 	static private interface G {
 		@GET("/maps/api/distancematrix/json")
 		void getMatrix(@Query("origins") String origins, @Query("destinations") String destinations,
-				@Query("language") String language, @Query("mode") String mode, @Query("key") String key,
+				@Query("language") String language, @Query("mode") String mode, @Query("key") String key, @Query("units") String units,
 				Callback<Matrix> callback);
 	}
 
@@ -141,10 +141,10 @@ public final class Api {
 	}
 
 
-	public static final void getMatrix(String origins, String destinations, String language, String mode, String key,
+	public static final void getMatrix(String origins, String destinations, String language, String mode, String key, String units,
 			Callback<Matrix> callback) {
 		assertCall();
-		g.getMatrix(origins, destinations, language, mode, key, callback);
+		g.getMatrix(origins, destinations, language, mode, key, units, callback);
 	}
 
 

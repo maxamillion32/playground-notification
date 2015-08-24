@@ -4,6 +4,7 @@
 
     <string name="action_share">Teile</string>
     <string name="action_go">Gehe?</string>
+    <string name="action_settings">Einstellungen</string>
     <string name="action_more_apps">Weitere Apps</string>
 
     <string name="btn_confirm">Sicher</string>
@@ -40,4 +41,32 @@
     <string name="lbl_near_ring">Near-Ring hinzugefügt</string>
     <string name="lbl_remove_near_ring">Aus Near-Ring entfernt</string>
     <string name="lbl_no_location_service">Die App muss geschlossen werden, da der Location-Service nicht eingeschaltet werden kann.</string>
+
+
+
+    <string name="settings_map">Karte &amp; Lokalisieren</string>
+    <string name="settings_map_types">Typ</string>
+    <string-array name="map_types">
+        <item>Map</item>
+        <item>Satelliten</item>
+    </string-array>
+
+    <string name="settings_battery">Battery</string>
+    <string-array name="battery_life_types">
+        <item>Ausgeglichen</item>
+        <item>Hohe Genauigkeit</item>
+        <item>Grobe Genauigkeit</item>
+        <item>Keine Genauigkeit</item>
+    </string-array>
+
+    <string name="settings_traffic">Verkehrsstatus zeigen</string>
+
+    <string name="settings_details">Spielplatzdetail</string>
+    <string name="details_units">Einheiten</string>
+    <string-array name="units_types">
+        <item>Kilometer</item>
+        <item>Meilen</item>
+    </string-array>
+
+    <string name="details_transportation">Verkehrsmittel</string>
 </resources>

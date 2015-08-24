@@ -21,6 +21,7 @@ import com.playground.notification.ds.google.Matrix;
 import com.playground.notification.ds.sync.SyncPlayground;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.NearRingManager;
+import com.playground.notification.utils.Prefs;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -92,14 +93,43 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 			final double lat = args.getDouble(EXTRAS_LAT);
 			final double lng = args.getDouble(EXTRAS_LNG);
 
+			Prefs prefs = Prefs.getInstance();
 			mBinding = DataBindingUtil.bind(view.findViewById(R.id.playground_detail_vg));
+			final String method;
+			switch (prefs.getTransportationMethod()) {
+			case "0":
+				method = "driving";
+				break;
+			case "1":
+				method = "walking";
+				break;
+			case "2":
+				method = "bicycling";
+				break;
+			case "3":
+				method = "transit";
+				break;
+			default:
+				method = "walking";
+				break;
+			}
+			String units = "metric";
+			switch (prefs.getUnitsType()) {
+			case "0":
+				units = "metric";
+				break;
+			case "1":
+				units = "imperial";
+				break;
+
+			}
 			Api.getMatrix(lat + "," + lng, playground.getLatitude() + "," + playground.getLongitude(),
-					Locale.getDefault().getLanguage(), "walking", App.Instance.getDistanceMatrixKey(),
+					Locale.getDefault().getLanguage(), method, App.Instance.getDistanceMatrixKey(), units,
 					new Callback<Matrix>() {
 						@Override
 						public void success(Matrix matrix, Response response) {
 							mBinding.setMatrix(matrix);
-							mBinding.setMode("walking");
+							mBinding.setMode(method);
 							mBinding.setModeSelectedHandler(new ModeSelectedHandler(lat, lng, playground, mBinding));
 						}
 
@@ -163,8 +193,18 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 		public void onModeSelected(View view) {
 			mBinding.setMode(view.getTag().toString());
 			mBinding.changingPb.setVisibility(View.VISIBLE);
+
+			Prefs prefs = Prefs.getInstance();
+			String units = "metric";
+			switch (prefs.getUnitsType()) {
+			case "0":
+				break;
+			case "1":
+				break;
+
+			}
 			Api.getMatrix(mLat + "," + mLng, mGround.getLatitude() + "," + mGround.getLongitude(),
-					Locale.getDefault().getLanguage(), mBinding.getMode(), App.Instance.getDistanceMatrixKey(),
+					Locale.getDefault().getLanguage(), mBinding.getMode(), App.Instance.getDistanceMatrixKey(), units,
 					new Callback<Matrix>() {
 						@Override
 						public void success(Matrix matrix, Response response) {

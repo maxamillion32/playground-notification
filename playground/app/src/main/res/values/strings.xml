@@ -10,6 +10,7 @@
     <string name="action_go">Going?</string>
     <string name="action_favorite">Favorite(%1$d)</string>
     <string name="action_near_ring">Near Ring(%1$d)</string>
+    <string name="action_settings">Settings</string>
     <string name="action_more_apps">More Apps</string>
 
     <string name="btn_confirm">Confirm</string>
@@ -66,4 +67,58 @@
     <string name="lbl_near_ring">Add to near-ring</string>
     <string name="lbl_remove_near_ring">Remove from near-ring</string>
     <string name="lbl_no_location_service">The application must be exited for the reason that the location service can not be turned on.</string>
+
+
+    <string name="settings_map">Map &amp; Locating</string>
+
+    <string name="settings_map_types">Types</string>
+    <string-array name="map_types">
+        <item>Card</item>
+        <item>Satellite</item>
+    </string-array>
+    <string-array name="map_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string name="settings_battery">Battery Life</string>
+    <string-array name="battery_life_types">
+        <item>Balanced</item>
+        <item>High accuracy</item>
+        <item>Coarse accuracy</item>
+        <item>Almost zero accuracy</item>
+    </string-array>
+    <string-array name="battery_life_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2 </item>
+        <item>3</item>
+    </string-array>
+
+    <string name="settings_traffic">Traffic status showing</string>
+
+    <string name="settings_details">Playground-detail</string>
+    <string name="details_units">Units</string>
+    <string-array name="units_types">
+        <item>Kilometer</item>
+        <item>Miles</item>
+    </string-array>
+    <string-array name="units_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string name="details_transportation">Transportation</string>
+    <string-array name="transportation_types">
+        <item>@string/lbl_driving</item>
+        <item>@string/lbl_walking</item>
+        <item>@string/lbl_bicycling</item>
+        <item>@string/lbl_transit</item>
+    </string-array>
+    <string-array name="transportation_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 </resources>

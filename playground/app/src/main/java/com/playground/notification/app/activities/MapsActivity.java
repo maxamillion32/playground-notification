@@ -272,12 +272,30 @@ public class MapsActivity extends AppActivity {
 	 */
 	private void initGoogle() {
 		setUpMapIfNeeded();
+		if (mMap != null) {
+			mapSettings();
+		}
 
 		//Location request.
 		mLocationRequest = LocationRequest.create();
-		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 		mLocationRequest.setInterval(AlarmManager.INTERVAL_HALF_HOUR);
 		mLocationRequest.setFastestInterval(AlarmManager.INTERVAL_HALF_HOUR);
+		int ty = 0;
+		switch (Prefs.getInstance().getBatteryLifeType()) {
+		case "0":
+			ty = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
+			break;
+		case "1":
+			ty = LocationRequest.PRIORITY_HIGH_ACCURACY;
+			break;
+		case "2":
+			ty = LocationRequest.PRIORITY_LOW_POWER;
+			break;
+		case "3":
+			ty = LocationRequest.PRIORITY_NO_POWER;
+			break;
+		}
+		mLocationRequest.setPriority(ty);
 
 		mGoogleApiClient = new GoogleApiClient.Builder(App.Instance).addApi(LocationServices.API)
 				.addConnectionCallbacks(new ConnectionCallbacks() {
@@ -456,7 +474,7 @@ public class MapsActivity extends AppActivity {
 	 */
 	private void setUpMap() {
 		mMap.setMyLocationEnabled(true);
-		mMap.setTrafficEnabled(true);
+
 		mMap.setIndoorEnabled(true);
 		mMap.setBuildingsEnabled(true);
 
@@ -482,6 +500,18 @@ public class MapsActivity extends AppActivity {
 				populateGrounds();
 			}
 		});
+	}
+
+	/**
+	 * Extra settings on map.
+	 */
+	private void mapSettings( ) {
+
+		Prefs prefs = Prefs.getInstance();
+		if (prefs.isTrafficShowing()) {
+			mMap.setTrafficEnabled(true);
+		}
+		mMap.setMapType(prefs.getMapType().equals("0") ? GoogleMap.MAP_TYPE_NORMAL : GoogleMap.MAP_TYPE_SATELLITE);
 	}
 
 	/**
@@ -650,6 +680,9 @@ public class MapsActivity extends AppActivity {
 							ViewPagerActivity.showInstance(MapsActivity.this, center.latitude, center.longitude,
 									nearRingManager.getCachedList());
 						}
+						break;
+					case R.id.action_settings:
+						SettingsActivity.showInstance(MapsActivity.this);
 						break;
 					case R.id.action_more_apps:
 						mBinding.drawerLayout.openDrawer(Gravity.RIGHT);

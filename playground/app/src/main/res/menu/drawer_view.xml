@@ -25,6 +25,11 @@
         android:title="@string/action_near_ring" />
 
     <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/action_settings" />
+
+    <item
         android:id="@+id/action_more_apps"
         android:icon="@drawable/ic_more_apps"
         android:title="@string/action_more_apps" />

@@ -57,6 +57,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/PagerTheme" />
 
+        <activity
+            android:name=".app.activities.SettingsActivity"
+            android:label="@string/action_settings"
+            android:screenOrientation="portrait"
+            android:theme="@style/SettingsTheme" />
+
         <!--Event handler for changing system packages.-->
         <receiver
             android:name="com.chopping.application.InstalledAppReceiver"
