@@ -6,6 +6,7 @@
     <string name="action_go">Gehe?</string>
     <string name="action_settings">Einstellungen</string>
     <string name="action_more_apps">Weitere Apps</string>
+    <string name="action_data_support">Datenquelle</string>
 
     <string name="btn_confirm">Sicher</string>
     <string name="btn_yes">Ja</string>

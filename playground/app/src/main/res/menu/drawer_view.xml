@@ -34,4 +34,19 @@
         android:icon="@drawable/ic_more_apps"
         android:title="@string/action_more_apps" />
 
+    <item
+        android:id="@+id/action_trends"
+        android:title="@string/action_data_support">
+        <menu>
+            <item
+                android:id="@+id/action_radar"
+                android:title="spielplatz-radar.de" />
+            <!--<item-->
+                <!--android:id="@+id/action_more_apps"-->
+                <!--android:icon="@drawable/ic_more_apps"-->
+                <!--android:title="@string/action_more_apps" />-->
+        </menu>
+    </item>
+
+
 </menu>

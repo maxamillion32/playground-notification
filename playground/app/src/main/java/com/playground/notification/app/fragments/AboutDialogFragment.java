@@ -116,7 +116,7 @@ public final class AboutDialogFragment extends DialogFragment {
 		dialogV.findViewById(R.id.powered_by_ll).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Utils.openExternalBrowser(getActivity(), "http://" + getString(R.string.support));
+				Utils.openExternalBrowser(getActivity(), "http://" + getString(R.string.support_spielplatz_radar));
 			}
 		});
 

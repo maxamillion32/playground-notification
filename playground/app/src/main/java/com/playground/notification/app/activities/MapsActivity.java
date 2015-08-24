@@ -688,6 +688,10 @@ public class MapsActivity extends AppActivity {
 					case R.id.action_more_apps:
 						mBinding.drawerLayout.openDrawer(Gravity.RIGHT);
 						break;
+					case R.id.action_radar:
+						com.playground.notification.utils.Utils.openExternalBrowser(MapsActivity.this,
+								"http://" + getString(R.string.support_spielplatz_radar));
+						break;
 					}
 				}
 				return true;

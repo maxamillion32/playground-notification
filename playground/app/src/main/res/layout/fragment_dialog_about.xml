@@ -39,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/support"
+                android:text="@string/support_spielplatz_radar"
                 android:textColor="@color/common_black" />
 
             <ImageView

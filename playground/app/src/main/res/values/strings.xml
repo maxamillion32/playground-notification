@@ -3,7 +3,7 @@
     <string name="application_name">Playgrounds search</string>
     <string name="title_activity_maps">@string/application_name</string>
 
-    <string name="support">spielplatz-radar.de</string>
+    <string name="support_spielplatz_radar">spielplatz-radar.de</string>
 
     <string name="action_share">Share</string>
     <string name="action_about">About</string>
@@ -12,6 +12,7 @@
     <string name="action_near_ring">Near Ring(%1$d)</string>
     <string name="action_settings">Settings</string>
     <string name="action_more_apps">More Apps</string>
+    <string name="action_data_support">Data support</string>
 
     <string name="btn_confirm">Confirm</string>
     <string name="btn_ok">Ok</string>
