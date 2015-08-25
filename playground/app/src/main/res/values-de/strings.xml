@@ -43,7 +43,7 @@
     <string name="lbl_remove_near_ring">Aus Near-Ring entfernt</string>
     <string name="lbl_no_location_service">Die App muss geschlossen werden, da der Location-Service nicht eingeschaltet werden kann.</string>
 
-
+    <string name="lbl_rating">Bewerten</string>
 
     <string name="settings_map">Karte &amp; Lokalisieren</string>
     <string name="settings_map_types">Typ</string>

@@ -1,12 +1,15 @@
 package com.playground.notification.app.fragments;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Locale;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,14 +18,28 @@ import android.view.ViewGroup;
 import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.app.App;
+import com.playground.notification.app.activities.AppActivity;
+import com.playground.notification.bus.ShowLocationRatingEvent;
 import com.playground.notification.databinding.PlaygroundDetailBinding;
+import com.playground.notification.databinding.RatingDialogBinding;
 import com.playground.notification.ds.Playground;
 import com.playground.notification.ds.google.Matrix;
+import com.playground.notification.ds.sync.Rating;
 import com.playground.notification.ds.sync.SyncPlayground;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.utils.Prefs;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobQuery.CachePolicy;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.FindStatisticsListener;
+import cn.bmob.v3.listener.UpdateListener;
+import de.greenrobot.event.EventBus;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -45,7 +62,83 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 	 */
 	private PlaygroundDetailBinding mBinding;
 
+	//------------------------------------------------
+	//Subscribes, event-handlers
+	//------------------------------------------------
 
+	/**
+	 * Handler for {@link com.playground.notification.bus.ShowLocationRatingEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.playground.notification.bus.ShowLocationRatingEvent}.
+	 */
+	public void onEvent(ShowLocationRatingEvent e) {
+		AppActivity activity = (AppActivity) getActivity();
+		if (activity != null) {
+			activity.showDialogFragment(RatingDialogFragment.newInstance(App.Instance, e.getPlayground(),
+					mBinding.getRating()), "rating");
+		}
+	}
+	//------------------------------------------------
+
+	//A dialog to update current rating status of a ground for you.
+	public static class RatingDialogFragment extends DialogFragment {
+		/**
+		 * Data-binding.
+		 */
+		private RatingDialogBinding mBinding;
+
+		public static RatingDialogFragment newInstance(Context cxt, Playground playground, Rating rating ) {
+			Bundle args = new Bundle();
+			args.putSerializable("rating", (Serializable) rating);
+			args.putSerializable("ground", (Serializable) playground);
+			return (RatingDialogFragment) RatingDialogFragment.instantiate(cxt, RatingDialogFragment.class.getName(),
+					args);
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			return inflater.inflate(R.layout.fragment_rating, container, false);
+		}
+
+		@Override
+		public void onViewCreated(View view, Bundle savedInstanceState) {
+			super.onViewCreated(view, savedInstanceState);
+			mBinding = DataBindingUtil.bind(view.findViewById(R.id.rating_dialog_vg));
+			Drawable progress = mBinding.locationRb.getProgressDrawable();
+			DrawableCompat.setTint(progress, getResources().getColor(R.color.primary_dark_color));
+			getDialog().setTitle(R.string.lbl_rating);
+			Rating rating = ((Rating)getArguments().getSerializable("rating"));
+			if (rating!= null) {
+				mBinding.setRating(rating);
+			}
+			view.findViewById(R.id.close_iv).setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					dismiss();
+					Playground playground = (Playground) getArguments().getSerializable("ground");
+					Rating rating = ((Rating)getArguments().getSerializable("rating"));
+					if (rating == null) {
+						Rating newRating = new Rating(Prefs.getInstance().getGoogleId(), playground);
+						newRating.setValue(mBinding.locationRb.getRating());
+						newRating.save(App.Instance);
+					} else {
+						Rating updateRating = new Rating(Prefs.getInstance().getGoogleId(), playground);
+						updateRating.setValue(mBinding.locationRb.getRating());
+						updateRating.update(App.Instance, rating.getObjectId(),  new UpdateListener() {
+							@Override
+							public void onSuccess() {
+							}
+
+							@Override
+							public void onFailure(int code, String msg) {
+							}
+						});
+					}
+				}
+			});
+		}
+	}
 
 	/**
 	 * New an instance of {@link GPlusFragment}.
@@ -71,7 +164,17 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 				PlaygroundDetailFragment.class.getName(), args);
 	}
 
+	@Override
+	public void onResume() {
+		EventBus.getDefault().register(this);
+		super.onResume();
+	}
 
+	@Override
+	public void onPause() {
+		EventBus.getDefault().unregister(this);
+		super.onPause();
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -90,11 +193,14 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 		Bundle args = getArguments();
 		final Playground playground = (Playground) args.getSerializable(EXTRAS_GROUND);
 		if (playground != null) {
+
 			final double lat = args.getDouble(EXTRAS_LAT);
 			final double lng = args.getDouble(EXTRAS_LNG);
 
 			Prefs prefs = Prefs.getInstance();
 			mBinding = DataBindingUtil.bind(view.findViewById(R.id.playground_detail_vg));
+
+
 			final String method;
 			switch (prefs.getTransportationMethod()) {
 			case "0":
@@ -130,7 +236,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 						public void success(Matrix matrix, Response response) {
 							mBinding.setMatrix(matrix);
 							mBinding.setMode(method);
-							mBinding.setModeSelectedHandler(new ModeSelectedHandler(lat, lng, playground, mBinding));
+							mBinding.setHandler(new EventHandler(lat, lng, playground, mBinding));
 						}
 
 						@Override
@@ -143,7 +249,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 				public void onClick(View v) {
 					FavoriteManager mgr = FavoriteManager.getInstance();
 					SyncPlayground favFound = mgr.findInCache(playground);
-					if(favFound == null) {
+					if (favFound == null) {
 						mgr.addFavorite(playground, mBinding.favIv, mBinding.playgroundDetailVg);
 					} else {
 						mgr.removeFavorite(favFound, mBinding.favIv, mBinding.playgroundDetailVg);
@@ -163,12 +269,62 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 				}
 			});
 
-			if(FavoriteManager.getInstance().isCached(playground)) {
+			if (FavoriteManager.getInstance().isCached(playground)) {
 				mBinding.favIv.setImageResource(R.drawable.ic_favorite);
 			}
-			if(NearRingManager.getInstance().isCached(playground)) {
+			if (NearRingManager.getInstance().isCached(playground)) {
 				mBinding.ringIv.setImageResource(R.drawable.ic_geo_fence);
 			}
+
+			Drawable progress = mBinding.locationRb.getProgressDrawable();
+			DrawableCompat.setTint(progress, getResources().getColor(R.color.primary_dark_color));
+
+			//Have you rated?
+			BmobQuery<Rating> q = new BmobQuery<>();
+			q.setCachePolicy(CachePolicy.NETWORK_ELSE_CACHE);
+			q.addWhereEqualTo("mUID", Prefs.getInstance().getGoogleId());
+			q.addWhereEqualTo("mId", playground.getId());
+			q.findObjects(App.Instance, new FindListener<Rating>() {
+				@Override
+				public void onSuccess(List<Rating> list) {
+					if (list.size() > 0) {
+						mBinding.setRating(list.get(0));
+					}
+				}
+
+				@Override
+				public void onError(int i, String s) {
+				}
+			});
+
+			//Rating summary.
+			q = new BmobQuery<>();
+			q.addWhereEqualTo("mId", playground.getId());
+			q.sum(new String[] { "mValue" });
+			q.findStatistics(App.Instance, Rating.class, new FindStatisticsListener() {
+
+				@Override
+				public void onSuccess(Object object) {
+					JSONArray ary = (JSONArray) object;
+					if (ary != null) {//
+						try {
+							JSONObject obj = ary.getJSONObject(0);
+							int sum = obj.getInt("_sumMValue");
+							mBinding.locationRb.setRating(sum);
+						} catch (JSONException e) {
+						}
+					} else {
+						mBinding.setRatedValue(0f);
+					}
+					mBinding.ratingVg.setVisibility(View.VISIBLE);
+				}
+
+				@Override
+				public void onFailure(int code, String msg) {
+					mBinding.setRatedValue(0f);
+					mBinding.ratingVg.setVisibility(View.VISIBLE);
+				}
+			});
 		}
 	}
 
@@ -176,14 +332,13 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 	/**
 	 * Event-handler for all radio-buttons on UI.
 	 */
-	public static class ModeSelectedHandler {
+	public static class EventHandler {
 		private double mLat;
 		private double mLng;
 		private Playground mGround;
 		private PlaygroundDetailBinding mBinding;
 
-		public ModeSelectedHandler(double fromLat, double fromLng, Playground playground,
-				PlaygroundDetailBinding binding) {
+		public EventHandler(double fromLat, double fromLng, Playground playground, PlaygroundDetailBinding binding) {
 			mLat = fromLat;
 			mLng = fromLng;
 			mGround = playground;
@@ -209,7 +364,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 						@Override
 						public void success(Matrix matrix, Response response) {
 							mBinding.setMatrix(matrix);
-							mBinding.setModeSelectedHandler(new ModeSelectedHandler(mLat, mLng, mGround, mBinding));
+							mBinding.setHandler(new EventHandler(mLat, mLng, mGround, mBinding));
 							mBinding.changingPb.setVisibility(View.GONE);
 						}
 
@@ -218,6 +373,10 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 							mBinding.changingPb.setVisibility(View.GONE);
 						}
 					});
+		}
+
+		public void onRatingClicked(View view) {
+			EventBus.getDefault().post(new ShowLocationRatingEvent(mGround));
 		}
 	}
 

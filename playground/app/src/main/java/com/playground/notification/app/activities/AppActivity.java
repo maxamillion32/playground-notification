@@ -47,7 +47,7 @@ public   class AppActivity extends BaseActivity{
 	 * 		Tag name for dialog, default is "dlg". To grantee that only one instance of {@link
 	 * 		android.support.v4.app.DialogFragment} can been seen.
 	 */
-	protected void showDialogFragment(DialogFragment _dlgFrg, String _tagName) {
+	public void showDialogFragment(DialogFragment _dlgFrg, String _tagName) {
 		try {
 			if (_dlgFrg != null) {
 				DialogFragment dialogFragment = _dlgFrg;

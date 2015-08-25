@@ -8,25 +8,38 @@
 
         <import type="android.view.View" />
 
+        <import type="com.playground.notification.ds.google.Row" />
+
+        <import type="com.playground.notification.ds.sync.Rating" />
+
+
         <import type="com.playground.notification.ds.google.Matrix" />
 
-        <import type="com.playground.notification.ds.google.Row" />
 
         <import type="com.playground.notification.ds.google.Element" />
 
-        <import type="com.playground.notification.app.fragments.PlaygroundDetailFragment.ModeSelectedHandler" />
+        <import type="com.playground.notification.app.fragments.PlaygroundDetailFragment.EventHandler" />
+
 
         <variable
             name="matrix"
             type="Matrix" />
 
         <variable
-            name="modeSelectedHandler"
-            type="ModeSelectedHandler" />
+            name="handler"
+            type="EventHandler" />
 
         <variable
             name="mode"
             type="String" />
+
+        <variable
+            name="rating"
+            type="Rating" />
+
+        <variable
+            name="ratedValue"
+            type="float" />
     </data>
 
     <RelativeLayout
@@ -84,7 +97,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:button="@drawable/ic_walking"
-                            android:onClick="@{modeSelectedHandler.onModeSelected}"
+                            android:onClick="@{handler.onModeSelected}"
                             android:tag="walking"
                             android:text="@{@string/lbl_walking}" />
 
@@ -108,7 +121,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:button="@drawable/ic_driving"
-                            android:onClick="@{modeSelectedHandler.onModeSelected}"
+                            android:onClick="@{handler.onModeSelected}"
                             android:tag="driving"
                             android:text="@{@string/lbl_driving}" />
 
@@ -132,7 +145,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:button="@drawable/ic_bicycling"
-                            android:onClick="@{modeSelectedHandler.onModeSelected}"
+                            android:onClick="@{handler.onModeSelected}"
                             android:tag="bicycling"
                             android:text="@{@string/lbl_bicycling}" />
 
@@ -155,7 +168,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:button="@drawable/ic_transit"
-                            android:onClick="@{modeSelectedHandler.onModeSelected}"
+                            android:onClick="@{handler.onModeSelected}"
                             android:tag="transit"
                             android:text="@{@string/lbl_transit}" />
 
@@ -204,17 +217,30 @@
                         android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}" />
                 </LinearLayout>
 
-                <RatingBar
-                    android:id="@+id/location_rb"
-                    style="?android:attr/ratingBarStyleIndicator"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/rating_vg"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="@dimen/common_padding"
-                    android:layout_marginTop="@dimen/common_padding"
-                    android:elevation="@dimen/common_elevation"
-                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}" />
+                    android:onClick="@{handler.onRatingClicked}"
+                    android:orientation="horizontal" android:visibility="gone">
 
+                    <RatingBar
+                        android:id="@+id/location_rb"
+                        style="?android:attr/ratingBarStyleIndicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginBottom="@dimen/common_padding"
+                        android:layout_marginTop="@dimen/common_padding"
+                        android:rating="@{ratedValue}" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/common_transparent"
+                        android:src="@{rating == null ? @drawable/ic_wanna_rating : @drawable/ic_rated}" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

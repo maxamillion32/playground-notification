@@ -69,6 +69,7 @@
     <string name="lbl_remove_near_ring">Remove from near-ring</string>
     <string name="lbl_no_location_service">The application must be exited for the reason that the location service can not be turned on.</string>
 
+    <string name="lbl_rating">Rating</string>
 
     <string name="settings_map">Map &amp; Locating</string>
 
