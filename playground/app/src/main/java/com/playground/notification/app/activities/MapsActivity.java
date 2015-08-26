@@ -7,6 +7,7 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
@@ -435,6 +436,11 @@ public class MapsActivity extends AppActivity {
 
 	@Override
 	protected void onResume() {
+		if(mCfgLoadDlg != null && mCfgLoadDlg.isShowing()) {
+			mCfgLoadDlg.dismiss();
+		}
+		mCfgLoadDlg = ProgressDialog.show(this, getString(R.string.application_name), getString(R.string.lbl_load_cfg));
+
 		super.onResume();
 
 		if (mDrawerToggle != null) {
@@ -610,10 +616,17 @@ public class MapsActivity extends AppActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	/**
+	 * An indicator dialog for loading app-config
+	 */
+	private ProgressDialog mCfgLoadDlg;
 
 	@Override
 	protected void onAppConfigLoaded() {
 		super.onAppConfigLoaded();
+		if(mCfgLoadDlg != null && mCfgLoadDlg.isShowing()) {
+			mCfgLoadDlg.dismiss();
+		}
 		showAppList();
 		Api.initialize(App.Instance, Prefs.getInstance().getApiHost());
 
@@ -623,6 +636,9 @@ public class MapsActivity extends AppActivity {
 	@Override
 	protected void onAppConfigIgnored() {
 		super.onAppConfigIgnored();
+		if(mCfgLoadDlg != null && mCfgLoadDlg.isShowing()) {
+			mCfgLoadDlg.dismiss();
+		}
 		showAppList();
 		Api.initialize(App.Instance, Prefs.getInstance().getApiHost());
 

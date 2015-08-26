@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Spielplätze</string>
-    <string name="application_name">Spielplätze</string>
+    <string name="app_name">Spielplätze App</string>
+    <string name="application_name">Spielplätze App</string>
 
     <string name="action_share">Teile</string>
     <string name="action_go">Gehe?</string>
@@ -44,6 +44,8 @@
     <string name="lbl_no_location_service">Die App muss geschlossen werden, da der Location-Service nicht eingeschaltet werden kann.</string>
 
     <string name="lbl_rating">Bewerten</string>
+
+    <string name="lbl_load_cfg">App-Konfiguration wird geladen.</string>
 
     <string name="settings_map">Karte &amp; Lokalisieren</string>
     <string name="settings_map_types">Typ</string>

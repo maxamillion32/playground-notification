@@ -40,10 +40,12 @@ import android.text.TextUtils;
 import com.chopping.net.TaskHelper;
 import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
+import com.crashlytics.android.Crashlytics;
 import com.playground.notification.R;
 import com.playground.notification.utils.Prefs;
 
 import cn.bmob.v3.Bmob;
+import io.fabric.sdk.android.Fabric;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 
@@ -77,6 +79,7 @@ public final class App extends MultiDexApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		Fabric.with(this, new Crashlytics());
 		//		Stetho.initialize(Stetho.newInitializerBuilder(this).enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
 		//				.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this)).build());
 
