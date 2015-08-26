@@ -52,6 +52,7 @@ import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -278,7 +279,7 @@ public class MapsActivity extends AppActivity {
 		}
 
 		//Location request.
-		if(mLocationRequest == null) {
+		if (mLocationRequest == null) {
 			mLocationRequest = LocationRequest.create();
 			mLocationRequest.setInterval(AlarmManager.INTERVAL_HALF_HOUR);
 			mLocationRequest.setFastestInterval(AlarmManager.INTERVAL_HALF_HOUR);
@@ -300,37 +301,39 @@ public class MapsActivity extends AppActivity {
 			mLocationRequest.setPriority(ty);
 		}
 
-		if(mGoogleApiClient == null) {
-			mGoogleApiClient = new GoogleApiClient.Builder(App.Instance).addApi(LocationServices.API).addConnectionCallbacks(
-					new ConnectionCallbacks() {
-						@Override
-						public void onConnected(Bundle bundle) {
-							if (mGoogleApiClient.isConnected()) {
-								LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-										mLocationRequest, new LocationListener() {
-											@Override
-											public void onLocationChanged(Location location) {
-												updateCurLocal(location);
-											}
-										});
-							}
-							Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-							if (location != null) {
-								updateCurLocal(location);
-							}
-						}
+		if (mGoogleApiClient == null) {
+			mGoogleApiClient = new GoogleApiClient.Builder(App.Instance).addApi(LocationServices.API)
+					.addConnectionCallbacks(new ConnectionCallbacks() {
+								@Override
+								public void onConnected(Bundle bundle) {
+									if (mGoogleApiClient.isConnected()) {
+										LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+												mLocationRequest, new LocationListener() {
+													@Override
+													public void onLocationChanged(Location location) {
+														updateCurLocal(location);
+													}
+												});
+									}
+									Location location = LocationServices.FusedLocationApi.getLastLocation(
+											mGoogleApiClient);
+									if (location != null) {
+										updateCurLocal(location);
+									}
+								}
 
-						@Override
-						public void onConnectionSuspended(int i) {
-							Utils.showShortToast(App.Instance, "onConnectionSuspended");
+								@Override
+								public void onConnectionSuspended(int i) {
+									Utils.showShortToast(App.Instance, "onConnectionSuspended");
 
+								}
+							}).addOnConnectionFailedListener(new OnConnectionFailedListener() {
+						@Override
+						public void onConnectionFailed(ConnectionResult connectionResult) {
+							Utils.showShortToast(App.Instance,
+									"onConnectionFailed: " + connectionResult.getErrorCode());
 						}
-					}).addOnConnectionFailedListener(new OnConnectionFailedListener() {
-				@Override
-				public void onConnectionFailed(ConnectionResult connectionResult) {
-					Utils.showShortToast(App.Instance, "onConnectionFailed: " + connectionResult.getErrorCode());
-				}
-			}).build();
+					}).build();
 
 			mGoogleApiClient.connect();
 		}
@@ -436,7 +439,7 @@ public class MapsActivity extends AppActivity {
 
 	@Override
 	protected void onResume() {
-		if(mCfgLoadDlg != null && mCfgLoadDlg.isShowing()) {
+		if (mCfgLoadDlg != null && mCfgLoadDlg.isShowing()) {
 			mCfgLoadDlg.dismiss();
 		}
 		mCfgLoadDlg = ProgressDialog.show(this, getString(R.string.application_name), getString(R.string.lbl_load_cfg));
@@ -515,7 +518,7 @@ public class MapsActivity extends AppActivity {
 	/**
 	 * Extra settings on map.
 	 */
-	private void mapSettings( ) {
+	private void mapSettings() {
 		Prefs prefs = Prefs.getInstance();
 		mMap.setTrafficEnabled(prefs.isTrafficShowing());
 		mMap.setMapType(prefs.getMapType().equals("0") ? GoogleMap.MAP_TYPE_NORMAL : GoogleMap.MAP_TYPE_SATELLITE);
@@ -551,7 +554,12 @@ public class MapsActivity extends AppActivity {
 					for (final Playground ground : grounds) {
 						LatLng to = new LatLng(ground.getLatitude(), ground.getLongitude());
 						MarkerOptions options = new MarkerOptions().position(to);
-						com.playground.notification.utils.Utils.changeMarkerIcon(options, center, to);
+						FavoriteManager favMgr = FavoriteManager.getInstance();
+						if (favMgr.isInit() && favMgr.isCached(ground)) {
+							options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorite));
+						} else {
+							com.playground.notification.utils.Utils.changeMarkerIcon(options, center, to);
+						}
 						mMarkerList.put(mMap.addMarker(options), ground);
 					}
 
@@ -624,7 +632,7 @@ public class MapsActivity extends AppActivity {
 	@Override
 	protected void onAppConfigLoaded() {
 		super.onAppConfigLoaded();
-		if(mCfgLoadDlg != null && mCfgLoadDlg.isShowing()) {
+		if (mCfgLoadDlg != null && mCfgLoadDlg.isShowing()) {
 			mCfgLoadDlg.dismiss();
 		}
 		showAppList();
@@ -636,7 +644,7 @@ public class MapsActivity extends AppActivity {
 	@Override
 	protected void onAppConfigIgnored() {
 		super.onAppConfigIgnored();
-		if(mCfgLoadDlg != null && mCfgLoadDlg.isShowing()) {
+		if (mCfgLoadDlg != null && mCfgLoadDlg.isShowing()) {
 			mCfgLoadDlg.dismiss();
 		}
 		showAppList();
