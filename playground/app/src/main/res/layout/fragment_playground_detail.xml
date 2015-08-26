@@ -77,6 +77,13 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
                     android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}" />
 
+                <ImageView
+                    android:id="@+id/location_preview_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}" />
+
                 <LinearLayout
                     android:id="@+id/travel_vg"
                     android:layout_width="match_parent"
@@ -319,8 +326,9 @@
                             android:id="@+id/go_iv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center" android:contentDescription="@string/lbl_go"
+                            android:layout_gravity="center"
                             android:background="@color/common_transparent"
+                            android:contentDescription="@string/lbl_go"
                             android:src="@drawable/ic_navigation" />
                     </com.playground.notification.views.MaterialRippleLayout>
 

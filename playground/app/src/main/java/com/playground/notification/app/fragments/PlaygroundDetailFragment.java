@@ -30,6 +30,7 @@ import com.playground.notification.ds.sync.SyncPlayground;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.utils.Prefs;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -89,7 +90,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 		 */
 		private RatingDialogBinding mBinding;
 
-		public static RatingDialogFragment newInstance(Context cxt, Playground playground, Rating rating ) {
+		public static RatingDialogFragment newInstance(Context cxt, Playground playground, Rating rating) {
 			Bundle args = new Bundle();
 			args.putSerializable("rating", (Serializable) rating);
 			args.putSerializable("ground", (Serializable) playground);
@@ -109,8 +110,8 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 			Drawable progress = mBinding.locationRb.getProgressDrawable();
 			DrawableCompat.setTint(progress, getResources().getColor(R.color.primary_dark_color));
 			getDialog().setTitle(R.string.lbl_rating);
-			Rating rating = ((Rating)getArguments().getSerializable("rating"));
-			if (rating!= null) {
+			Rating rating = ((Rating) getArguments().getSerializable("rating"));
+			if (rating != null) {
 				mBinding.setRating(rating);
 			}
 			view.findViewById(R.id.close_iv).setOnClickListener(new OnClickListener() {
@@ -118,7 +119,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 				public void onClick(View v) {
 					dismiss();
 					Playground playground = (Playground) getArguments().getSerializable("ground");
-					Rating rating = ((Rating)getArguments().getSerializable("rating"));
+					Rating rating = ((Rating) getArguments().getSerializable("rating"));
 					if (rating == null) {
 						Rating newRating = new Rating(Prefs.getInstance().getGoogleId(), playground);
 						newRating.setValue(mBinding.locationRb.getRating());
@@ -126,7 +127,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 					} else {
 						Rating updateRating = new Rating(Prefs.getInstance().getGoogleId(), playground);
 						updateRating.setValue(mBinding.locationRb.getRating());
-						updateRating.update(App.Instance, rating.getObjectId(),  new UpdateListener() {
+						updateRating.update(App.Instance, rating.getObjectId(), new UpdateListener() {
 							@Override
 							public void onSuccess() {
 							}
@@ -301,6 +302,14 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 					mBinding.ratingVg.setVisibility(View.VISIBLE);
 				}
 			});
+
+
+			String latlng = playground.getLatitude() + "," + playground.getLongitude();
+			String maptype = prefs.getMapType().equals("0") ? "roadmap" : "hybrid";
+			String url = "https://maps.googleapis.com/maps/api/staticmap?center=" + latlng +
+					"&zoom=16&size=420x200&markers=color:red%7Clabel:S%7C" + latlng + "&key=" +
+					App.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
+			Picasso.with(App.Instance).load(url).into(mBinding.locationPreviewIv);
 		}
 	}
 
@@ -376,7 +385,8 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 		}
 
 		public void onGoClicked(View v) {
-			com.playground.notification.utils.Utils.openMapWeb(mBinding.goBtn.getContext(), new LatLng(mLat, mLng), new LatLng(mGround.getLatitude(), mGround.getLongitude()));
+			com.playground.notification.utils.Utils.openMapWeb(mBinding.goBtn.getContext(), new LatLng(mLat, mLng),
+					new LatLng(mGround.getLatitude(), mGround.getLongitude()));
 		}
 	}
 
