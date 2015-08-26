@@ -276,8 +276,6 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 				mBinding.ringIv.setImageResource(R.drawable.ic_geo_fence);
 			}
 
-			Drawable progress = mBinding.locationRb.getProgressDrawable();
-			DrawableCompat.setTint(progress, getResources().getColor(R.color.primary_dark_color));
 
 			//Have you rated?
 			BmobQuery<Rating> q = new BmobQuery<>();
@@ -300,7 +298,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 			//Rating summary.
 			q = new BmobQuery<>();
 			q.addWhereEqualTo("mId", playground.getId());
-			q.sum(new String[] { "mValue" });
+			q.average(new String[] { "mValue" });
 			q.findStatistics(App.Instance, Rating.class, new FindStatisticsListener() {
 
 				@Override
@@ -309,8 +307,8 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 					if (ary != null) {//
 						try {
 							JSONObject obj = ary.getJSONObject(0);
-							int sum = obj.getInt("_sumMValue");
-							mBinding.locationRb.setRating(sum);
+							int avg = obj.getInt("_avgMValue");
+							mBinding.locationRb.setRating(avg);
 						} catch (JSONException e) {
 						}
 					} else {
