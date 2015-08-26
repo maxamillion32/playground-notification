@@ -64,4 +64,18 @@ public final class Utils {
 		i.setData(Uri.parse(url));
 		ActivityCompat.startActivity(cxt, i, null);
 	}
+
+	/**
+	 * Open Google's map to show two points.
+	 * @param cxt {@link Context}.
+	 * @param fromLatLng From point.
+	 * @param toLatLng To point
+	 */
+	public static void openMapWeb(Context cxt, LatLng fromLatLng, LatLng toLatLng     ) {
+		String q = new StringBuilder().append("http://maps.google.com/maps?").append("saddr=").append(fromLatLng.latitude + "," + fromLatLng.longitude)
+				.append("&daddr=").append(toLatLng.latitude + "," + toLatLng.longitude).toString();
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(q.trim()));
+		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		cxt.startActivity(intent);
+	}
 }

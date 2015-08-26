@@ -73,6 +73,8 @@
 
     <string name="lbl_load_cfg">Loading application configurations.</string>
 
+    <string name="lbl_go">Go</string>
+
     <string name="settings_map">Map &amp; Locating</string>
 
     <string name="settings_map_types">Types</string>

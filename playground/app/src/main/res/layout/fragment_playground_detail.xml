@@ -222,7 +222,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:onClick="@{handler.onRatingClicked}"
-                    android:orientation="horizontal" android:visibility="gone">
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
                     <RatingBar
                         android:id="@+id/location_rb"
@@ -247,7 +248,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"
-                    android:weightSum="2">
+                    android:weightSum="3">
 
 
                     <com.playground.notification.views.MaterialRippleLayout
@@ -259,6 +260,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_weight="1"
                         android:background="@color/common_transparent"
+                        android:onClick="@{handler.onSaveFavClicked}"
                         android:paddingBottom="5dp"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
@@ -282,6 +284,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_weight="1"
                         android:background="@color/common_transparent"
+                        android:onClick="@{handler.onSaveNearRingClicked}"
                         android:paddingBottom="5dp"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
@@ -294,6 +297,31 @@
                             android:layout_gravity="center"
                             android:background="@color/common_transparent"
                             android:src="@drawable/ic_geo_fence_no_check" />
+                    </com.playground.notification.views.MaterialRippleLayout>
+
+
+                    <com.playground.notification.views.MaterialRippleLayout
+                        android:id="@+id/go_btn"
+                        style="@style/MaterialRippleLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginTop="5dp"
+                        android:layout_weight="1"
+                        android:background="@color/common_transparent"
+                        android:onClick="@{handler.onGoClicked}"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:paddingTop="5dp">
+
+                        <ImageView
+                            android:id="@+id/go_iv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center" android:contentDescription="@string/lbl_go"
+                            android:background="@color/common_transparent"
+                            android:src="@drawable/ic_navigation" />
                     </com.playground.notification.views.MaterialRippleLayout>
 
                 </LinearLayout>

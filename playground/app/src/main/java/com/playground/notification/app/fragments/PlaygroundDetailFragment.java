@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.app.App;
@@ -244,30 +245,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 
 						}
 					});
-			mBinding.favBtn.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					FavoriteManager mgr = FavoriteManager.getInstance();
-					SyncPlayground favFound = mgr.findInCache(playground);
-					if (favFound == null) {
-						mgr.addFavorite(playground, mBinding.favIv, mBinding.playgroundDetailVg);
-					} else {
-						mgr.removeFavorite(favFound, mBinding.favIv, mBinding.playgroundDetailVg);
-					}
-				}
-			});
-			mBinding.ringBtn.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					NearRingManager mgr = NearRingManager.getInstance();
-					SyncPlayground ringFound = mgr.findInCache(playground);
-					if (ringFound == null) {
-						mgr.addNearRing(playground, mBinding.ringIv, mBinding.playgroundDetailVg);
-					} else {
-						mgr.removeNearRing(ringFound, mBinding.ringIv, mBinding.playgroundDetailVg);
-					}
-				}
-			});
+
 
 			if (FavoriteManager.getInstance().isCached(playground)) {
 				mBinding.favIv.setImageResource(R.drawable.ic_favorite);
@@ -375,6 +353,30 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 
 		public void onRatingClicked(View view) {
 			EventBus.getDefault().post(new ShowLocationRatingEvent(mGround));
+		}
+
+		public void onSaveFavClicked(View view) {
+			FavoriteManager mgr = FavoriteManager.getInstance();
+			SyncPlayground favFound = mgr.findInCache(mGround);
+			if (favFound == null) {
+				mgr.addFavorite(mGround, mBinding.favIv, mBinding.playgroundDetailVg);
+			} else {
+				mgr.removeFavorite(favFound, mBinding.favIv, mBinding.playgroundDetailVg);
+			}
+		}
+
+		public void onSaveNearRingClicked(View view) {
+			NearRingManager mgr = NearRingManager.getInstance();
+			SyncPlayground ringFound = mgr.findInCache(mGround);
+			if (ringFound == null) {
+				mgr.addNearRing(mGround, mBinding.ringIv, mBinding.playgroundDetailVg);
+			} else {
+				mgr.removeNearRing(ringFound, mBinding.ringIv, mBinding.playgroundDetailVg);
+			}
+		}
+
+		public void onGoClicked(View v) {
+			com.playground.notification.utils.Utils.openMapWeb(mBinding.goBtn.getContext(), new LatLng(mLat, mLng), new LatLng(mGround.getLatitude(), mGround.getLongitude()));
 		}
 	}
 
