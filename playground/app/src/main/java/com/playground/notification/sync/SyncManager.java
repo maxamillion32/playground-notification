@@ -32,7 +32,7 @@ public  abstract class SyncManager<T extends SyncPlayground> {
 
 
 	public boolean isCached(Playground ground) {
-		return mCachedList.contains(ground);
+		return ground != null && mCachedList.contains(ground);
 	}
 
 
