@@ -605,6 +605,9 @@ public class MapsActivity extends AppActivity {
 								.show();
 						return;
 					}
+					mMarkerList.clear();
+					mMap.clear();
+
 					final LatLng currentLatLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
 					//final LatLng center = mMap.getProjection().getVisibleRegion().latLngBounds.getCenter();
 					List<Playground> grounds = playgrounds.getPlaygroundList();

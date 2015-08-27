@@ -3,6 +3,8 @@ package com.playground.notification.ds;
 
 import java.io.Serializable;
 
+import android.text.TextUtils;
+
 import com.google.gson.annotations.SerializedName;
 
 import cn.bmob.v3.BmobObject;
@@ -41,6 +43,6 @@ public class Playground extends BmobObject implements Serializable {
 	@Override
 	public boolean equals(Object o) {
 		Playground other = (Playground) o;
-		return getId().equals(other.getId());
+		return !TextUtils.isEmpty(other.getId()) && getId().equals(other.getId());
 	}
 }
