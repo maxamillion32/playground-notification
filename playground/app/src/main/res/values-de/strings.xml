@@ -38,10 +38,10 @@
     <string name="lbl_bicycling">Fahrrad</string>
     <string name="lbl_transit">Bus, Bahn</string>
 
-    <string name="lbl_favorite">Favorisiert</string>
-    <string name="lbl_remove_favorite">Nicht favorisiert</string>
-    <string name="lbl_near_ring">Near-Ring hinzugefügt</string>
-    <string name="lbl_remove_near_ring">Aus Near-Ring entfernt</string>
+    <string name="lbl_favorite">wurde favorisiert</string>
+    <string name="lbl_remove_favorite">wurde nicht favorisiert</string>
+    <string name="lbl_near_ring">wurde als Near-Ring hinzugefügt</string>
+    <string name="lbl_remove_near_ring">wurde aus Near-Rings entfernt</string>
     <string name="lbl_no_location_service">Die App muss geschlossen werden, da der Location-Service nicht eingeschaltet werden kann.</string>
 
     <string name="lbl_rating">Bewerten</string>
@@ -53,6 +53,8 @@
     <string name="lbl_my_location_enter">Per Lang-Klick auf Ballon kannst Du eigenen Spielplatz definieren.</string>
     <string name="lbl_no_current_location">Deine aktuelle Lokalisation ist unklar.</string>
     <string name="lbl_name">Name</string>
+    <string name="lbl_saved">wurde gespeichert</string>
+    <string name="lbl_deleted">wurde entfernt</string>
 
     <string name="settings_map">Karte &amp; Lokalisieren</string>
     <string name="settings_map_types">Typ</string>

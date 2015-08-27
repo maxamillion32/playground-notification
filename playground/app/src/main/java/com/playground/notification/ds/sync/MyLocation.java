@@ -3,22 +3,19 @@ package com.playground.notification.ds.sync;
 import com.playground.notification.ds.Playground;
 
 public final class MyLocation extends SyncPlayground {
-	private String mName;
+	private String mLabel;
 
-	public MyLocation(String uid, Playground ground) {
+	public MyLocation(String uid, String label, Playground ground) {
 		super(uid, ground);
-	}
-
-	public MyLocation(Playground ground) {
-		super(ground);
+		mLabel = label;
 	}
 
 
-	public String getName() {
-		return mName;
-	}
 
-	public void setName(String name) {
-		mName = name;
+
+	@Override
+	public boolean equals(Object o) {
+		Playground other = (Playground) o;
+		return getLatitude() == other.getLatitude() && getLongitude() == other.getLongitude();
 	}
 }

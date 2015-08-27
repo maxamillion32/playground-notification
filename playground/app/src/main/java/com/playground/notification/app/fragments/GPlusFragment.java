@@ -20,6 +20,7 @@ import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.app.activities.ConnectGoogleActivity;
 import com.playground.notification.sync.FavoriteManager;
+import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.utils.Prefs;
 import com.squareup.picasso.Picasso;
@@ -102,6 +103,7 @@ public final class GPlusFragment extends BaseFragment {
 			prefs.setGoogleThumbUrl(null);
 			FavoriteManager.getInstance().clean();
 			NearRingManager.getInstance().clean();
+			MyLocationManager.getInstance().clean();
 		}
 	}
 

@@ -10,6 +10,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import com.playground.notification.R;
 import com.playground.notification.api.Api;
@@ -17,6 +18,8 @@ import com.playground.notification.app.App;
 import com.playground.notification.databinding.MyLocationBinding;
 import com.playground.notification.ds.Playground;
 import com.playground.notification.ds.google.Matrix;
+import com.playground.notification.ds.sync.MyLocation;
+import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.utils.Prefs;
 import com.squareup.picasso.Picasso;
 
@@ -87,6 +90,12 @@ public final class MyLocationFragment extends DialogFragment {
 
 			final double lat = args.getDouble(EXTRAS_LAT);
 			final double lng = args.getDouble(EXTRAS_LNG);
+
+			MyLocationManager manager = MyLocationManager.getInstance();
+			MyLocation myLocation = manager.findInCache(playground);
+			if(myLocation != null) {
+				mBinding.saveMyLocationIv.setImageResource(R.drawable.ic_action_delete);
+			}
 
 			Prefs prefs = Prefs.getInstance();
 			mBinding = DataBindingUtil.bind(view.findViewById(R.id.my_location_vg));
@@ -192,6 +201,17 @@ public final class MyLocationFragment extends DialogFragment {
 					});
 		}
 
+		public void onSaveMyLocationClicked(View v) {
+			MyLocationManager manager = MyLocationManager.getInstance();
+			MyLocation myLocation = manager.findInCache(mGround);
+			if(myLocation != null) {
+				manager.removeMyLocation(myLocation, mBinding.saveMyLocationIv, mBinding.myLocationVg );
+			} else {
+				InputMethodManager imm = (InputMethodManager) App.Instance.getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(mBinding.myLocationNameTv.getWindowToken(), 0);
+				String name = mBinding.myLocationNameTv.getText().toString();
+				manager.addMyLocation(mGround, name, mBinding.saveMyLocationIv, mBinding.myLocationVg);
+			}
+		}
 	}
-
 }
