@@ -70,8 +70,6 @@ import com.playground.notification.app.fragments.MyLocationFragment;
 import com.playground.notification.app.fragments.PlaygroundDetailFragment;
 import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
-import com.playground.notification.bus.FavoriteListInitEvent;
-import com.playground.notification.bus.NearRingListInitEvent;
 import com.playground.notification.databinding.ActivityMapsBinding;
 import com.playground.notification.ds.Playground;
 import com.playground.notification.ds.Playgrounds;
@@ -80,6 +78,7 @@ import com.playground.notification.ds.sync.MyLocation;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
+import com.playground.notification.sync.SyncManager;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.views.TouchableMapFragment;
 
@@ -170,32 +169,7 @@ public class MapsActivity extends AppActivity {
 	}
 
 
-	/**
-	 * Handler for {@link com.playground.notification.bus.FavoriteListInitEvent}.
-	 *
-	 * @param e
-	 * 		Event {@link com.playground.notification.bus.FavoriteListInitEvent}.
-	 */
-	public void onEvent(FavoriteListInitEvent e) {
-		if (FavoriteManager.getInstance().isInit() && NearRingManager.getInstance().isInit()) {
-			mBinding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-			mBinding.drawerLayout.setEnabled(true);
-		}
-	}
 
-	/**
-	 * Handler for {@link com.playground.notification.bus.NearRingListInitEvent}.
-	 *
-	 * @param e
-	 * 		Event {@link com.playground.notification.bus.NearRingListInitEvent}.
-	 */
-	public void onEvent(NearRingListInitEvent e) {
-		if (FavoriteManager.getInstance().isInit() && NearRingManager.getInstance().isInit()) {
-			mBinding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-			mBinding.drawerLayout.setEnabled(true);
-
-		}
-	}
 	//------------------------------------------------
 
 
@@ -451,40 +425,36 @@ public class MapsActivity extends AppActivity {
 	private void initDrawer() {
 		setSupportActionBar(mBinding.toolbar);
 		ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			actionBar.setHomeButtonEnabled(true);
-			actionBar.setDisplayHomeAsUpEnabled(true);
-			mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-			mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.application_name,
-					R.string.app_name) {
-				@Override
-				public void onDrawerOpened(View drawerView) {
-					super.onDrawerOpened(drawerView);
-					FavoriteManager favoriteManager = FavoriteManager.getInstance();
-					if (favoriteManager.isInit()) {
-						mBinding.navView.getMenu().findItem(R.id.action_favorite).setTitle(getString(
-								R.string.action_favorite, favoriteManager.getCachedList().size()));
-					} else {
-						mBinding.navView.getMenu().findItem(R.id.action_favorite).setTitle(getString(
-								R.string.action_favorite, 0));
-					}
-					NearRingManager nearRingManager = NearRingManager.getInstance();
-					if (nearRingManager.isInit()) {
-						mBinding.navView.getMenu().findItem(R.id.action_near_ring).setTitle(getString(
-								R.string.action_near_ring, nearRingManager.getCachedList().size()));
-					} else {
-						mBinding.navView.getMenu().findItem(R.id.action_near_ring).setTitle(getString(
-								R.string.action_near_ring, 0));
-					}
-				}
-			};
-			mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-		}
+		actionBar.setHomeButtonEnabled(true);
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.application_name, R.string.app_name) {
+			@Override
+			public void onDrawerOpened(View drawerView) {
+				super.onDrawerOpened(drawerView);
+				updateDrawerMenuItem(R.id.action_favorite, R.string.action_favorite, FavoriteManager.getInstance() );
+				updateDrawerMenuItem(R.id.action_near_ring, R.string.action_near_ring, NearRingManager.getInstance() );
+				updateDrawerMenuItem(R.id.action_my_location_list, R.string.action_my_location_list, MyLocationManager.getInstance() );
+			}
+		};
+		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 		//Navi-head
 		getSupportFragmentManager().beginTransaction().replace(R.id.gplus_container, GPlusFragment.newInstance(
 				getApplication())).commit();
+	}
+
+	/**
+	 * Helper to update menu-titles on drawer.
+	 */
+	private void updateDrawerMenuItem(int itemResId, int itemTitleResId, SyncManager mgr) {
+		if (mgr.isInit()) {
+			mBinding.navView.getMenu().findItem(itemResId).setTitle(getString(
+					itemTitleResId, mgr.getCachedList().size()));
+		} else {
+			mBinding.navView.getMenu().findItem(itemResId).setTitle(getString(
+					itemTitleResId, 0));
+		}
 	}
 
 	@Override
@@ -752,8 +722,6 @@ public class MapsActivity extends AppActivity {
 	 * Set-up of navi-bar left.
 	 */
 	private void initDrawerContent() {
-		mBinding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-		mBinding.drawerLayout.setEnabled(false);
 		mBinding.navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 			@Override
 			public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -774,6 +742,12 @@ public class MapsActivity extends AppActivity {
 						if (nearRingManager.getCachedList().size() > 0) {
 							ViewPagerActivity.showInstance(MapsActivity.this, center.latitude, center.longitude,
 									nearRingManager.getCachedList());
+						}
+						break;
+					case R.id.action_my_location_list:
+						MyLocationManager myLocationManager = MyLocationManager.getInstance();
+						if (myLocationManager.getCachedList().size() > 0) {
+							MyLocationListActivity.showInstance(MapsActivity.this);
 						}
 						break;
 					case R.id.action_settings:

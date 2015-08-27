@@ -7,7 +7,6 @@ import android.view.View;
 
 import com.playground.notification.R;
 import com.playground.notification.app.App;
-import com.playground.notification.bus.NearRingListInitEvent;
 import com.playground.notification.bus.NearRingListLoadingErrorEvent;
 import com.playground.notification.ds.Playground;
 import com.playground.notification.ds.sync.NearRing;
@@ -60,11 +59,11 @@ public final class NearRingManager extends SyncManager<NearRing> {
 				}
 				getCachedList().addAll(list);
 				setInit();
-				EventBus.getDefault().post(new NearRingListInitEvent());
 			}
 
 			@Override
 			public void onError(int i, String s) {
+				setInit();
 				EventBus.getDefault().post(new NearRingListLoadingErrorEvent());
 			}
 		});

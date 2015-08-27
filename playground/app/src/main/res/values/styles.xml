@@ -30,5 +30,11 @@
         <item name="android:textColorSecondary">@color/primary_accent</item>
     </style>
 
-
+    <style name="BoxCardView">
+        <item name="contentPadding">0dp</item>
+        <item name="cardElevation">5dp</item>
+        <item name="cardMaxElevation">8dp</item>
+        <item name="cardUseCompatPadding">true</item>
+        <item name="cardCornerRadius">0dp</item>
+    </style>
 </resources>

@@ -40,17 +40,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".app.activities.ConnectGoogleActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.FirstPage" />
-
-        <!--Include the AdActivity configChanges and theme. -->
-        <activity
-            android:name="com.google.android.gms.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent" />
 
         <activity
             android:name=".app.activities.ViewPagerActivity"
@@ -62,6 +56,19 @@
             android:label="@string/action_settings"
             android:screenOrientation="portrait"
             android:theme="@style/SettingsTheme" />
+
+        <activity
+            android:name=".app.activities.MyLocationListActivity"
+            android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait"/>
+
+
+        <!--Include the AdActivity configChanges and theme. -->
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent" />
 
         <!--Event handler for changing system packages.-->
         <receiver

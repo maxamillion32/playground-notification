@@ -4,9 +4,13 @@
 
     <string name="action_share">Teile</string>
     <string name="action_go">Gehe?</string>
+    <string name="action_favorite">Favoritenliste(%1$d)</string>
+    <string name="action_near_ring">Near-Rings(%1$d)</string>
     <string name="action_settings">Einstellungen</string>
     <string name="action_more_apps">Weitere Apps</string>
     <string name="action_data_support">Datenquelle</string>
+    <string name="action_delete_all">Alle entfernen</string>
+    <string name="action_my_location_list">Meine Lokalisationen(%1$d)</string>
 
     <string name="btn_confirm">Sicher</string>
     <string name="btn_yes">Ja</string>
@@ -56,6 +60,8 @@
     <string name="lbl_name">Name</string>
     <string name="lbl_saved">wurde gespeichert</string>
     <string name="lbl_deleted">wurde entfernt</string>
+
+    <string name="lbl_my_location_list">Meine Lokalisationen</string>
 
     <string name="settings_map">Karte &amp; Lokalisieren</string>
     <string name="settings_map_types">Typ</string>

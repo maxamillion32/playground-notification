@@ -11,7 +11,9 @@ public final class MyLocation extends SyncPlayground {
 	}
 
 
-
+	public String getLabel() {
+		return mLabel;
+	}
 
 	@Override
 	public boolean equals(Object o) {

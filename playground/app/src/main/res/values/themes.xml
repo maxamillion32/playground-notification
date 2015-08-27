@@ -85,8 +85,13 @@
         <item name="colorAccent">@color/primary_accent</item>
     </style>
 
-    <style name="SettingsTheme" parent="SettingsThemeBase">
+    <style name="SettingsTheme" parent="SettingsThemeBase"/>
 
+
+
+    <style name="ActionModeCheckbox" parent="BaseTheme">
+        <item name="android:colorAccent">@color/primary_color</item>
+        <item name="colorAccent">@color/primary_color</item>
     </style>
 
 </resources>

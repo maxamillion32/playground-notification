@@ -7,7 +7,6 @@ import android.view.View;
 
 import com.playground.notification.R;
 import com.playground.notification.app.App;
-import com.playground.notification.bus.FavoriteListInitEvent;
 import com.playground.notification.bus.FavoriteListLoadingErrorEvent;
 import com.playground.notification.ds.Playground;
 import com.playground.notification.ds.sync.Favorite;
@@ -60,11 +59,11 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 				}
 				getCachedList().addAll(list);
 				setInit();
-				EventBus.getDefault().post(new FavoriteListInitEvent());
 			}
 
 			@Override
 			public void onError(int i, String s) {
+				setInit();
 				EventBus.getDefault().post(new FavoriteListLoadingErrorEvent());
 			}
 		});
