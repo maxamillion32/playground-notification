@@ -74,4 +74,17 @@ public final class Utils {
 		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		cxt.startActivity(intent);
 	}
+
+
+	/**
+	 *Share information by calling standards of system.
+	 */
+	public static void shareInformation( Context cxt, String subject,
+			String body) {
+		Intent i = new Intent(Intent.ACTION_SEND);
+		i.setType("text/plain");
+		i.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
+		i.putExtra(android.content.Intent.EXTRA_TEXT, body);
+		cxt.startActivity(i);
+	}
 }

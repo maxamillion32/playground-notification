@@ -46,9 +46,11 @@
 
 
     <string name="lbl_share_download_app">Download %1$s:\n%2$s</string>
-    <string name="lbl_share_app_title">Super App for you</string>
-    <string name="lbl_share_app_content">Dear Papa and Mama\n\nHere is %1$s, a powerful tool to help you and notify you when you\'ve been near to a play-field for you kids.\n\n%2$s</string>
     <string name="lbl_store_url">https://play.google.com/store/apps/details?id=%1$s</string>
+    <string name="lbl_share_app_title">Super App for you</string>
+    <string name="lbl_share_app_content">Dear Papa and Mama\n\nHere is %1$s, a powerful tool to help you find playgrounds near you for your kids.\n\n%2$s</string>
+    <string name="lbl_share_ground_title">Hi! Here is a playground for children.</string>
+    <string name="lbl_share_ground_content">Dear Papa und Mama,\n\nI want to share a playground for your child(ren) here.\n\nMap:\n%1$s\n\n%2$s</string>
 
 
     <string name="lbl_hello">Hello %1$s!</string>

@@ -30,6 +30,7 @@ import com.playground.notification.ds.sync.SyncPlayground;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.utils.Prefs;
+import com.playground.notification.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -388,6 +389,27 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 			com.playground.notification.utils.Utils.openMapWeb(mBinding.goBtn.getContext(), new LatLng(mLat, mLng),
 					new LatLng(mGround.getLatitude(), mGround.getLongitude()));
 		}
-	}
 
+
+		public void onShareGround(View v) {
+			final String url = "https://www.google.de/maps/search/" + mGround.getLatitude() + "," + mGround.getLongitude();
+			com.tinyurl4j.Api.getTinyUrl(url, new Callback<com.tinyurl4j.data.Response>() {
+				@Override
+				public void success(com.tinyurl4j.data.Response response, retrofit.client.Response response2) {
+					String subject = App.Instance.getString(R.string.lbl_share_ground_title);
+					String content = App.Instance.getString(R.string.lbl_share_ground_content,
+							response.getResult(), Prefs.getInstance().getAppDownloadInfo());
+					Utils.shareInformation(mBinding.shareGroundBtn.getContext(), subject, content);
+				}
+
+				@Override
+				public void failure(RetrofitError error) {
+					String subject = App.Instance.getString(R.string.lbl_share_ground_title);
+					String content = App.Instance.getString(R.string.lbl_share_ground_content, url,
+							Prefs.getInstance().getAppDownloadInfo());
+					Utils.shareInformation(mBinding.shareGroundBtn.getContext(), subject, content);
+				}
+			});
+		}
+	}
 }

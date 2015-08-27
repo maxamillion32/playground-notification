@@ -255,6 +255,31 @@
                             android:src="@drawable/ic_save" />
                     </com.playground.notification.views.MaterialRippleLayout>
                 </RelativeLayout>
+
+
+
+                <com.playground.notification.views.MaterialRippleLayout
+                    android:id="@+id/share_ground_btn"
+                    style="@style/MaterialRippleLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/common_transparent"
+                    android:onClick="@{handler.onShareGround}"
+                    android:paddingBottom="5dp" android:visibility="gone"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="5dp">
+
+                    <ImageView
+                        android:id="@+id/share_ground_iv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@color/common_transparent"
+                        android:src="@drawable/ic_share_ground" />
+                </com.playground.notification.views.MaterialRippleLayout>
             </LinearLayout>
 
 

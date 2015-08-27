@@ -21,6 +21,7 @@ import com.playground.notification.ds.google.Matrix;
 import com.playground.notification.ds.sync.MyLocation;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.utils.Prefs;
+import com.playground.notification.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import retrofit.Callback;
@@ -95,6 +96,7 @@ public final class MyLocationFragment extends DialogFragment {
 			MyLocation myLocation = manager.findInCache(playground);
 			if(myLocation != null) {
 				mBinding.saveMyLocationIv.setImageResource(R.drawable.ic_action_delete);
+				mBinding.shareGroundBtn.setVisibility(View.VISIBLE);
 			}
 
 			Prefs prefs = Prefs.getInstance();
@@ -210,9 +212,34 @@ public final class MyLocationFragment extends DialogFragment {
 				InputMethodManager imm = (InputMethodManager) App.Instance.getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(mBinding.myLocationNameTv.getWindowToken(), 0);
 				String name = mBinding.myLocationNameTv.getText().toString();
-				mGround.setId("my_" + mGround.getLatitude()+"," + mGround.getLongitude());
+				mGround.setId("my_" + mGround.getLatitude() + "," + mGround.getLongitude());
 				manager.addMyLocation(mGround, name, mBinding.saveMyLocationIv, mBinding.myLocationVg);
+				mBinding.shareGroundBtn.setVisibility(View.VISIBLE);
 			}
+		}
+
+		public void onShareGround(View v) {
+			final String url = "https://www.google.de/maps/search/" + mGround.getLatitude() + "," + mGround.getLongitude();
+			com.tinyurl4j.Api.getTinyUrl(url,
+					new Callback<com.tinyurl4j.data.Response>() {
+						@Override
+						public void success(com.tinyurl4j.data.Response response, retrofit.client.Response response2) {
+							String subject = App.Instance.getString(R.string.lbl_share_ground_title);
+							String content =  App.Instance.getString(R.string.lbl_share_ground_content,
+									response.getResult(),
+									Prefs.getInstance().getAppDownloadInfo());
+							Utils.shareInformation(mBinding.shareGroundBtn.getContext(), subject, content);
+						}
+
+						@Override
+						public void failure(RetrofitError error) {
+							String subject = App.Instance.getString(R.string.lbl_share_ground_title);
+							String content =  App.Instance.getString(R.string.lbl_share_ground_content,
+									url,
+									Prefs.getInstance().getAppDownloadInfo());
+							Utils.shareInformation(mBinding.shareGroundBtn.getContext(), subject, content);
+						}
+					});
 		}
 	}
 }
