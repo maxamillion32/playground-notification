@@ -23,6 +23,7 @@
     <string name="btn_begin">Begin now</string>
     <string name="btn_close_app">Close app</string>
     <string name="btn_close">Close</string>
+    <string name="btn_exit">Exit</string>
 
     <string name="lbl_play_service">This application needs Google Play Service, you must install it first.</string>
 
@@ -74,6 +75,9 @@
     <string name="lbl_load_cfg">Loading application configurations.</string>
 
     <string name="lbl_go">Go</string>
+
+    <string name="lbl_my_location_enter">Define you own playground by long-clicking.</string>
+    <string name="lbl_no_current_location">Can not catch your current location.</string>
 
     <string name="settings_map">Map &amp; Locating</string>
 

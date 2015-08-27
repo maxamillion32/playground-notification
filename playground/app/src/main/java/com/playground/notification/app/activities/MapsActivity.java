@@ -15,6 +15,7 @@ import android.databinding.DataBindingUtil;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -27,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 
 import com.chopping.bus.CloseDrawerEvent;
@@ -64,6 +66,7 @@ import com.playground.notification.app.App;
 import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.AppListImpFragment;
 import com.playground.notification.app.fragments.GPlusFragment;
+import com.playground.notification.app.fragments.MyLocationFragment;
 import com.playground.notification.app.fragments.PlaygroundDetailFragment;
 import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
@@ -124,6 +127,10 @@ public class MapsActivity extends AppActivity {
 
 
 	private Map<Marker, Playground> mMarkerList = new LinkedHashMap<>();
+	/**
+	 * Current position.
+	 */
+	private Location mCurrentLocation;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -231,6 +238,47 @@ public class MapsActivity extends AppActivity {
 
 		initDrawer();
 		initBoard();
+		initAddFunctions();
+	}
+
+	/**
+	 * Define UI for add my-location.
+	 */
+	private void initAddFunctions() {
+		mBinding.addPaneV.hide();
+		mBinding.exitAddBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mBinding.currentBtn.setVisibility(View.GONE);
+				mBinding.addBtn.show();
+				mBinding.addPaneV.hide();
+			}
+		});
+		mBinding.addBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mBinding.currentBtn.setVisibility(View.VISIBLE);
+				mBinding.addBtn.hide();
+				mBinding.addPaneV.show();
+			}
+		});
+		mBinding.currentBtn.setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				if(mCurrentLocation == null) {
+					mBinding.currentBtn.setVisibility(View.GONE);
+					mBinding.addBtn.show();
+					mBinding.addPaneV.hide();
+					Snackbar.make(mBinding.drawerLayout, R.string.lbl_no_current_location, Snackbar.LENGTH_LONG)
+							.show();
+					return true;
+				}
+				final LatLng center = mMap.getProjection().getVisibleRegion().latLngBounds.getCenter();
+				showDialogFragment(MyLocationFragment.newInstance(App.Instance, mCurrentLocation.getLatitude(),
+						mCurrentLocation.getLongitude(), new Playground(center.latitude, center.longitude)), null);
+				return true;
+			}
+		});
 	}
 
 	/**
@@ -492,7 +540,7 @@ public class MapsActivity extends AppActivity {
 		mMap.setBuildingsEnabled(true);
 
 		UiSettings uiSettings = mMap.getUiSettings();
-		uiSettings.setZoomControlsEnabled(true);
+//		uiSettings.setZoomControlsEnabled(true);
 		uiSettings.setMyLocationButtonEnabled(true);
 		uiSettings.setIndoorLevelPickerEnabled(true);
 		uiSettings.setCompassEnabled(true);
@@ -549,8 +597,15 @@ public class MapsActivity extends AppActivity {
 			Api.getPlaygrounds(Prefs.getInstance().getApiSearch(), request, new Callback<Playgrounds>() {
 				@Override
 				public void success(Playgrounds playgrounds, Response response) {
+					mBinding.loadPinPb.setVisibility(View.GONE);
+					if (mCurrentLocation == null) {
+						Snackbar.make(mBinding.drawerLayout, R.string.lbl_no_current_location, Snackbar.LENGTH_LONG)
+								.show();
+						return;
+					}
+					final LatLng currentLatLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+					//final LatLng center = mMap.getProjection().getVisibleRegion().latLngBounds.getCenter();
 					List<Playground> grounds = playgrounds.getPlaygroundList();
-					final LatLng center = mMap.getProjection().getVisibleRegion().latLngBounds.getCenter();
 					for (final Playground ground : grounds) {
 						LatLng to = new LatLng(ground.getLatitude(), ground.getLongitude());
 						MarkerOptions options = new MarkerOptions().position(to);
@@ -558,7 +613,7 @@ public class MapsActivity extends AppActivity {
 						if (favMgr.isInit() && favMgr.isCached(ground)) {
 							options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorite));
 						} else {
-							com.playground.notification.utils.Utils.changeMarkerIcon(options, center, to);
+							com.playground.notification.utils.Utils.changeMarkerIcon(options, currentLatLng, to);
 						}
 						mMarkerList.put(mMap.addMarker(options), ground);
 					}
@@ -569,14 +624,13 @@ public class MapsActivity extends AppActivity {
 							for (Marker m : mMarkerList.keySet()) {
 								if (m.equals(marker)) {
 									showDialogFragment(PlaygroundDetailFragment.newInstance(App.Instance,
-											center.latitude, center.longitude, mMarkerList.get(m)), null);
+											currentLatLng.latitude, currentLatLng.longitude, mMarkerList.get(m)), null);
 									break;
 								}
 							}
 							return true;
 						}
 					});
-					mBinding.loadPinPb.setVisibility(View.GONE);
 				}
 
 				@Override
@@ -674,6 +728,7 @@ public class MapsActivity extends AppActivity {
 					location.getLongitude()), 16);
 			mMap.moveCamera(update);
 		}
+		mCurrentLocation = location;
 		Utils.showShortToast(App.Instance, "updateCurLocal");
 	}
 

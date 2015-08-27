@@ -143,7 +143,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 	}
 
 	/**
-	 * New an instance of {@link GPlusFragment}.
+	 * New an instance of {@link PlaygroundDetailFragment}.
 	 *
 	 * @param context
 	 * 		{@link android.content.Context}.

@@ -13,7 +13,6 @@ import com.playground.notification.ds.Playground;
 import com.playground.notification.ds.sync.Favorite;
 import com.playground.notification.ds.sync.SyncPlayground;
 import com.playground.notification.utils.Prefs;
-import com.software.shell.fab.ActionButton;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobQuery.CachePolicy;
@@ -93,7 +92,7 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 	 * @param oldT
 	 * 		An old {@link Favorite}.
 	 * @param v
-	 * 		{@link ActionButton} the button to fire the removing.
+	 * 		{@link View} the button to fire the removing.
 	 * @param viewForSnack
 	 * 		{@link View} anchor for showing {@link Snackbar} messages.
 	 */

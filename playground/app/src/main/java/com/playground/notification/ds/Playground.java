@@ -21,6 +21,11 @@ public class Playground extends BmobObject implements Serializable {
 		mLongitude = longitude;
 	}
 
+	public Playground( double latitude, double longitude) {
+		mLatitude = latitude;
+		mLongitude = longitude;
+	}
+
 	public String getId() {
 		return mId;
 	}
