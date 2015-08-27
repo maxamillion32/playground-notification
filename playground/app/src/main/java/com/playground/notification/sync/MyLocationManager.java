@@ -61,8 +61,7 @@ public final class MyLocationManager extends SyncManager<MyLocation> {
 
 			@Override
 			public void onError(int i, String s) {
-
-
+				setInit();
 			}
 		});
 	}

@@ -40,15 +40,11 @@ public final class Utils {
 					options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_300));
 				} else if (distance <= 400 && distance > 300) {
 					options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_400));
-				} else if (distance <= 500 && distance > 400) {
+				} else  {
 					options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_500));
-				} else if (distance <= 600 && distance > 500) {
-					options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_600));
-				} else {
-					options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_more));
 				}
 			} else {
-				options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_more));
+				options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_500));
 			}
 		}
 	}

@@ -76,6 +76,7 @@ import com.playground.notification.databinding.ActivityMapsBinding;
 import com.playground.notification.ds.Playground;
 import com.playground.notification.ds.Playgrounds;
 import com.playground.notification.ds.Request;
+import com.playground.notification.ds.sync.MyLocation;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
@@ -266,12 +267,11 @@ public class MapsActivity extends AppActivity {
 		mBinding.currentBtn.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
-				if(mCurrentLocation == null) {
+				if (mCurrentLocation == null) {
 					mBinding.currentBtn.setVisibility(View.GONE);
 					mBinding.addBtn.show();
 					mBinding.addPaneV.hide();
-					Snackbar.make(mBinding.drawerLayout, R.string.lbl_no_current_location, Snackbar.LENGTH_LONG)
-							.show();
+					Snackbar.make(mBinding.drawerLayout, R.string.lbl_no_current_location, Snackbar.LENGTH_LONG).show();
 					return true;
 				}
 				final LatLng center = mMap.getProjection().getVisibleRegion().latLngBounds.getCenter();
@@ -616,11 +616,21 @@ public class MapsActivity extends AppActivity {
 						MarkerOptions options = new MarkerOptions().position(to);
 						FavoriteManager favMgr = FavoriteManager.getInstance();
 						if (favMgr.isInit() && favMgr.isCached(ground)) {
-							options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorite));
+							options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorited));
 						} else {
 							com.playground.notification.utils.Utils.changeMarkerIcon(options, currentLatLng, to);
 						}
 						mMarkerList.put(mMap.addMarker(options), ground);
+					}
+
+					MyLocationManager myLocMgr = MyLocationManager.getInstance();
+					if (myLocMgr.isInit()) {
+						for(MyLocation myLoc : myLocMgr.getCachedList()) {
+							LatLng to = new LatLng(myLoc.getLatitude(), myLoc.getLongitude());
+							MarkerOptions options = new MarkerOptions().position(to);
+							options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_saved_ground));
+							mMarkerList.put(mMap.addMarker(options), myLoc);
+						}
 					}
 
 					mMap.setOnMarkerClickListener(new OnMarkerClickListener() {

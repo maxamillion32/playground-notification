@@ -28,6 +28,10 @@ public class Playground extends BmobObject implements Serializable {
 		mLongitude = longitude;
 	}
 
+	public void setId(String id) {
+		mId = id;
+	}
+
 	public String getId() {
 		return mId;
 	}

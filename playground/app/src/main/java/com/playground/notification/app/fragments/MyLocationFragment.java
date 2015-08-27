@@ -210,6 +210,7 @@ public final class MyLocationFragment extends DialogFragment {
 				InputMethodManager imm = (InputMethodManager) App.Instance.getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(mBinding.myLocationNameTv.getWindowToken(), 0);
 				String name = mBinding.myLocationNameTv.getText().toString();
+				mGround.setId("my_" + mGround.getLatitude()+"," + mGround.getLongitude());
 				manager.addMyLocation(mGround, name, mBinding.saveMyLocationIv, mBinding.myLocationVg);
 			}
 		}
