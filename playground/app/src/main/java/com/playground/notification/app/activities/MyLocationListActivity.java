@@ -159,6 +159,7 @@ public final class MyLocationListActivity extends AppActivity {
 
 		//App-bar.
 		setSupportActionBar(mBinding.toolbar);
+		mBinding.toolbar.setTitle(R.string.lbl_my_location_list);
 		ActionBar actionBar = getSupportActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setDefaultDisplayHomeAsUpEnabled(true);

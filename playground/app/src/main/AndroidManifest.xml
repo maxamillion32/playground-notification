@@ -59,7 +59,7 @@
 
         <activity
             android:name=".app.activities.MyLocationListActivity"
-            android:label="@string/title_activity_maps"
+            android:label="@string/lbl_my_location_list"
             android:screenOrientation="portrait"/>
 
 

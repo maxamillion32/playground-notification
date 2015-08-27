@@ -452,8 +452,7 @@ public class MapsActivity extends AppActivity {
 			mBinding.navView.getMenu().findItem(itemResId).setTitle(getString(
 					itemTitleResId, mgr.getCachedList().size()));
 		} else {
-			mBinding.navView.getMenu().findItem(itemResId).setTitle(getString(
-					itemTitleResId, 0));
+			mBinding.navView.getMenu().findItem(itemResId).setTitle(getString(itemTitleResId, 0));
 		}
 	}
 
@@ -734,14 +733,14 @@ public class MapsActivity extends AppActivity {
 						FavoriteManager favoriteManager = FavoriteManager.getInstance();
 						if (favoriteManager.getCachedList().size() > 0) {
 							ViewPagerActivity.showInstance(MapsActivity.this, center.latitude, center.longitude,
-									favoriteManager.getCachedList());
+									favoriteManager.getCachedList(), getString(R.string.lbl_favorite_list));
 						}
 						break;
 					case R.id.action_near_ring:
 						NearRingManager nearRingManager = NearRingManager.getInstance();
 						if (nearRingManager.getCachedList().size() > 0) {
 							ViewPagerActivity.showInstance(MapsActivity.this, center.latitude, center.longitude,
-									nearRingManager.getCachedList());
+									nearRingManager.getCachedList(), getString(R.string.lbl_near_ring_list));
 						}
 						break;
 					case R.id.action_my_location_list:
