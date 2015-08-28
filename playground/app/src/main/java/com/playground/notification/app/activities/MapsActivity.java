@@ -772,19 +772,21 @@ public class MapsActivity extends AppActivity implements LocationListener {
 				mBinding.drawerLayout.closeDrawer(Gravity.LEFT);
 
 				if (mMap != null) {
-					LatLng center = mMap.getProjection().getVisibleRegion().latLngBounds.getCenter();
+					Location location = App.Instance.getCurrentLocation();
+					double lat = location.getLatitude();
+					double lng =  location.getLongitude();
 					switch (menuItem.getItemId()) {
 					case R.id.action_favorite:
 						FavoriteManager favoriteManager = FavoriteManager.getInstance();
 						if (favoriteManager.getCachedList().size() > 0) {
-							ViewPagerActivity.showInstance(MapsActivity.this, center.latitude, center.longitude,
+							ViewPagerActivity.showInstance(MapsActivity.this, lat, lng,
 									favoriteManager.getCachedList(), getString(R.string.lbl_favorite_list));
 						}
 						break;
 					case R.id.action_near_ring:
 						NearRingManager nearRingManager = NearRingManager.getInstance();
 						if (nearRingManager.getCachedList().size() > 0) {
-							ViewPagerActivity.showInstance(MapsActivity.this, center.latitude, center.longitude,
+							ViewPagerActivity.showInstance(MapsActivity.this, lat, lng,
 									nearRingManager.getCachedList(), getString(R.string.lbl_near_ring_list));
 						}
 						break;
