@@ -47,7 +47,7 @@
     <string name="lbl_remove_favorite">wurde nicht favorisiert</string>
     <string name="lbl_near_ring">wurde als Near-Ring hinzugefügt</string>
     <string name="lbl_remove_near_ring">wurde aus Near-Rings entfernt</string>
-    <string name="lbl_no_location_service">Die App muss geschlossen werden, da der Location-Service nicht eingeschaltet werden kann.</string>
+    <string name="lbl_no_location_service">Die App muss geschlossen werden, da entweder der Lokalisationsserver oder Netzwerk nicht verfügbar ist.</string>
 
     <string name="lbl_rating">Bewerten</string>
 

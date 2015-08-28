@@ -62,7 +62,7 @@ public final class NearRingManager extends SyncManager<NearRing> {
 				getCachedList().addAll(list);
 				setInit();
 
-
+				App.Instance.stopService(new Intent(App.Instance, GeofenceManagerService.class));
 				App.Instance.startService(new Intent(App.Instance, GeofenceManagerService.class));
 			}
 
@@ -87,6 +87,7 @@ public final class NearRingManager extends SyncManager<NearRing> {
 	 */
 	public synchronized void addNearRing(Playground newGround, android.widget.ImageView v, View viewForSnack) {
 		add(new NearRing(Prefs.getInstance().getGoogleId(), newGround), v, viewForSnack);
+		App.Instance.stopService(new Intent(App.Instance, GeofenceManagerService.class));
 		App.Instance.startService(new Intent(App.Instance, GeofenceManagerService.class));
 	}
 
@@ -105,6 +106,7 @@ public final class NearRingManager extends SyncManager<NearRing> {
 		NearRing delNearRing = new NearRing(Prefs.getInstance().getGoogleId(), oldT);
 		delNearRing.setObjectId(oldT.getObjectId());
 		remove(delNearRing, v, viewForSnack);
+		App.Instance.stopService(new Intent(App.Instance, GeofenceManagerService.class));
 		App.Instance.startService(new Intent(App.Instance, GeofenceManagerService.class));
 	}
 

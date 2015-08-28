@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
+import android.app.Activity;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
@@ -20,6 +21,7 @@ import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.app.App;
 import com.playground.notification.app.activities.AppActivity;
+import com.playground.notification.app.activities.MapsActivity;
 import com.playground.notification.bus.ShowLocationRatingEvent;
 import com.playground.notification.databinding.PlaygroundDetailBinding;
 import com.playground.notification.databinding.RatingDialogBinding;
@@ -56,6 +58,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 	private static final String EXTRAS_GROUND = PlaygroundDetailFragment.class.getName() + ".EXTRAS.playground";
 	private static final String EXTRAS_LAT = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lat";
 	private static final String EXTRAS_LNG = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lng";
+	private static final String EXTRAS_CLICKABLE = MyLocationFragment.class.getName() + ".EXTRAS.clickable";
 	/**
 	 * Main layout for this component.
 	 */
@@ -154,15 +157,17 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 	 * 		The longitude of "from" position to {@code playground}.
 	 * @param playground
 	 * 		{@link Playground}.
+	 * 	@param clickable  {@code true} if the preview map can be clicked and show marker on main map.
 	 *
 	 * @return An instance of {@link PlaygroundDetailFragment}.
 	 */
 	public static PlaygroundDetailFragment newInstance(Context context, double fromLat, double fromLng,
-			Playground playground) {
+			Playground playground, boolean clickable) {
 		Bundle args = new Bundle();
 		args.putDouble(EXTRAS_LAT, fromLat);
 		args.putDouble(EXTRAS_LNG, fromLng);
 		args.putSerializable(EXTRAS_GROUND, (Serializable) playground);
+		args.putBoolean(EXTRAS_CLICKABLE, clickable);
 		return (PlaygroundDetailFragment) PlaygroundDetailFragment.instantiate(context,
 				PlaygroundDetailFragment.class.getName(), args);
 	}
@@ -311,6 +316,15 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 					"&zoom=16&size=420x200&markers=color:red%7Clabel:S%7C" + latlng + "&key=" +
 					App.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
 			Picasso.with(App.Instance).load(url).into(mBinding.locationPreviewIv);
+			if(getArguments().getBoolean(EXTRAS_CLICKABLE)){
+				mBinding.locationPreviewIv.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+
+						MapsActivity.showInstance((Activity) mBinding.locationPreviewIv.getContext(), playground);
+					}
+				});
+			}
 		}
 	}
 
@@ -397,8 +411,8 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 				@Override
 				public void success(com.tinyurl4j.data.Response response, retrofit.client.Response response2) {
 					String subject = App.Instance.getString(R.string.lbl_share_ground_title);
-					String content = App.Instance.getString(R.string.lbl_share_ground_content,
-							response.getResult(), Prefs.getInstance().getAppDownloadInfo());
+					String content = App.Instance.getString(R.string.lbl_share_ground_content, response.getResult(),
+							Prefs.getInstance().getAppDownloadInfo());
 					mBinding.shareGroundBtn.getContext().startActivity(Utils.getShareInformation(subject, content));
 				}
 
@@ -410,6 +424,10 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 					mBinding.shareGroundBtn.getContext().startActivity(Utils.getShareInformation(subject, content));
 				}
 			});
+		}
+
+		public void onPreviewClicked(View v) {
+			MapsActivity.showInstance((Activity) mBinding.locationPreviewIv.getContext(), mGround);
 		}
 	}
 }

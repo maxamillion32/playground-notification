@@ -3,18 +3,21 @@ package com.playground.notification.app.fragments;
 import java.io.Serializable;
 import java.util.Locale;
 
+import android.app.Activity;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
 import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.app.App;
+import com.playground.notification.app.activities.MapsActivity;
 import com.playground.notification.databinding.MyLocationBinding;
 import com.playground.notification.ds.Playground;
 import com.playground.notification.ds.google.Matrix;
@@ -37,6 +40,7 @@ public final class MyLocationFragment extends DialogFragment {
 	private static final String EXTRAS_LAT = MyLocationFragment.class.getName() + ".EXTRAS.lat";
 	private static final String EXTRAS_LNG = MyLocationFragment.class.getName() + ".EXTRAS.lng";
 	private static final String EXTRAS_GROUND = MyLocationFragment.class.getName() + ".EXTRAS.playground";
+	private static final String EXTRAS_CLICKABLE = MyLocationFragment.class.getName() + ".EXTRAS.clickable";
 	/**
 	 * Main layout for this component.
 	 */
@@ -57,15 +61,16 @@ public final class MyLocationFragment extends DialogFragment {
 	 * 		The longitude of "from" position to {@code playground}.
 	 * @param playground
 	 * 		{@link Playground}.
-	 *
+	 * 	@param clickable  {@code true} if the preview map can be clicked and show marker on main map.
 	 * @return An instance of {@link MyLocationFragment}.
 	 */
 	public static MyLocationFragment newInstance(Context context, double fromLat, double fromLng,
-			Playground playground) {
+			Playground playground, boolean clickable) {
 		Bundle args = new Bundle();
 		args.putDouble(EXTRAS_LAT, fromLat);
 		args.putDouble(EXTRAS_LNG, fromLng);
 		args.putSerializable(EXTRAS_GROUND, (Serializable) playground);
+		args.putBoolean(EXTRAS_CLICKABLE, clickable);
 		return (MyLocationFragment) MyLocationFragment.instantiate(context, MyLocationFragment.class.getName(), args);
 	}
 
@@ -154,6 +159,15 @@ public final class MyLocationFragment extends DialogFragment {
 					"&zoom=16&size=420x200&markers=color:red%7Clabel:S%7C" + latlng + "&key=" +
 					App.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
 			Picasso.with(App.Instance).load(url).into(mBinding.locationPreviewIv);
+			if(getArguments().getBoolean(EXTRAS_CLICKABLE)){
+				mBinding.locationPreviewIv.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+
+						MapsActivity.showInstance((Activity) mBinding.locationPreviewIv.getContext(), playground);
+					}
+				});
+			}
 		}
 	}
 
@@ -243,5 +257,6 @@ public final class MyLocationFragment extends DialogFragment {
 						}
 					});
 		}
+
 	}
 }

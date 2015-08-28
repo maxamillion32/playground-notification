@@ -98,12 +98,17 @@ public final class GeofenceManagerService extends Service implements ConnectionC
 		if (mGeofencePendingIntent != null) {
 			LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, mGeofencePendingIntent).setResultCallback(
 					this);
+			mGeofencePendingIntent = null;
 		}
 
 		if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
 			mGoogleApiClient.disconnect();
+			mGoogleApiClient = null;
 		}
+		mGeofencingRequest = null;
+		mGoogleApiClient = null;
 		super.onDestroy();
+		Log.d("pg:geofence", "onDestroy");
 	}
 
 

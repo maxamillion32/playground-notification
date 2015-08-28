@@ -78,7 +78,9 @@ import com.playground.notification.databinding.ActivityMapsBinding;
 import com.playground.notification.ds.Playground;
 import com.playground.notification.ds.Playgrounds;
 import com.playground.notification.ds.Request;
+import com.playground.notification.ds.sync.Favorite;
 import com.playground.notification.ds.sync.MyLocation;
+import com.playground.notification.ds.sync.NearRing;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
@@ -141,7 +143,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	/**
 	 * {@code true} if the map is forground.
 	 */
-	private boolean mVisiable;
+	private boolean mVisible;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -245,9 +247,21 @@ public class MapsActivity extends AppActivity implements LocationListener {
 			LatLng to = new LatLng(playground.getLatitude(),
 					playground.getLongitude());
 			CameraUpdate update = CameraUpdateFactory.newLatLngZoom(to, 16);
-			MarkerOptions options = new MarkerOptions().position(to);
-			options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_saved_ground));
-			mMap.addMarker(options);
+			if(playground instanceof MyLocation) {
+				MarkerOptions options = new MarkerOptions().position(to);
+				options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_saved_ground));
+				mMap.addMarker(options);
+			} else if(playground instanceof Favorite) {
+				MarkerOptions options = new MarkerOptions().position(to);
+				options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorited));
+				mMap.addMarker(options);
+			} else if(playground instanceof NearRing) {
+				mMap.addCircle(new CircleOptions().center(new LatLng(playground.getLatitude(),
+						playground.getLongitude())).radius(Prefs.getInstance().getAlarmArea()).strokeWidth(1)
+						.strokeColor(Color.BLUE).fillColor(getResources().getColor(R.color.common_blue_50)));
+				MarkerOptions options = new MarkerOptions().position(to);
+				mMap.addMarker(options);
+			}
 			mMap.moveCamera(update);
 		}
 	}
@@ -286,7 +300,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 				}
 				final LatLng center = mMap.getProjection().getVisibleRegion().latLngBounds.getCenter();
 				showDialogFragment(MyLocationFragment.newInstance(App.Instance, location.getLatitude(),
-						location.getLongitude(), new Playground(center.latitude, center.longitude)), null);
+						location.getLongitude(), new Playground(center.latitude, center.longitude), false), null);
 				return true;
 			}
 		});
@@ -455,17 +469,20 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		super.onDestroy();
 	}
 
+	private AlertDialog mExitAppDlg;
+
 	/**
 	 * Force to exit application for no location-service.
 	 */
 	private void exitAppDialog() {
-		new AlertDialog.Builder(MapsActivity.this).setCancelable(false).setTitle(R.string.application_name).setMessage(
+		mExitAppDlg = new AlertDialog.Builder(MapsActivity.this).setCancelable(false).setTitle(R.string.application_name).setMessage(
 				R.string.lbl_no_location_service).setPositiveButton(R.string.btn_confirm,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						ActivityCompat.finishAfterTransition(MapsActivity.this);
 					}
-				}).create().show();
+				}).create();
+		mExitAppDlg.show();
 	}
 
 
@@ -520,12 +537,12 @@ public class MapsActivity extends AppActivity implements LocationListener {
 			mDrawerToggle.syncState();
 		}
 		setUpMapIfNeeded();
-		mVisiable = true;
+		mVisible = true;
 	}
 
 	@Override
 	protected void onPause() {
-		mVisiable = false;
+		mVisible = false;
 		super.onPause();
 	}
 
@@ -681,7 +698,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 								for (Marker m : mMarkerList.keySet()) {
 									if (m.equals(marker)) {
 										showDialogFragment(PlaygroundDetailFragment.newInstance(App.Instance,
-												currentLatLng.latitude, currentLatLng.longitude, mMarkerList.get(m)),
+												currentLatLng.latitude, currentLatLng.longitude, mMarkerList.get(m), false),
 												null);
 										break;
 									}
@@ -745,25 +762,30 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	@Override
 	protected void onAppConfigLoaded() {
 		super.onAppConfigLoaded();
-		if (mCfgLoadDlg != null && mCfgLoadDlg.isShowing()) {
-			mCfgLoadDlg.dismiss();
-		}
-		showAppList();
-		Api.initialize(App.Instance, Prefs.getInstance().getApiHost());
-
-		initUseApp();
+		cfgFinished();
 	}
 
 	@Override
 	protected void onAppConfigIgnored() {
 		super.onAppConfigIgnored();
+		cfgFinished();
+	}
+
+	private void cfgFinished() {
 		if (mCfgLoadDlg != null && mCfgLoadDlg.isShowing()) {
 			mCfgLoadDlg.dismiss();
 		}
-		showAppList();
-		Api.initialize(App.Instance, Prefs.getInstance().getApiHost());
-
-		initUseApp();
+		if (mExitAppDlg != null && mExitAppDlg.isShowing()) {
+			mExitAppDlg.dismiss();
+		}
+		Prefs prefs = Prefs.getInstance();
+		if (!TextUtils.isEmpty(prefs.getApiHost())) {
+			showAppList();
+			Api.initialize(App.Instance, prefs.getApiHost());
+			initUseApp();
+		} else  {
+			exitAppDialog();
+		}
 	}
 
 	/**
@@ -782,7 +804,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	 * 		Current location.
 	 */
 	private void movedToUpdatedLocation(Location location) {
-		if (mMap != null && mVisiable) {
+		if (mMap != null && mVisible) {
 			CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),
 					location.getLongitude()), 16);
 			mMap.moveCamera(update);

@@ -31,6 +31,7 @@
             name="mode"
             type="String" />
 
+
     </data>
 
     <RelativeLayout
@@ -257,7 +258,6 @@
                 </RelativeLayout>
 
 
-
                 <com.playground.notification.views.MaterialRippleLayout
                     android:id="@+id/share_ground_btn"
                     style="@style/MaterialRippleLayout"
@@ -267,10 +267,11 @@
                     android:layout_marginTop="5dp"
                     android:background="@color/common_transparent"
                     android:onClick="@{handler.onShareGround}"
-                    android:paddingBottom="5dp" android:visibility="gone"
+                    android:paddingBottom="5dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    android:paddingTop="5dp">
+                    android:paddingTop="5dp"
+                    android:visibility="gone">
 
                     <ImageView
                         android:id="@+id/share_ground_iv"
