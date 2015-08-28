@@ -23,6 +23,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,6 +53,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -86,7 +88,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class MapsActivity extends AppActivity {
+public class MapsActivity extends AppActivity implements LocationListener{
 	private static final int REQ = 0x98;
 
 	/**
@@ -131,7 +133,11 @@ public class MapsActivity extends AppActivity {
 	/**
 	 * Current position.
 	 */
-	private Location mCurrentLocation;
+	private volatile Location mCurrentLocation;
+	/**
+	 * {@code true} if the map is forground.
+	 */
+	private boolean mVisiable;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -306,7 +312,7 @@ public class MapsActivity extends AppActivity {
 		if (mLocationRequest == null) {
 			mLocationRequest = LocationRequest.create();
 			mLocationRequest.setInterval(AlarmManager.INTERVAL_HALF_HOUR);
-			mLocationRequest.setFastestInterval(AlarmManager.INTERVAL_HALF_HOUR);
+			mLocationRequest.setFastestInterval(AlarmManager.INTERVAL_FIFTEEN_MINUTES);
 			int ty = 0;
 			switch (Prefs.getInstance().getBatteryLifeType()) {
 			case "0":
@@ -330,20 +336,7 @@ public class MapsActivity extends AppActivity {
 					.addConnectionCallbacks(new ConnectionCallbacks() {
 								@Override
 								public void onConnected(Bundle bundle) {
-									if (mGoogleApiClient.isConnected()) {
-										LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-												mLocationRequest, new LocationListener() {
-													@Override
-													public void onLocationChanged(Location location) {
-														updateCurLocal(location);
-													}
-												});
-									}
-									Location location = LocationServices.FusedLocationApi.getLastLocation(
-											mGoogleApiClient);
-									if (location != null) {
-										updateCurLocal(location);
-									}
+									startLocationUpdate();
 								}
 
 								@Override
@@ -393,6 +386,46 @@ public class MapsActivity extends AppActivity {
 	}
 
 	/**
+	 * Locating begin.
+	 */
+	private void startLocationUpdate() {
+		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+			LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, 	mLocationRequest, this);
+		}
+	}
+
+
+	@Override
+	public void onLocationChanged(Location location) {
+		mCurrentLocation = location;
+		Log.d("pg:location", "method: onLocationChanged -> mCurrentLocation changed");
+		movedToUpdatedLocation(location);
+	}
+
+	/**
+	 * Stop locating.
+	 */
+	protected void stopLocationUpdates() {
+		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+			LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		stopLocationUpdates();
+		if (mMap != null) {
+			mMap.clear();
+			mMarkerList.clear();
+			mMap = null;
+		}
+		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+			mGoogleApiClient.disconnect();
+		}
+		super.onDestroy();
+	}
+
+	/**
 	 * Force to exit application for no location-service.
 	 */
 	private void exitAppDialog() {
@@ -405,18 +438,6 @@ public class MapsActivity extends AppActivity {
 				}).create().show();
 	}
 
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		if (mMap != null) {
-			mMap.clear();
-			mMarkerList.clear();
-		}
-		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-			mGoogleApiClient.disconnect();
-		}
-	}
 
 
 	/**
@@ -469,8 +490,14 @@ public class MapsActivity extends AppActivity {
 			mDrawerToggle.syncState();
 		}
 		setUpMapIfNeeded();
+		mVisiable = true;
 	}
 
+	@Override
+	protected void onPause() {
+		mVisiable = false;
+		super.onPause();
+	}
 
 	/**
 	 * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly installed) and the
@@ -530,6 +557,13 @@ public class MapsActivity extends AppActivity {
 			@Override
 			public void onCameraChange(CameraPosition cameraPosition) {
 				populateGrounds();
+			}
+		});
+		mMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener() {
+			@Override
+			public void onMyLocationChange(Location location) {
+				mCurrentLocation = location;
+				Log.d("pg:location", "method: onMyLocationChange -> mCurrentLocation changed");
 			}
 		});
 	}
@@ -706,14 +740,13 @@ public class MapsActivity extends AppActivity {
 	 * @param location
 	 * 		Current location.
 	 */
-	private void updateCurLocal(Location location) {
-		if (mMap != null) {
+	private void movedToUpdatedLocation(Location location) {
+		if (mMap != null && mVisiable) {
 			CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),
 					location.getLongitude()), 16);
 			mMap.moveCamera(update);
+			Log.d("pg:location", "method: movedToUpdatedLocation");
 		}
-		mCurrentLocation = location;
-		Utils.showShortToast(App.Instance, "updateCurLocal");
 	}
 
 
