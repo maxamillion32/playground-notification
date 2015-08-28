@@ -19,6 +19,8 @@ import android.widget.ImageView;
 import com.playground.notification.BR;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
+import com.playground.notification.app.activities.MapsActivity;
+import com.playground.notification.bus.OpenPlaygroundEvent;
 import com.playground.notification.bus.SelectItemEvent;
 import com.playground.notification.bus.StartActionModeEvent;
 import com.playground.notification.ds.sync.MyLocation;
@@ -93,7 +95,7 @@ public final class MyLocationListAdapter extends SelectableAdapter<MyLocationLis
 
 	@Override
 	public void onBindViewHolder(final ViewHolder holder, final int position) {
-		MyLocation myLocation = mVisibleData.get(position);
+		final MyLocation myLocation = mVisibleData.get(position);
 		holder.mBinding.setVariable(BR.myLoc, myLocation);
 		holder.mBinding.executePendingBindings();
 
@@ -137,9 +139,7 @@ public final class MyLocationListAdapter extends SelectableAdapter<MyLocationLis
 			@Override
 			public void onClick(View v) {
 				if (!isActionMode()) {
-					//EventBus.getDefault().post(new CropImageEvent(input, output));
-				} else {
-					//EventBus.getDefault().post(new SelectItemEvent(position));
+					EventBus.getDefault().post(new OpenPlaygroundEvent(myLocation));
 				}
 			}
 		});

@@ -23,6 +23,7 @@ import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.app.adapters.MyLocationListAdapter;
+import com.playground.notification.bus.OpenPlaygroundEvent;
 import com.playground.notification.bus.SelectItemEvent;
 import com.playground.notification.bus.StartActionModeEvent;
 import com.playground.notification.databinding.MyLocationListBinding;
@@ -135,6 +136,15 @@ public final class MyLocationListActivity extends AppActivity {
 		});
 	}
 
+	/**
+	 * Handler for {@link com.playground.notification.bus.OpenPlaygroundEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.playground.notification.bus.OpenPlaygroundEvent}.
+	 */
+	public void onEvent(OpenPlaygroundEvent e) {
+		MapsActivity.showInstance(this, e.getPlayground());
+	}
 	//------------------------------------------------
 
 	/**

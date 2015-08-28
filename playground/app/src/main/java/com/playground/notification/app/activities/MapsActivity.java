@@ -90,6 +90,9 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
+
 public class MapsActivity extends AppActivity implements LocationListener {
 	public static final String EXTRAS_GROUND = MapsActivity.class.getName() + ".EXTRAS.ground";
 
@@ -178,6 +181,17 @@ public class MapsActivity extends AppActivity implements LocationListener {
 
 	//------------------------------------------------
 
+	/**
+	 * Show single instance of {@link MapsActivity}
+	 *
+	 * @param cxt {@link Activity}.
+	 */
+	public static void showInstance(Activity cxt, Playground ground ) {
+		Intent intent = new Intent(cxt, MapsActivity.class);
+		intent.putExtra(EXTRAS_GROUND, ground);
+		intent.setFlags(FLAG_ACTIVITY_SINGLE_TOP | FLAG_ACTIVITY_CLEAR_TOP);
+		ActivityCompat.startActivity(cxt, intent, null);
+	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -212,7 +226,6 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-
 		//Init data-binding.
 		mBinding = DataBindingUtil.setContentView(this, LAYOUT);
 		//Init application basic elements.
@@ -221,6 +234,22 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		initDrawer();
 		initBoard();
 		initAddFunctions();
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		setIntent(intent);
+		if(intent.getSerializableExtra(EXTRAS_GROUND) != null) {
+			Playground playground = (Playground) intent.getSerializableExtra(EXTRAS_GROUND);
+			LatLng to = new LatLng(playground.getLatitude(),
+					playground.getLongitude());
+			CameraUpdate update = CameraUpdateFactory.newLatLngZoom(to, 16);
+			MarkerOptions options = new MarkerOptions().position(to);
+			options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_saved_ground));
+			mMap.addMarker(options);
+			mMap.moveCamera(update);
+		}
 	}
 
 	/**

@@ -1,6 +1,7 @@
 package com.playground.notification.geofence;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 import android.app.IntentService;
@@ -123,7 +124,7 @@ public final class GeofenceTransitionsIntentService extends IntentService {
 					ring.getLatitude(), ring.getLongitude()));
 		} else {
 			i = new Intent(this, MapsActivity.class);
-			i.putExtra(MapsActivity.EXTRAS_GROUND, ring);
+			i.putExtra(MapsActivity.EXTRAS_GROUND, (Serializable)ring);
 			i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		}
 		PendingIntent contentIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), i,
