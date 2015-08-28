@@ -17,8 +17,13 @@ public final class MyLocation extends SyncPlayground {
 
 	@Override
 	public boolean equals(Object o) {
-		if(o == null) return false;
-		Playground other = (Playground) o;
-		return getLatitude() == other.getLatitude() && getLongitude() == other.getLongitude();
+		try {
+			if (o == null)
+				return false;
+			Playground other = (Playground) o;
+			return getLatitude() == other.getLatitude() && getLongitude() == other.getLongitude();
+		} catch (NullPointerException e) {
+			return false;
+		}
 	}
 }
