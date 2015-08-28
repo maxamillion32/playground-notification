@@ -46,7 +46,7 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 	/**
 	 * Init the manager.
 	 */
-	public void init() {
+	public synchronized void init() {
 		//Load from backend.
 		BmobQuery<Favorite> q = new BmobQuery<>();
 		q.setCachePolicy(CachePolicy.NETWORK_ELSE_CACHE);
@@ -80,7 +80,7 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 	 * @param viewForSnack
 	 * 		{@link View} anchor for showing {@link Snackbar} messages.
 	 */
-	public void addFavorite(Playground newGround, android.widget.ImageView v, View viewForSnack) {
+	public synchronized void addFavorite(Playground newGround, android.widget.ImageView v, View viewForSnack) {
 		add(new Favorite(Prefs.getInstance().getGoogleId(), newGround), v, viewForSnack);
 	}
 
@@ -95,7 +95,7 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 	 * @param viewForSnack
 	 * 		{@link View} anchor for showing {@link Snackbar} messages.
 	 */
-	public void removeFavorite(SyncPlayground oldT, android.widget.ImageView v, View viewForSnack) {
+	public synchronized void removeFavorite(SyncPlayground oldT, android.widget.ImageView v, View viewForSnack) {
 		Favorite delFav = new Favorite(Prefs.getInstance().getGoogleId(), oldT);
 		delFav.setObjectId(oldT.getObjectId());
 		remove(delFav, v, viewForSnack);

@@ -386,8 +386,8 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 		}
 
 		public void onGoClicked(View v) {
-			com.playground.notification.utils.Utils.openMapWeb(mBinding.goBtn.getContext(), new LatLng(mLat, mLng),
-					new LatLng(mGround.getLatitude(), mGround.getLongitude()));
+			mBinding.goBtn.getContext().startActivity(com.playground.notification.utils.Utils.getMapWeb(new LatLng(mLat,
+					mLng), new LatLng(mGround.getLatitude(), mGround.getLongitude())));
 		}
 
 
@@ -399,7 +399,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 					String subject = App.Instance.getString(R.string.lbl_share_ground_title);
 					String content = App.Instance.getString(R.string.lbl_share_ground_content,
 							response.getResult(), Prefs.getInstance().getAppDownloadInfo());
-					Utils.shareInformation(mBinding.shareGroundBtn.getContext(), subject, content);
+					mBinding.shareGroundBtn.getContext().startActivity(Utils.getShareInformation(subject, content));
 				}
 
 				@Override
@@ -407,7 +407,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 					String subject = App.Instance.getString(R.string.lbl_share_ground_title);
 					String content = App.Instance.getString(R.string.lbl_share_ground_content, url,
 							Prefs.getInstance().getAppDownloadInfo());
-					Utils.shareInformation(mBinding.shareGroundBtn.getContext(), subject, content);
+					mBinding.shareGroundBtn.getContext().startActivity(Utils.getShareInformation(subject, content));
 				}
 			});
 		}

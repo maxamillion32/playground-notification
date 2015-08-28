@@ -56,6 +56,7 @@ public final class Prefs extends BasicPrefs {
 	public static final String KEY_TRAFFIC_SHOWING = "key.traffic.showing";
 	public static final String KEY_UNITS = "key.units";
 	public static final String KEY_TRANSPORTATION = "key.transportation";
+	public static final String KEY_ALARM_AREA = "key.alarm.area";
 
 	/**
 	 * The Instance.
@@ -228,5 +229,22 @@ public final class Prefs extends BasicPrefs {
 
 	public String getTransportationMethod() {
 		return getString(KEY_TRANSPORTATION, "1");
+	}
+
+	public int getAlarmArea() {
+		switch (getString(KEY_ALARM_AREA, "0")) {
+		case "0":
+			return 100;
+		case "1":
+			return 150;
+		case "2":
+			return 200;
+		default:
+			return 100;
+		}
+	}
+
+	public String getAlarmAreaValue() {
+		return getString(KEY_ALARM_AREA, "0");
 	}
 }

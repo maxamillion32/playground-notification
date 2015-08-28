@@ -2,6 +2,7 @@ package com.playground.notification.app.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -19,6 +20,7 @@ import com.chopping.utils.Utils;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.app.activities.ConnectGoogleActivity;
+import com.playground.notification.geofence.GeofenceManagerService;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
@@ -104,6 +106,7 @@ public final class GPlusFragment extends BaseFragment {
 			FavoriteManager.getInstance().clean();
 			NearRingManager.getInstance().clean();
 			MyLocationManager.getInstance().clean();
+			App.Instance.stopService(new Intent(App.Instance, GeofenceManagerService.class));
 		}
 	}
 

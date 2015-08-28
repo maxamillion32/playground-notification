@@ -63,28 +63,26 @@ public final class Utils {
 
 	/**
 	 * Open Google's map to show two points.
-	 * @param cxt {@link Context}.
 	 * @param fromLatLng From point.
 	 * @param toLatLng To point
 	 */
-	public static void openMapWeb(Context cxt, LatLng fromLatLng, LatLng toLatLng     ) {
+	public static Intent getMapWeb( LatLng fromLatLng, LatLng toLatLng     ) {
 		String q = new StringBuilder().append("http://maps.google.com/maps?").append("saddr=").append(fromLatLng.latitude + "," + fromLatLng.longitude)
 				.append("&daddr=").append(toLatLng.latitude + "," + toLatLng.longitude).toString();
 		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(q.trim()));
 		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		cxt.startActivity(intent);
+		return intent;
 	}
 
 
 	/**
 	 *Share information by calling standards of system.
 	 */
-	public static void shareInformation( Context cxt, String subject,
-			String body) {
+	public static Intent getShareInformation(String subject, String body) {
 		Intent i = new Intent(Intent.ACTION_SEND);
 		i.setType("text/plain");
 		i.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
 		i.putExtra(android.content.Intent.EXTRA_TEXT, body);
-		cxt.startActivity(i);
+		return i;
 	}
 }

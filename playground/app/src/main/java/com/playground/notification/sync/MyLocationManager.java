@@ -44,7 +44,7 @@ public final class MyLocationManager extends SyncManager<MyLocation> {
 	/**
 	 * Init the manager.
 	 */
-	public void init() {
+	public synchronized void init() {
 		//Load from backend.
 		BmobQuery<MyLocation> q = new BmobQuery<>();
 		q.setCachePolicy(CachePolicy.NETWORK_ELSE_CACHE);
@@ -72,13 +72,15 @@ public final class MyLocationManager extends SyncManager<MyLocation> {
 	 *
 	 * @param newGround
 	 * 		A new {@link Playground} to save as my own one.
-	 * 	@param name A label or name of your own 	{@link Playground}.
+	 * @param name
+	 * 		A label or name of your own 	{@link Playground}.
 	 * @param v
 	 * 		{@link android.widget.ImageView} with which user can save    {@link Playground} as {@link NearRing}.
 	 * @param viewForSnack
 	 * 		{@link View} anchor for showing {@link Snackbar} messages.
 	 */
-	public void addMyLocation(Playground newGround, String name, android.widget.ImageView v, View viewForSnack) {
+	public synchronized void addMyLocation(Playground newGround, String name, android.widget.ImageView v,
+			View viewForSnack) {
 		add(new MyLocation(Prefs.getInstance().getGoogleId(), name, newGround), v, viewForSnack);
 	}
 
@@ -93,11 +95,11 @@ public final class MyLocationManager extends SyncManager<MyLocation> {
 	 * @param viewForSnack
 	 * 		{@link View} anchor for showing {@link Snackbar} messages.
 	 */
-	public void removeMyLocation(MyLocation oldT, android.widget.ImageView v, View viewForSnack) {
+	public synchronized void removeMyLocation(MyLocation oldT, android.widget.ImageView v, View viewForSnack) {
 		remove(oldT, v, viewForSnack);
 	}
 
-@Override
+	@Override
 	protected int getAddSuccessText() {
 		return R.string.lbl_saved;
 	}
@@ -109,7 +111,7 @@ public final class MyLocationManager extends SyncManager<MyLocation> {
 
 	@Override
 	protected int getAddedIcon() {
-		return R.drawable.ic_action_delete ;
+		return R.drawable.ic_action_delete;
 	}
 
 	@Override

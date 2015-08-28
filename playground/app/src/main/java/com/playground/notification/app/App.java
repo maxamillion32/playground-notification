@@ -34,6 +34,7 @@ package com.playground.notification.app;
 import java.io.IOException;
 import java.util.Properties;
 
+import android.location.Location;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
@@ -56,6 +57,12 @@ import retrofit.RetrofitError;
  * @author Xinyue Zhao
  */
 public final class App extends MultiDexApplication {
+
+
+	/**
+	 * Current position.
+	 */
+	private   Location mCurrentLocation;
 	/**
 	 * Application's instance.
 	 */
@@ -118,6 +125,7 @@ public final class App extends MultiDexApplication {
 					});
 		}
 		mScreenSize = DeviceUtils.getScreenSize(this);
+
 	}
 
 	/**
@@ -133,5 +141,19 @@ public final class App extends MultiDexApplication {
 	 */
 	public ScreenSize getScreenSize() {
 		return mScreenSize;
+	}
+
+	/**
+	 * Current position.
+	 */
+	public synchronized Location getCurrentLocation() {
+		return mCurrentLocation;
+	}
+
+	/**
+	 * Current position.
+	 */
+	public synchronized  void setCurrentLocation(Location currentLocation) {
+		mCurrentLocation = currentLocation;
 	}
 }

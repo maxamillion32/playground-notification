@@ -2,6 +2,7 @@ package com.playground.notification.sync;
 
 import java.util.List;
 
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
@@ -11,6 +12,7 @@ import com.playground.notification.bus.NearRingListLoadingErrorEvent;
 import com.playground.notification.ds.Playground;
 import com.playground.notification.ds.sync.NearRing;
 import com.playground.notification.ds.sync.SyncPlayground;
+import com.playground.notification.geofence.GeofenceManagerService;
 import com.playground.notification.utils.Prefs;
 
 import cn.bmob.v3.BmobQuery;
@@ -46,7 +48,7 @@ public final class NearRingManager extends SyncManager<NearRing> {
 	/**
 	 * Init the manager.
 	 */
-	public void init() {
+	public synchronized void init() {
 		//Load from backend.
 		BmobQuery<NearRing> q = new BmobQuery<>();
 		q.setCachePolicy(CachePolicy.NETWORK_ELSE_CACHE);
@@ -59,6 +61,9 @@ public final class NearRingManager extends SyncManager<NearRing> {
 				}
 				getCachedList().addAll(list);
 				setInit();
+
+
+				App.Instance.startService(new Intent(App.Instance, GeofenceManagerService.class));
 			}
 
 			@Override
@@ -80,7 +85,7 @@ public final class NearRingManager extends SyncManager<NearRing> {
 	 * @param viewForSnack
 	 * 		{@link View} anchor for showing {@link Snackbar} messages.
 	 */
-	public void addNearRing(Playground newGround, android.widget.ImageView v, View viewForSnack) {
+	public synchronized void addNearRing(Playground newGround, android.widget.ImageView v, View viewForSnack) {
 		add(new NearRing(Prefs.getInstance().getGoogleId(), newGround), v, viewForSnack);
 	}
 
@@ -95,7 +100,7 @@ public final class NearRingManager extends SyncManager<NearRing> {
 	 * @param viewForSnack
 	 * 		{@link View} anchor for showing {@link Snackbar} messages.
 	 */
-	public void removeNearRing(SyncPlayground oldT, android.widget.ImageView v, View viewForSnack) {
+	public synchronized void removeNearRing(SyncPlayground oldT, android.widget.ImageView v, View viewForSnack) {
 		NearRing delNearRing = new NearRing(Prefs.getInstance().getGoogleId(), oldT);
 		delNearRing.setObjectId(oldT.getObjectId());
 		remove(delNearRing, v, viewForSnack);

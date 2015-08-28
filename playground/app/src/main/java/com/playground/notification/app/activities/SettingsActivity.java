@@ -124,6 +124,19 @@ public final class SettingsActivity extends PreferenceActivity implements Prefer
 		value = prefs.getTransportationMethod();
 		transMethodType.setValue(value);
 		updateSummary(transMethodType, value, R.array.transportation_types);
+
+
+		ListPreference alarmArea = (ListPreference) findPreference(Prefs.KEY_ALARM_AREA);
+		alarmArea.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				updateSummary(preference, newValue, R.array.area_types);
+				return true;
+			}
+		});
+		value = prefs.getAlarmAreaValue();
+		alarmArea.setValue(value);
+		updateSummary(alarmArea, value, R.array.area_types);
 	}
 
 	/**

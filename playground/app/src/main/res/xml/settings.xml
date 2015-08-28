@@ -53,4 +53,24 @@
             android:title="@string/details_transportation" />
 
     </PreferenceCategory>
+
+
+
+
+
+
+    <PreferenceCategory
+        android:layout="@layout/setting_category"
+        android:title="@string/settings_near_ring">
+
+        <ListPreference
+            android:entries="@array/area_types"
+            android:entryValues="@array/area_values"
+            android:key="key.alarm.area"
+            android:defaultValue="0"
+            android:layout="@layout/setting_item"
+            android:title="@string/near_ring_alarm_area" />
+
+
+    </PreferenceCategory>
 </PreferenceScreen>

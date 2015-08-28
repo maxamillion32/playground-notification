@@ -46,6 +46,7 @@ public class Playground extends BmobObject implements Serializable {
 
 	@Override
 	public boolean equals(Object o) {
+		if(o == null) return false;
 		Playground other = (Playground) o;
 		return !TextUtils.isEmpty(other.getId()) && getId().equals(other.getId());
 	}

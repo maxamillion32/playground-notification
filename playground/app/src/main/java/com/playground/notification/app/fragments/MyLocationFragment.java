@@ -228,7 +228,8 @@ public final class MyLocationFragment extends DialogFragment {
 							String content =  App.Instance.getString(R.string.lbl_share_ground_content,
 									response.getResult(),
 									Prefs.getInstance().getAppDownloadInfo());
-							Utils.shareInformation(mBinding.shareGroundBtn.getContext(), subject, content);
+							mBinding.shareGroundBtn.getContext().startActivity(Utils.getShareInformation(subject,
+									content));
 						}
 
 						@Override
@@ -237,7 +238,8 @@ public final class MyLocationFragment extends DialogFragment {
 							String content =  App.Instance.getString(R.string.lbl_share_ground_content,
 									url,
 									Prefs.getInstance().getAppDownloadInfo());
-							Utils.shareInformation(mBinding.shareGroundBtn.getContext(), subject, content);
+							mBinding.shareGroundBtn.getContext().startActivity(Utils.getShareInformation(subject,
+									content));
 						}
 					});
 		}

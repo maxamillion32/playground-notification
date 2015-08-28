@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -58,6 +59,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -88,7 +90,9 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class MapsActivity extends AppActivity implements LocationListener{
+public class MapsActivity extends AppActivity implements LocationListener {
+	public static final String EXTRAS_GROUND = MapsActivity.class.getName() + ".EXTRAS.ground";
+
 	private static final int REQ = 0x98;
 
 	/**
@@ -127,13 +131,10 @@ public class MapsActivity extends AppActivity implements LocationListener{
 	 * Connect to google-api.
 	 */
 	private GoogleApiClient mGoogleApiClient;
-
-
-	private Map<Marker, Playground> mMarkerList = new LinkedHashMap<>();
 	/**
-	 * Current position.
+	 * Current shown markers.
 	 */
-	private volatile Location mCurrentLocation;
+	private Map<Marker, Playground> mMarkerList = new LinkedHashMap<>();
 	/**
 	 * {@code true} if the map is forground.
 	 */
@@ -173,7 +174,6 @@ public class MapsActivity extends AppActivity implements LocationListener{
 	public void onEvent(EULAConfirmedEvent e) {
 		ConnectGoogleActivity.showInstance(this);
 	}
-
 
 
 	//------------------------------------------------
@@ -247,7 +247,8 @@ public class MapsActivity extends AppActivity implements LocationListener{
 		mBinding.currentBtn.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
-				if (mCurrentLocation == null) {
+				Location location = App.Instance.getCurrentLocation();
+				if (location == null) {
 					mBinding.currentBtn.setVisibility(View.GONE);
 					mBinding.addBtn.show();
 					mBinding.addPaneV.hide();
@@ -255,8 +256,8 @@ public class MapsActivity extends AppActivity implements LocationListener{
 					return true;
 				}
 				final LatLng center = mMap.getProjection().getVisibleRegion().latLngBounds.getCenter();
-				showDialogFragment(MyLocationFragment.newInstance(App.Instance, mCurrentLocation.getLatitude(),
-						mCurrentLocation.getLongitude(), new Playground(center.latitude, center.longitude)), null);
+				showDialogFragment(MyLocationFragment.newInstance(App.Instance, location.getLatitude(),
+						location.getLongitude(), new Playground(center.latitude, center.longitude)), null);
 				return true;
 			}
 		});
@@ -334,17 +335,17 @@ public class MapsActivity extends AppActivity implements LocationListener{
 		if (mGoogleApiClient == null) {
 			mGoogleApiClient = new GoogleApiClient.Builder(App.Instance).addApi(LocationServices.API)
 					.addConnectionCallbacks(new ConnectionCallbacks() {
-								@Override
-								public void onConnected(Bundle bundle) {
-									startLocationUpdate();
-								}
+						@Override
+						public void onConnected(Bundle bundle) {
+							startLocationUpdate();
+						}
 
-								@Override
-								public void onConnectionSuspended(int i) {
-									Utils.showShortToast(App.Instance, "onConnectionSuspended");
+						@Override
+						public void onConnectionSuspended(int i) {
+							Utils.showShortToast(App.Instance, "onConnectionSuspended");
 
-								}
-							}).addOnConnectionFailedListener(new OnConnectionFailedListener() {
+						}
+					}).addOnConnectionFailedListener(new OnConnectionFailedListener() {
 						@Override
 						public void onConnectionFailed(ConnectionResult connectionResult) {
 							Utils.showShortToast(App.Instance,
@@ -390,14 +391,14 @@ public class MapsActivity extends AppActivity implements LocationListener{
 	 */
 	private void startLocationUpdate() {
 		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-			LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, 	mLocationRequest, this);
+			LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 		}
 	}
 
 
 	@Override
 	public void onLocationChanged(Location location) {
-		mCurrentLocation = location;
+		App.Instance.setCurrentLocation(location);
 		Log.d("pg:location", "method: onLocationChanged -> mCurrentLocation changed");
 		movedToUpdatedLocation(location);
 	}
@@ -439,7 +440,6 @@ public class MapsActivity extends AppActivity implements LocationListener{
 	}
 
 
-
 	/**
 	 * Initialize the navigation drawer.
 	 */
@@ -453,9 +453,10 @@ public class MapsActivity extends AppActivity implements LocationListener{
 			@Override
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
-				updateDrawerMenuItem(R.id.action_favorite, R.string.action_favorite, FavoriteManager.getInstance() );
-				updateDrawerMenuItem(R.id.action_near_ring, R.string.action_near_ring, NearRingManager.getInstance() );
-				updateDrawerMenuItem(R.id.action_my_location_list, R.string.action_my_location_list, MyLocationManager.getInstance() );
+				updateDrawerMenuItem(R.id.action_favorite, R.string.action_favorite, FavoriteManager.getInstance());
+				updateDrawerMenuItem(R.id.action_near_ring, R.string.action_near_ring, NearRingManager.getInstance());
+				updateDrawerMenuItem(R.id.action_my_location_list, R.string.action_my_location_list,
+						MyLocationManager.getInstance());
 			}
 		};
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -470,8 +471,8 @@ public class MapsActivity extends AppActivity implements LocationListener{
 	 */
 	private void updateDrawerMenuItem(int itemResId, int itemTitleResId, SyncManager mgr) {
 		if (mgr.isInit()) {
-			mBinding.navView.getMenu().findItem(itemResId).setTitle(getString(
-					itemTitleResId, mgr.getCachedList().size()));
+			mBinding.navView.getMenu().findItem(itemResId).setTitle(getString(itemTitleResId,
+					mgr.getCachedList().size()));
 		} else {
 			mBinding.navView.getMenu().findItem(itemResId).setTitle(getString(itemTitleResId, 0));
 		}
@@ -538,7 +539,7 @@ public class MapsActivity extends AppActivity implements LocationListener{
 		mMap.setBuildingsEnabled(true);
 
 		UiSettings uiSettings = mMap.getUiSettings();
-//		uiSettings.setZoomControlsEnabled(true);
+		//		uiSettings.setZoomControlsEnabled(true);
 		uiSettings.setMyLocationButtonEnabled(true);
 		uiSettings.setIndoorLevelPickerEnabled(true);
 		uiSettings.setCompassEnabled(true);
@@ -562,7 +563,7 @@ public class MapsActivity extends AppActivity implements LocationListener{
 		mMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener() {
 			@Override
 			public void onMyLocationChange(Location location) {
-				mCurrentLocation = location;
+				App.Instance.setCurrentLocation(location);
 				Log.d("pg:location", "method: onMyLocationChange -> mCurrentLocation changed");
 			}
 		});
@@ -603,52 +604,63 @@ public class MapsActivity extends AppActivity implements LocationListener{
 				@Override
 				public void success(Playgrounds playgrounds, Response response) {
 					mBinding.loadPinPb.setVisibility(View.GONE);
-					if (mCurrentLocation == null) {
+					Location location = App.Instance.getCurrentLocation();
+					if (location  == null) {
 						Snackbar.make(mBinding.drawerLayout, R.string.lbl_no_current_location, Snackbar.LENGTH_LONG)
 								.show();
 						return;
 					}
 					mMarkerList.clear();
-					mMap.clear();
-
-					final LatLng currentLatLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-					//final LatLng center = mMap.getProjection().getVisibleRegion().latLngBounds.getCenter();
-					List<Playground> grounds = playgrounds.getPlaygroundList();
-					for (final Playground ground : grounds) {
-						LatLng to = new LatLng(ground.getLatitude(), ground.getLongitude());
-						MarkerOptions options = new MarkerOptions().position(to);
-						FavoriteManager favMgr = FavoriteManager.getInstance();
-						if (favMgr.isInit() && favMgr.isCached(ground)) {
-							options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorited));
-						} else {
-							com.playground.notification.utils.Utils.changeMarkerIcon(options, currentLatLng, to);
-						}
-						mMarkerList.put(mMap.addMarker(options), ground);
-					}
-
-					MyLocationManager myLocMgr = MyLocationManager.getInstance();
-					if (myLocMgr.isInit()) {
-						for(MyLocation myLoc : myLocMgr.getCachedList()) {
-							LatLng to = new LatLng(myLoc.getLatitude(), myLoc.getLongitude());
+					if (mMap != null) {
+						mMap.clear();
+						final LatLng currentLatLng = new LatLng(location.getLatitude(),
+								location.getLongitude());
+						List<Playground> grounds = playgrounds.getPlaygroundList();
+						for (final Playground ground : grounds) {
+							LatLng to = new LatLng(ground.getLatitude(), ground.getLongitude());
+							//Draw different markers, for fav , for normal ground, for grounds in near-rings.
 							MarkerOptions options = new MarkerOptions().position(to);
-							options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_saved_ground));
-							mMarkerList.put(mMap.addMarker(options), myLoc);
-						}
-					}
-
-					mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
-						@Override
-						public boolean onMarkerClick(Marker marker) {
-							for (Marker m : mMarkerList.keySet()) {
-								if (m.equals(marker)) {
-									showDialogFragment(PlaygroundDetailFragment.newInstance(App.Instance,
-											currentLatLng.latitude, currentLatLng.longitude, mMarkerList.get(m)), null);
-									break;
-								}
+							FavoriteManager favMgr = FavoriteManager.getInstance();
+							if (favMgr.isInit() && favMgr.isCached(ground)) {
+								options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorited));
+							} else {
+								com.playground.notification.utils.Utils.changeMarkerIcon(options, currentLatLng, to);
 							}
-							return true;
+							NearRingManager nearRingMgr = NearRingManager.getInstance();
+							if (nearRingMgr.isInit() && nearRingMgr.isCached(ground)) {
+								mMap.addCircle(new CircleOptions().center(new LatLng(ground.getLatitude(),
+										ground.getLongitude())).radius(Prefs.getInstance().getAlarmArea()).strokeWidth(
+										1).strokeColor(Color.BLUE).fillColor(getResources().getColor(
+										R.color.common_blue_50)));
+							}
+							mMarkerList.put(mMap.addMarker(options), ground);
 						}
-					});
+
+						MyLocationManager myLocMgr = MyLocationManager.getInstance();
+						if (myLocMgr.isInit()) {
+							for (MyLocation myLoc : myLocMgr.getCachedList()) {
+								LatLng to = new LatLng(myLoc.getLatitude(), myLoc.getLongitude());
+								MarkerOptions options = new MarkerOptions().position(to);
+								options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_saved_ground));
+								mMarkerList.put(mMap.addMarker(options), myLoc);
+							}
+						}
+
+						mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+							@Override
+							public boolean onMarkerClick(Marker marker) {
+								for (Marker m : mMarkerList.keySet()) {
+									if (m.equals(marker)) {
+										showDialogFragment(PlaygroundDetailFragment.newInstance(App.Instance,
+												currentLatLng.latitude, currentLatLng.longitude, mMarkerList.get(m)),
+												null);
+										break;
+									}
+								}
+								return true;
+							}
+						});
+					}
 				}
 
 				@Override

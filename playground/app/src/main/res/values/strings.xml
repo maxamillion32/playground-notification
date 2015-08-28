@@ -90,6 +90,9 @@
     <string name="lbl_favorite_list">Favorite(%1$s/%2$d)</string>
     <string name="lbl_near_ring_list">Near-Rings(%1$s/%2$d)</string>
 
+    <string name="lbl_notify_title">You\'re near to a playground.</string>
+    <string name="lbl_notify_content">Hi I detect a playground near to you, ready?</string>
+
     <string name="settings_map">Map &amp; Locating</string>
 
     <string name="settings_map_types">Types</string>
@@ -141,5 +144,18 @@
         <item>1</item>
         <item>2</item>
         <item>3</item>
+    </string-array>
+
+    <string name="settings_near_ring">Near Rings</string>
+    <string name="near_ring_alarm_area">Alarm area</string>
+    <string-array name="area_types">
+        <item>Standard</item>
+        <item>Medium</item>
+        <item>Large</item>
+    </string-array>
+    <string-array name="area_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
     </string-array>
 </resources>
