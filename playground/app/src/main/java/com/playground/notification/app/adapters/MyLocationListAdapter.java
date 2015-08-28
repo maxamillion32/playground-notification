@@ -85,7 +85,6 @@ public final class MyLocationListAdapter extends SelectableAdapter<MyLocationLis
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		Context cxt = parent.getContext();
-		View convertView = LayoutInflater.from(cxt).inflate(ITEM_LAYOUT, parent, false);
 		LayoutInflater inflater = LayoutInflater.from(cxt);
 		ViewDataBinding binding = DataBindingUtil.inflate(inflater, ITEM_LAYOUT, parent, false);
 		MyLocationListAdapter.ViewHolder viewHolder = new MyLocationListAdapter.ViewHolder(binding);
@@ -98,10 +97,11 @@ public final class MyLocationListAdapter extends SelectableAdapter<MyLocationLis
 		holder.mBinding.setVariable(BR.myLoc, myLocation);
 		holder.mBinding.executePendingBindings();
 
+		Prefs prefs = Prefs.getInstance();
 		String latlng = myLocation.getLatitude() + "," + myLocation.getLongitude();
 		String maptype = Prefs.getInstance().getMapType().equals("0") ? "roadmap" : "hybrid";
-		final String url = "https://maps.googleapis.com/maps/api/staticmap?center=" + latlng +
-				"&zoom=16&size=100x100&markers=color:red%7Clabel:S%7C" + latlng + "&key=" +
+		final String url = prefs.getGoogleApiHost() + "maps/api/staticmap?center=" + latlng +
+				"&zoom=16&size=" + prefs.getMyLocationPreviewSize() + "&markers=color:red%7Clabel:S%7C" + latlng + "&key=" +
 				App.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
 		Picasso.with(App.Instance).load(url).transform(new Transformation() {
 			public Bitmap getResizedBitmap(Bitmap bm, float newWidth, float newHeight) {

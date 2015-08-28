@@ -150,7 +150,7 @@ public final class MyLocationFragment extends DialogFragment {
 
 			String latlng = playground.getLatitude() + "," + playground.getLongitude();
 			String maptype = prefs.getMapType().equals("0") ? "roadmap" : "hybrid";
-			String url = "https://maps.googleapis.com/maps/api/staticmap?center=" + latlng +
+			String url = prefs.getGoogleApiHost() + "maps/api/staticmap?center=" + latlng +
 					"&zoom=16&size=420x200&markers=color:red%7Clabel:S%7C" + latlng + "&key=" +
 					App.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
 			Picasso.with(App.Instance).load(url).into(mBinding.locationPreviewIv);

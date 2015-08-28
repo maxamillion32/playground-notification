@@ -41,6 +41,14 @@ public final class Prefs extends BasicPrefs {
 	 * API search defined in config.
 	 */
 	private static final String KEY_API_SEARCH = "api_search";
+	/**
+	 * Google API's host.
+	 */
+	private static final String KEY_GOOGLE_API_HOST = "google_api_host";
+	/**
+	 * Map preview size for my-location-list.
+	 */
+	private static final String KEY_MY_LOC_PRE = "my_loc_pre";
 
 	//All settings
 	public static final String KEY_MAP_TYPES = "key.map.types";
@@ -189,8 +197,18 @@ public final class Prefs extends BasicPrefs {
 	public String getApiSearch() {
 		return getString(KEY_API_SEARCH, null);
 	}
-
-
+	/**
+	 * Google API's host.
+	 */
+	public String getGoogleApiHost() {
+		return getString(KEY_GOOGLE_API_HOST, null);
+	}
+	/**
+	 * Map preview size for my-location-list.
+	 */
+	public String getMyLocationPreviewSize() {
+		return getString(KEY_MY_LOC_PRE, null);
+	}
 
 	public String getMapType() {
 		return getString(KEY_MAP_TYPES, "0");
