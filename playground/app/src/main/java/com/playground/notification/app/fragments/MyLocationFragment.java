@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.playground.notification.R;
 import com.playground.notification.api.Api;
+import com.playground.notification.api.ApiNotInitializedException;
 import com.playground.notification.app.App;
 import com.playground.notification.app.activities.MapsActivity;
 import com.playground.notification.databinding.MyLocationBinding;
@@ -136,27 +137,31 @@ public final class MyLocationFragment extends DialogFragment {
 				break;
 
 			}
-			Api.getMatrix(lat + "," + lng, playground.getLatitude() + "," + playground.getLongitude(),
-					Locale.getDefault().getLanguage(), method, App.Instance.getDistanceMatrixKey(), units,
-					new Callback<Matrix>() {
-						@Override
-						public void success(Matrix matrix, Response response) {
-							mBinding.setMatrix(matrix);
-							mBinding.setMode(method);
-							mBinding.setHandler(new EventHandler(lat, lng, playground, mBinding));
-						}
+			try {
+				Api.getMatrix(lat + "," + lng, playground.getLatitude() + "," + playground.getLongitude(),
+						Locale.getDefault().getLanguage(), method, App.Instance.getDistanceMatrixKey(), units,
+						new Callback<Matrix>() {
+							@Override
+							public void success(Matrix matrix, Response response) {
+								mBinding.setMatrix(matrix);
+								mBinding.setMode(method);
+								mBinding.setHandler(new EventHandler(lat, lng, playground, mBinding));
+							}
 
-						@Override
-						public void failure(RetrofitError error) {
+							@Override
+							public void failure(RetrofitError error) {
 
-						}
-					});
+							}
+						});
+			} catch (ApiNotInitializedException e) {
+				dismiss();
+			}
 
 
 			String latlng = playground.getLatitude() + "," + playground.getLongitude();
 			String maptype = prefs.getMapType().equals("0") ? "roadmap" : "hybrid";
 			String url = prefs.getGoogleApiHost() + "maps/api/staticmap?center=" + latlng +
-					"&zoom=16&size=420x200&markers=color:red%7Clabel:S%7C" + latlng + "&key=" +
+					"&zoom=16&size=620x250&markers=color:red%7Clabel:S%7C" + latlng + "&key=" +
 					App.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
 			Picasso.with(App.Instance).load(url).into(mBinding.locationPreviewIv);
 			if(getArguments().getBoolean(EXTRAS_CLICKABLE)){
@@ -200,21 +205,26 @@ public final class MyLocationFragment extends DialogFragment {
 				break;
 
 			}
-			Api.getMatrix(mLat + "," + mLng, mGround.getLatitude() + "," + mGround.getLongitude(),
-					Locale.getDefault().getLanguage(), mBinding.getMode(), App.Instance.getDistanceMatrixKey(), units,
-					new Callback<Matrix>() {
-						@Override
-						public void success(Matrix matrix, Response response) {
-							mBinding.setMatrix(matrix);
-							mBinding.setHandler(new EventHandler(mLat, mLng, mGround, mBinding));
-							mBinding.changingPb.setVisibility(View.GONE);
-						}
+			try {
+				Api.getMatrix(mLat + "," + mLng, mGround.getLatitude() + "," + mGround.getLongitude(),
+						Locale.getDefault().getLanguage(), mBinding.getMode(), App.Instance.getDistanceMatrixKey(), units,
+						new Callback<Matrix>() {
+							@Override
+							public void success(Matrix matrix, Response response) {
+								mBinding.setMatrix(matrix);
+								mBinding.setHandler(new EventHandler(mLat, mLng, mGround, mBinding));
+								mBinding.changingPb.setVisibility(View.GONE);
+							}
 
-						@Override
-						public void failure(RetrofitError error) {
-							mBinding.changingPb.setVisibility(View.GONE);
-						}
-					});
+							@Override
+							public void failure(RetrofitError error) {
+								mBinding.changingPb.setVisibility(View.GONE);
+							}
+						});
+			} catch (ApiNotInitializedException e) {
+				//Ignore this request.
+				mBinding.changingPb.setVisibility(View.GONE);
+			}
 		}
 
 		public void onSaveMyLocationClicked(View v) {

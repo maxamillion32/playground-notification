@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.playground.notification.ds.Playgrounds;
@@ -96,12 +97,6 @@ public final class Api {
 		g = adapter.create(G.class);
 	}
 
-	/**
-	 * Init the http-client and cache.
-	 */
-	private static void initClient() {
-		initClient(null);
-	}
 
 
 	/**
@@ -135,14 +130,15 @@ public final class Api {
 	}
 
 
-	public static final void getPlaygrounds(String api, Request req, Callback<Playgrounds> callback) {
+	public static final void getPlaygrounds(String api, Request req, Callback<Playgrounds> callback) throws
+			ApiNotInitializedException {
 		assertCall();
 		s.getPlaygrounds(api, req, callback);
 	}
 
 
 	public static final void getMatrix(String origins, String destinations, String language, String mode, String key, String units,
-			Callback<Matrix> callback) {
+			Callback<Matrix> callback) throws ApiNotInitializedException {
 		assertCall();
 		g.getMatrix(origins, destinations, language, mode, key, units, callback);
 	}
@@ -151,18 +147,16 @@ public final class Api {
 	/**
 	 * Assert before calling api.
 	 */
-	private static void assertCall() {
-		if (sClient == null) {//Create http-client when needs.
-			initClient();
-		}
-		if (sHost == null) {//Default when needs.
-			sHost = "http://www.faroo.com/";
-		}
-		Log.i(TAG, String.format("Host:%s, Cache:%d", sHost, sCacheSize));
-		if (sCache != null) {
-			Log.i(TAG, String.format("RequestCount:%d", sCache.getRequestCount()));
-			Log.i(TAG, String.format("NetworkCount:%d", sCache.getNetworkCount()));
-			Log.i(TAG, String.format("HitCount:%d", sCache.getHitCount()));
+	private static void assertCall() throws ApiNotInitializedException {
+		if (sClient == null || TextUtils.isEmpty(sHost)) {
+			throw new ApiNotInitializedException();
+		} else {
+			Log.i(TAG, String.format("Host:%s, Cache:%d", sHost, sCacheSize));
+			if (sCache != null) {
+				Log.i(TAG, String.format("RequestCount:%d", sCache.getRequestCount()));
+				Log.i(TAG, String.format("NetworkCount:%d", sCache.getNetworkCount()));
+				Log.i(TAG, String.format("HitCount:%d", sCache.getHitCount()));
+			}
 		}
 	}
 

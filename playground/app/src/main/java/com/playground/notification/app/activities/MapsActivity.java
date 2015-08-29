@@ -66,6 +66,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.playground.notification.R;
 import com.playground.notification.api.Api;
+import com.playground.notification.api.ApiNotInitializedException;
 import com.playground.notification.app.App;
 import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.AppListImpFragment;
@@ -646,74 +647,79 @@ public class MapsActivity extends AppActivity implements LocationListener {
 			request.setSouth(bounds.southwest.latitude);
 			request.setWest(bounds.southwest.longitude);
 
-			Api.getPlaygrounds(Prefs.getInstance().getApiSearch(), request, new Callback<Playgrounds>() {
-				@Override
-				public void success(Playgrounds playgrounds, Response response) {
-					mBinding.loadPinPb.setVisibility(View.GONE);
-					Location location = App.Instance.getCurrentLocation();
-					if (location  == null) {
-						Snackbar.make(mBinding.drawerLayout, R.string.lbl_no_current_location, Snackbar.LENGTH_LONG)
-								.show();
-						return;
-					}
-					mMarkerList.clear();
-					if (mMap != null) {
-						mMap.clear();
-						final LatLng currentLatLng = new LatLng(location.getLatitude(),
-								location.getLongitude());
-						List<Playground> grounds = playgrounds.getPlaygroundList();
-						for (final Playground ground : grounds) {
-							LatLng to = new LatLng(ground.getLatitude(), ground.getLongitude());
-							//Draw different markers, for fav , for normal ground, for grounds in near-rings.
-							MarkerOptions options = new MarkerOptions().position(to);
-							FavoriteManager favMgr = FavoriteManager.getInstance();
-							if (favMgr.isInit() && favMgr.isCached(ground)) {
-								options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorited));
-							} else {
-								com.playground.notification.utils.Utils.changeMarkerIcon(options, currentLatLng, to);
-							}
-							NearRingManager nearRingMgr = NearRingManager.getInstance();
-							if (nearRingMgr.isInit() && nearRingMgr.isCached(ground)) {
-								mMap.addCircle(new CircleOptions().center(new LatLng(ground.getLatitude(),
-										ground.getLongitude())).radius(Prefs.getInstance().getAlarmArea()).strokeWidth(
-										1).strokeColor(Color.BLUE).fillColor(getResources().getColor(
-										R.color.common_blue_50)));
-							}
-							mMarkerList.put(mMap.addMarker(options), ground);
+			try {
+				Api.getPlaygrounds(Prefs.getInstance().getApiSearch(), request, new Callback<Playgrounds>() {
+					@Override
+					public void success(Playgrounds playgrounds, Response response) {
+						mBinding.loadPinPb.setVisibility(View.GONE);
+						Location location = App.Instance.getCurrentLocation();
+						if (location  == null) {
+							Snackbar.make(mBinding.drawerLayout, R.string.lbl_no_current_location, Snackbar.LENGTH_LONG)
+									.show();
+							return;
 						}
-
-						MyLocationManager myLocMgr = MyLocationManager.getInstance();
-						if (myLocMgr.isInit()) {
-							for (MyLocation myLoc : myLocMgr.getCachedList()) {
-								LatLng to = new LatLng(myLoc.getLatitude(), myLoc.getLongitude());
+						mMarkerList.clear();
+						if (mMap != null) {
+							mMap.clear();
+							final LatLng currentLatLng = new LatLng(location.getLatitude(),
+									location.getLongitude());
+							List<Playground> grounds = playgrounds.getPlaygroundList();
+							for (final Playground ground : grounds) {
+								LatLng to = new LatLng(ground.getLatitude(), ground.getLongitude());
+								//Draw different markers, for fav , for normal ground, for grounds in near-rings.
 								MarkerOptions options = new MarkerOptions().position(to);
-								options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_saved_ground));
-								mMarkerList.put(mMap.addMarker(options), myLoc);
-							}
-						}
-
-						mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
-							@Override
-							public boolean onMarkerClick(Marker marker) {
-								for (Marker m : mMarkerList.keySet()) {
-									if (m.equals(marker)) {
-										showDialogFragment(PlaygroundDetailFragment.newInstance(App.Instance,
-												currentLatLng.latitude, currentLatLng.longitude, mMarkerList.get(m), false),
-												null);
-										break;
-									}
+								FavoriteManager favMgr = FavoriteManager.getInstance();
+								if (favMgr.isInit() && favMgr.isCached(ground)) {
+									options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorited));
+								} else {
+									com.playground.notification.utils.Utils.changeMarkerIcon(options, currentLatLng, to);
 								}
-								return true;
+								NearRingManager nearRingMgr = NearRingManager.getInstance();
+								if (nearRingMgr.isInit() && nearRingMgr.isCached(ground)) {
+									mMap.addCircle(new CircleOptions().center(new LatLng(ground.getLatitude(),
+											ground.getLongitude())).radius(Prefs.getInstance().getAlarmArea()).strokeWidth(
+											1).strokeColor(Color.BLUE).fillColor(getResources().getColor(
+											R.color.common_blue_50)));
+								}
+								mMarkerList.put(mMap.addMarker(options), ground);
 							}
-						});
-					}
-				}
 
-				@Override
-				public void failure(RetrofitError error) {
-					mBinding.loadPinPb.setVisibility(View.GONE);
-				}
-			});
+							MyLocationManager myLocMgr = MyLocationManager.getInstance();
+							if (myLocMgr.isInit()) {
+								for (MyLocation myLoc : myLocMgr.getCachedList()) {
+									LatLng to = new LatLng(myLoc.getLatitude(), myLoc.getLongitude());
+									MarkerOptions options = new MarkerOptions().position(to);
+									options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_saved_ground));
+									mMarkerList.put(mMap.addMarker(options), myLoc);
+								}
+							}
+
+							mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+								@Override
+								public boolean onMarkerClick(Marker marker) {
+									for (Marker m : mMarkerList.keySet()) {
+										if (m.equals(marker)) {
+											showDialogFragment(PlaygroundDetailFragment.newInstance(App.Instance,
+													currentLatLng.latitude, currentLatLng.longitude, mMarkerList.get(m), false),
+													null);
+											break;
+										}
+									}
+									return true;
+								}
+							});
+						}
+					}
+
+					@Override
+					public void failure(RetrofitError error) {
+						mBinding.loadPinPb.setVisibility(View.GONE);
+					}
+				});
+			} catch (ApiNotInitializedException e) {
+				//Ignore this request.
+				mBinding.loadPinPb.setVisibility(View.GONE);
+			}
 		}
 	}
 
