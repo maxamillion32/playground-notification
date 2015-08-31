@@ -161,7 +161,7 @@ public final class MyLocationFragment extends DialogFragment {
 			String latlng = playground.getLatitude() + "," + playground.getLongitude();
 			String maptype = prefs.getMapType().equals("0") ? "roadmap" : "hybrid";
 			String url = prefs.getGoogleApiHost() + "maps/api/staticmap?center=" + latlng +
-					"&zoom=16&size=620x250&markers=color:red%7Clabel:S%7C" + latlng + "&key=" +
+					"&zoom=16&size="+prefs.getDetailPreviewSize()+"&markers=color:red%7Clabel:S%7C" + latlng + "&key=" +
 					App.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
 			Picasso.with(App.Instance).load(url).into(mBinding.locationPreviewIv);
 			if(getArguments().getBoolean(EXTRAS_CLICKABLE)){
@@ -243,7 +243,7 @@ public final class MyLocationFragment extends DialogFragment {
 		}
 
 		public void onShareGround(View v) {
-			final String url = "https://www.google.de/maps/search/" + mGround.getLatitude() + "," + mGround.getLongitude();
+			final String url = Prefs.getInstance().getGoogleMapSearchHost() + mGround.getLatitude() + "," + mGround.getLongitude();
 			com.tinyurl4j.Api.getTinyUrl(url,
 					new Callback<com.tinyurl4j.data.Response>() {
 						@Override

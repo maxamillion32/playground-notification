@@ -1,8 +1,11 @@
 package com.playground.notification.utils;
 
+import java.util.Locale;
+
 import android.content.Context;
 
 import com.chopping.application.BasicPrefs;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Store app and device information.
@@ -49,6 +52,22 @@ public final class Prefs extends BasicPrefs {
 	 * Map preview size for my-location-list.
 	 */
 	private static final String KEY_MY_LOC_PRE = "my_loc_pre";
+	/**
+	 * Map preview size for detail-view.
+	 */
+	private static final String KEY_DETAIL_PRE="detail_pre";
+	/**
+	 * Host name for Google's map search engine.
+	 */
+	private static final String KEY_GOOGLE_MAP_SEARCH_HOST = "google_map_search_host";
+	/**
+	 * Url to load a icon of current weather.
+	 */
+	private static final String KEY_WEATHER_ICON_URL = "weather_icon_url";
+	/**
+	 * The weather-API.
+	 */
+	private static final String KEY_WEATHER_API = "weather_api";
 
 	//All settings
 	public static final String KEY_MAP_TYPES = "key.map.types";
@@ -198,24 +217,37 @@ public final class Prefs extends BasicPrefs {
 	public String getApiSearch() {
 		return getString(KEY_API_SEARCH, null);
 	}
+
 	/**
 	 * Google API's host.
 	 */
 	public String getGoogleApiHost() {
 		return getString(KEY_GOOGLE_API_HOST, null);
 	}
+
 	/**
 	 * Map preview size for my-location-list.
+	 *
+	 * @return Size in format {@code "23x34"};
 	 */
 	public String getMyLocationPreviewSize() {
 		return getString(KEY_MY_LOC_PRE, null);
+	}
+
+	/**
+	 * Map preview size for detail-view.
+	 *
+	 * @return Size in format {@code "23x34"};
+	 */
+	public String getDetailPreviewSize() {
+		return getString(KEY_DETAIL_PRE, null);
 	}
 
 	public String getMapType() {
 		return getString(KEY_MAP_TYPES, "0");
 	}
 
-	public String getBatteryLifeType(){
+	public String getBatteryLifeType() {
 		return getString(KEY_BATTERY_TYPES, "0");
 	}
 
@@ -246,5 +278,39 @@ public final class Prefs extends BasicPrefs {
 
 	public String getAlarmAreaValue() {
 		return getString(KEY_ALARM_AREA, "0");
+	}
+
+	/**
+	 * Host name for Google's map search engine.
+	 *
+	 * @return The host name of Google'map search.
+	 */
+	public String getGoogleMapSearchHost() {
+		return getString(KEY_GOOGLE_MAP_SEARCH_HOST, null);
+	}
+
+	/**
+	 * Url to load a icon of current weather.
+	 *
+	 * @param name Icon's name.
+	 * @return A completed URL to an icon.
+	 */
+	public String getWeahterIconUrl(String name) {
+		return String.format(getString(KEY_WEATHER_ICON_URL, null), name);
+	}
+
+	/**
+	 * The weather-API.
+	 *
+	 * @param latLng
+	 * 		The location to ask.
+	 * @param units
+	 * 		is available in Fahrenheit, Celsius and Kelvin units.
+	 *
+	 * @return The completed API.
+	 */
+	public String getWeatherApi(LatLng latLng, String units) {
+		return String.format(getString(KEY_WEATHER_API, null), latLng.latitude, latLng.longitude,
+				Locale.getDefault().getLanguage(), units);
 	}
 }

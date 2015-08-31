@@ -64,7 +64,7 @@ public final class GeofenceTransitionsIntentService extends IntentService {
 				for (final NearRing ring : rings) {
 					if (ring.getId().equals(geofence.getRequestId())) {
 						final String url =
-								"https://www.google.de/maps/search/" + ring.getLatitude() + "," + ring.getLongitude();
+								Prefs.getInstance().getGoogleMapSearchHost() + ring.getLatitude() + "," + ring.getLongitude();
 						com.tinyurl4j.Api.getTinyUrl(url, new Callback<Response>() {
 							@Override
 							public void success(com.tinyurl4j.data.Response response,
