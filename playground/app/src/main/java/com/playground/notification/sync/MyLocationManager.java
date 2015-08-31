@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.playground.notification.R;
 import com.playground.notification.app.App;
-import com.playground.notification.ds.Playground;
+import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.MyLocation;
 import com.playground.notification.ds.sync.NearRing;
 import com.playground.notification.utils.Prefs;

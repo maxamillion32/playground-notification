@@ -93,6 +93,9 @@
     <string name="lbl_notify_title">You\'re near to a playground.</string>
     <string name="lbl_notify_content">Hi I detect a playground near to you, ready?</string>
 
+    <string name="lbl_c" formatted="false">%1$.0f °C</string>
+    <string name="lbl_f" formatted="false">%1$.0f °F</string>
+
     <string name="settings_map">Map &amp; Locating</string>
 
     <string name="settings_map_types">Types</string>

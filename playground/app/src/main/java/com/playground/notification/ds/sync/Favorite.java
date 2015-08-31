@@ -1,7 +1,7 @@
 package com.playground.notification.ds.sync;
 
 
-import com.playground.notification.ds.Playground;
+import com.playground.notification.ds.grounds.Playground;
 
 public final class Favorite extends SyncPlayground {
 	public Favorite(String uid, Playground ground) {

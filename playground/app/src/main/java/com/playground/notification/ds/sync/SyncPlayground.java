@@ -1,6 +1,6 @@
 package com.playground.notification.ds.sync;
 
-import com.playground.notification.ds.Playground;
+import com.playground.notification.ds.grounds.Playground;
 
 public abstract class SyncPlayground extends Playground {
 	private String mUID;

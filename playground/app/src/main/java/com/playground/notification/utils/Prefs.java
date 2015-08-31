@@ -1,11 +1,8 @@
 package com.playground.notification.utils;
 
-import java.util.Locale;
-
 import android.content.Context;
 
 import com.chopping.application.BasicPrefs;
-import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Store app and device information.
@@ -65,9 +62,9 @@ public final class Prefs extends BasicPrefs {
 	 */
 	private static final String KEY_WEATHER_ICON_URL = "weather_icon_url";
 	/**
-	 * The weather-API.
+	 * The weather-API host.
 	 */
-	private static final String KEY_WEATHER_API = "weather_api";
+	private static final String KEY_WEATHER_API_HOST = "weather_api";
 
 	//All settings
 	public static final String KEY_MAP_TYPES = "key.map.types";
@@ -300,17 +297,12 @@ public final class Prefs extends BasicPrefs {
 	}
 
 	/**
-	 * The weather-API.
+	 * The weather-API host.
 	 *
-	 * @param latLng
-	 * 		The location to ask.
-	 * @param units
-	 * 		is available in Fahrenheit, Celsius and Kelvin units.
 	 *
-	 * @return The completed API.
+	 * @return The host of API.
 	 */
-	public String getWeatherApi(LatLng latLng, String units) {
-		return String.format(getString(KEY_WEATHER_API, null), latLng.latitude, latLng.longitude,
-				Locale.getDefault().getLanguage(), units);
+	public String getWeatherApiHost() {
+		return getString(KEY_WEATHER_API_HOST, null);
 	}
 }

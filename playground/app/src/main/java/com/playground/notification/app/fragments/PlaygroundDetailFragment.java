@@ -26,7 +26,7 @@ import com.playground.notification.app.activities.MapsActivity;
 import com.playground.notification.bus.ShowLocationRatingEvent;
 import com.playground.notification.databinding.PlaygroundDetailBinding;
 import com.playground.notification.databinding.RatingDialogBinding;
-import com.playground.notification.ds.Playground;
+import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.google.Matrix;
 import com.playground.notification.ds.sync.Rating;
 import com.playground.notification.ds.sync.SyncPlayground;

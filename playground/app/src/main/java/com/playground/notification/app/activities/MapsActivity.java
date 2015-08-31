@@ -3,6 +3,7 @@ package com.playground.notification.app.activities;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import android.app.Activity;
@@ -64,6 +65,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.nineoldandroids.view.ViewHelper;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.api.ApiNotInitializedException;
@@ -76,18 +79,21 @@ import com.playground.notification.app.fragments.PlaygroundDetailFragment;
 import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
 import com.playground.notification.databinding.ActivityMapsBinding;
-import com.playground.notification.ds.Playground;
-import com.playground.notification.ds.Playgrounds;
-import com.playground.notification.ds.Request;
+import com.playground.notification.ds.grounds.Playground;
+import com.playground.notification.ds.grounds.Playgrounds;
+import com.playground.notification.ds.grounds.Request;
 import com.playground.notification.ds.sync.Favorite;
 import com.playground.notification.ds.sync.MyLocation;
 import com.playground.notification.ds.sync.NearRing;
+import com.playground.notification.ds.weather.Weather;
+import com.playground.notification.ds.weather.WeatherDetail;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.sync.SyncManager;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.views.TouchableMapFragment;
+import com.squareup.picasso.Picasso;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -330,6 +336,39 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		NearRingManager.getInstance().init();
 		MyLocationManager.getInstance().init();
 		initDrawerContent();
+		//Ask weather
+		if (App.Instance.getCurrentLocation() != null) {
+			Location location = App.Instance.getCurrentLocation();
+			try {
+				Api.getWeather(location.getLatitude(), location.getLongitude(), Locale.getDefault().getLanguage(),
+						"metric", new Callback<Weather>() {
+							@Override
+							public void success(Weather weather, Response response) {
+								mBinding.boardVg.setVisibility(View.VISIBLE);
+								WeatherDetail weatherDetail = weather.getDetails().get(0);
+								String temp =  getString(R.string.lbl_c, weather.getTemperature().getValue());
+								String weatherInfo = String.format("%s", temp );
+								mBinding.boardTv.setText(weatherInfo);
+								String url = String.format(Prefs.getInstance().getWeahterIconUrl(weatherDetail.getIcon()));
+								Picasso.with(App.Instance).load(url).into(mBinding.boardIconIv);
+
+								ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mBinding.boardVg);
+								float x = ViewHelper.getX(mBinding.boardVg);
+								float y = ViewHelper.getY(mBinding.boardVg);
+								ViewHelper.setPivotX(mBinding.boardVg, x / 2);
+								ViewHelper.setPivotY(mBinding.boardVg, y / 2);
+								animator.rotation(-5f).rotation(5f).setDuration(500) .start();
+							}
+
+							@Override
+							public void failure(RetrofitError error) {
+
+							}
+						});
+			} catch (ApiNotInitializedException e) {
+				//Ignore this request.
+			}
+		}
 	}
 
 	/**
@@ -339,7 +378,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		mBinding.boardVg.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Utils.showShortToast(App.Instance, "Click on board");
+				v.setVisibility(View.GONE);
 			}
 		});
 	}
@@ -787,7 +826,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		Prefs prefs = Prefs.getInstance();
 		if (!TextUtils.isEmpty(prefs.getApiHost())) {
 			showAppList();
-			Api.initialize(App.Instance, prefs.getApiHost());
+			Api.initialize(App.Instance, prefs.getApiHost(), prefs.getWeatherApiHost());
 			initUseApp();
 		} else  {
 			exitAppDialog();

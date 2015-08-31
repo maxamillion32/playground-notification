@@ -12,7 +12,7 @@ import android.widget.ImageView;
 
 import com.playground.notification.R;
 import com.playground.notification.app.App;
-import com.playground.notification.ds.Playground;
+import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Favorite;
 import com.playground.notification.ds.sync.SyncPlayground;
 

@@ -9,7 +9,7 @@ import android.view.View;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.bus.NearRingListLoadingErrorEvent;
-import com.playground.notification.ds.Playground;
+import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.NearRing;
 import com.playground.notification.ds.sync.SyncPlayground;
 import com.playground.notification.geofence.GeofenceManagerService;

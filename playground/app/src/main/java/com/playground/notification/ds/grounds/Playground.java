@@ -1,4 +1,4 @@
-package com.playground.notification.ds;
+package com.playground.notification.ds.grounds;
 
 
 import java.io.Serializable;

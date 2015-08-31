@@ -20,7 +20,7 @@ import com.playground.notification.api.ApiNotInitializedException;
 import com.playground.notification.app.App;
 import com.playground.notification.app.activities.MapsActivity;
 import com.playground.notification.databinding.MyLocationBinding;
-import com.playground.notification.ds.Playground;
+import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.google.Matrix;
 import com.playground.notification.ds.sync.MyLocation;
 import com.playground.notification.sync.MyLocationManager;

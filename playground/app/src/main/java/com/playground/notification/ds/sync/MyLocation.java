@@ -1,6 +1,6 @@
 package com.playground.notification.ds.sync;
 
-import com.playground.notification.ds.Playground;
+import com.playground.notification.ds.grounds.Playground;
 
 public final class MyLocation extends SyncPlayground {
 	private String mLabel;
