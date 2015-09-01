@@ -12,8 +12,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.media.AudioManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat.BigPictureStyle;
 import android.support.v4.app.NotificationCompat.BigTextStyle;
@@ -150,14 +148,7 @@ public final class GeofenceTransitionsIntentService extends IntentService {
 				.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_geofence_notify));
 		mNotifyBuilder.setContentIntent(contentIntent);
 
-
-		AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
-			mNotifyBuilder.setVibrate(new long[] { 1000, 1000, 1000, 1000 });
-			mNotifyBuilder.setSound(Uri.parse(String.format("android.resource://%s/%s", getPackageName(),
-					R.raw.signal)));
-		}
-		mNotifyBuilder.setLights(getResources().getColor(R.color.primary_color), 1000, 1000);
+		Utils.vibrateSound(this, mNotifyBuilder);
 
 		mNotificationManager.notify((int) System.currentTimeMillis(), mNotifyBuilder.build());
 	}

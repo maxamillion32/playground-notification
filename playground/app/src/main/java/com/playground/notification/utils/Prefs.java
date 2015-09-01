@@ -310,7 +310,7 @@ public final class Prefs extends BasicPrefs {
 	 * @param name Icon's name.
 	 * @return A completed URL to an icon.
 	 */
-	public String getWeahterIconUrl(String name) {
+	public String getWeatherIconUrl(String name) {
 		return String.format(getString(KEY_WEATHER_ICON_URL, null), name);
 	}
 

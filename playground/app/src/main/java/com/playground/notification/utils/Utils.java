@@ -3,6 +3,7 @@ package com.playground.notification.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 
@@ -84,5 +85,17 @@ public final class Utils {
 		i.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
 		i.putExtra(android.content.Intent.EXTRA_TEXT, body);
 		return i;
+	}
+
+	/**
+	 * Vibrate and make sound.
+	 */
+	public static void vibrateSound(Context cxt, android.support.v4.app.NotificationCompat.Builder notifyBuilder) {
+		AudioManager audioManager = (AudioManager) cxt.getSystemService(Context.AUDIO_SERVICE);
+		if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+			notifyBuilder.setVibrate(new long[] { 1000, 1000, 1000, 1000 });
+			notifyBuilder.setSound(Uri.parse(String.format("android.resource://%s/%s", cxt.getPackageName(), R.raw.signal)));
+		}
+		notifyBuilder.setLights(cxt.getResources().getColor(R.color.primary_color), 1000, 1000);
 	}
 }

@@ -195,9 +195,10 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	/**
 	 * Show single instance of {@link MapsActivity}
 	 *
-	 * @param cxt {@link Activity}.
+	 * @param cxt
+	 * 		{@link Activity}.
 	 */
-	public static void showInstance(Activity cxt, Playground ground ) {
+	public static void showInstance(Activity cxt, Playground ground) {
 		Intent intent = new Intent(cxt, MapsActivity.class);
 		intent.putExtra(EXTRAS_GROUND, ground);
 		intent.setFlags(FLAG_ACTIVITY_SINGLE_TOP | FLAG_ACTIVITY_CLEAR_TOP);
@@ -222,7 +223,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 				break;
 			}
 		case SettingsActivity.REQ:
-			askWeather();
+			askWeatherBoard();
 			break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -247,20 +248,19 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		setIntent(intent);
-		if(intent.getSerializableExtra(EXTRAS_GROUND) != null) {
+		if (intent.getSerializableExtra(EXTRAS_GROUND) != null) {
 			Playground playground = (Playground) intent.getSerializableExtra(EXTRAS_GROUND);
-			LatLng to = new LatLng(playground.getLatitude(),
-					playground.getLongitude());
+			LatLng to = new LatLng(playground.getLatitude(), playground.getLongitude());
 			CameraUpdate update = CameraUpdateFactory.newLatLngZoom(to, 16);
-			if(playground instanceof MyLocation) {
+			if (playground instanceof MyLocation) {
 				MarkerOptions options = new MarkerOptions().position(to);
 				options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_saved_ground));
 				mMap.addMarker(options);
-			} else if(playground instanceof Favorite) {
+			} else if (playground instanceof Favorite) {
 				MarkerOptions options = new MarkerOptions().position(to);
 				options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorited));
 				mMap.addMarker(options);
-			} else if(playground instanceof NearRing) {
+			} else if (playground instanceof NearRing) {
 				mMap.addCircle(new CircleOptions().center(new LatLng(playground.getLatitude(),
 						playground.getLongitude())).radius(Prefs.getInstance().getAlarmArea()).strokeWidth(1)
 						.strokeColor(Color.BLUE).fillColor(getResources().getColor(R.color.common_blue_50)));
@@ -334,13 +334,13 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		NearRingManager.getInstance().init();
 		MyLocationManager.getInstance().init();
 		initDrawerContent();
-		askWeather();
+		askWeatherBoard();
 	}
 
 	/**
 	 * Get weather status.
 	 */
-	private void askWeather() {
+	private void askWeatherBoard() {
 		if (App.Instance.getCurrentLocation() != null) {
 			Location location = App.Instance.getCurrentLocation();
 			try {
@@ -357,31 +357,42 @@ public class MapsActivity extends AppActivity implements LocationListener {
 						units, App.Instance.getWeatherKey(), new Callback<Weather>() {
 							@Override
 							public void success(Weather weather, Response response) {
-								if (Prefs.getInstance().showWeatherBoard()) {
-									mBinding.boardVg.setVisibility(View.VISIBLE);
-									WeatherDetail weatherDetail = weather.getDetails().get(0);
-									int units = R.string.lbl_c;
-									switch (Prefs.getInstance().getWeatherUnitsType()) {
-									case "0":
-										units = R.string.lbl_c;
-										break;
-									case "1":
-										units = R.string.lbl_f;
-										break;
-									}
-									String temp = getString(units, weather.getTemperature().getValue());
-									String weatherInfo = String.format("%s", temp);
-									mBinding.boardTv.setText(weatherInfo);
-									String url = String.format(Prefs.getInstance().getWeahterIconUrl(
-											weatherDetail.getIcon()));
-									Picasso.with(App.Instance).load(url).into(mBinding.boardIconIv);
+								Prefs prefs = Prefs.getInstance();
+								if (prefs.showWeatherBoard()) {
+									List<WeatherDetail> details = weather.getDetails();
+									if (details != null && details.size() > 0) {
+										WeatherDetail weatherDetail = details.get(0);
+										if (weatherDetail != null) {
+											mBinding.boardVg.setVisibility(View.VISIBLE);
+											int units = R.string.lbl_c;
+											switch (prefs.getWeatherUnitsType()) {
+											case "0":
+												units = R.string.lbl_c;
+												break;
+											case "1":
+												units = R.string.lbl_f;
+												break;
+											}
+											String temp = weather.getTemperature() != null ? getString(units,
+													weather.getTemperature().getValue()) : getString(units, 0f);
+											String weatherDesc = String.format("%s", temp);
+											if (!TextUtils.isEmpty(weatherDesc)) {
+												mBinding.boardTv.setText(weatherDesc);
+											}
+											String url = !TextUtils.isEmpty(weatherDetail.getIcon()) ?
+													prefs.getWeatherIconUrl(weatherDetail.getIcon()) :
+													prefs.getWeatherIconUrl("03d");
+											Picasso.with(App.Instance).load(url).into(mBinding.boardIconIv);
 
-									ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mBinding.boardVg);
-									float x = ViewHelper.getX(mBinding.boardVg);
-									float y = ViewHelper.getY(mBinding.boardVg);
-									ViewHelper.setPivotX(mBinding.boardVg, x / 2);
-									ViewHelper.setPivotY(mBinding.boardVg, y / 2);
-									animator.rotation(-5f).setDuration(500).start();
+											ViewPropertyAnimator animator = ViewPropertyAnimator.animate(
+													mBinding.boardVg);
+											float x = ViewHelper.getX(mBinding.boardVg);
+											float y = ViewHelper.getY(mBinding.boardVg);
+											ViewHelper.setPivotX(mBinding.boardVg, x / 2);
+											ViewHelper.setPivotY(mBinding.boardVg, y / 2);
+											animator.rotation(-5f).setDuration(500).start();
+										}
+									}
 								}
 							}
 
@@ -548,9 +559,9 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	 * Force to exit application for no location-service.
 	 */
 	private void exitAppDialog() {
-		mExitAppDlg = new AlertDialog.Builder(MapsActivity.this).setCancelable(false).setTitle(R.string.application_name).setMessage(
-				R.string.lbl_no_location_service).setPositiveButton(R.string.btn_confirm,
-				new DialogInterface.OnClickListener() {
+		mExitAppDlg = new AlertDialog.Builder(MapsActivity.this).setCancelable(false).setTitle(
+				R.string.application_name).setMessage(R.string.lbl_no_location_service).setPositiveButton(
+				R.string.btn_confirm, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						ActivityCompat.finishAfterTransition(MapsActivity.this);
 					}
@@ -725,7 +736,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 					public void success(Playgrounds playgrounds, Response response) {
 						mBinding.loadPinPb.setVisibility(View.GONE);
 						Location location = App.Instance.getCurrentLocation();
-						if (location  == null) {
+						if (location == null) {
 							Snackbar.make(mBinding.drawerLayout, R.string.lbl_no_current_location, Snackbar.LENGTH_LONG)
 									.show();
 							return;
@@ -733,8 +744,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 						mMarkerList.clear();
 						if (mMap != null) {
 							mMap.clear();
-							final LatLng currentLatLng = new LatLng(location.getLatitude(),
-									location.getLongitude());
+							final LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 							List<Playground> grounds = playgrounds.getPlaygroundList();
 							for (final Playground ground : grounds) {
 								LatLng to = new LatLng(ground.getLatitude(), ground.getLongitude());
@@ -744,14 +754,15 @@ public class MapsActivity extends AppActivity implements LocationListener {
 								if (favMgr.isInit() && favMgr.isCached(ground)) {
 									options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorited));
 								} else {
-									com.playground.notification.utils.Utils.changeMarkerIcon(options, currentLatLng, to);
+									com.playground.notification.utils.Utils.changeMarkerIcon(options, currentLatLng,
+											to);
 								}
 								NearRingManager nearRingMgr = NearRingManager.getInstance();
 								if (nearRingMgr.isInit() && nearRingMgr.isCached(ground)) {
 									mMap.addCircle(new CircleOptions().center(new LatLng(ground.getLatitude(),
-											ground.getLongitude())).radius(Prefs.getInstance().getAlarmArea()).strokeWidth(
-											1).strokeColor(Color.BLUE).fillColor(getResources().getColor(
-											R.color.common_blue_50)));
+											ground.getLongitude())).radius(Prefs.getInstance().getAlarmArea())
+											.strokeWidth(1).strokeColor(Color.BLUE).fillColor(getResources().getColor(
+													R.color.common_blue_50)));
 								}
 								mMarkerList.put(mMap.addMarker(options), ground);
 							}
@@ -772,8 +783,8 @@ public class MapsActivity extends AppActivity implements LocationListener {
 									for (Marker m : mMarkerList.keySet()) {
 										if (m.equals(marker)) {
 											showDialogFragment(PlaygroundDetailFragment.newInstance(App.Instance,
-													currentLatLng.latitude, currentLatLng.longitude, mMarkerList.get(m), false),
-													null);
+													currentLatLng.latitude, currentLatLng.longitude, mMarkerList.get(m),
+													false), null);
 											break;
 										}
 									}
@@ -861,7 +872,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 			showAppList();
 			Api.initialize(App.Instance, prefs.getApiHost(), prefs.getWeatherApiHost());
 			initUseApp();
-		} else  {
+		} else {
 			exitAppDialog();
 		}
 	}
@@ -903,20 +914,20 @@ public class MapsActivity extends AppActivity implements LocationListener {
 				if (mMap != null) {
 					Location location = App.Instance.getCurrentLocation();
 					double lat = location.getLatitude();
-					double lng =  location.getLongitude();
+					double lng = location.getLongitude();
 					switch (menuItem.getItemId()) {
 					case R.id.action_favorite:
 						FavoriteManager favoriteManager = FavoriteManager.getInstance();
 						if (favoriteManager.getCachedList().size() > 0) {
-							ViewPagerActivity.showInstance(MapsActivity.this, lat, lng,
-									favoriteManager.getCachedList(), getString(R.string.lbl_favorite_list));
+							ViewPagerActivity.showInstance(MapsActivity.this, lat, lng, favoriteManager.getCachedList(),
+									getString(R.string.lbl_favorite_list));
 						}
 						break;
 					case R.id.action_near_ring:
 						NearRingManager nearRingManager = NearRingManager.getInstance();
 						if (nearRingManager.getCachedList().size() > 0) {
-							ViewPagerActivity.showInstance(MapsActivity.this, lat, lng,
-									nearRingManager.getCachedList(), getString(R.string.lbl_near_ring_list));
+							ViewPagerActivity.showInstance(MapsActivity.this, lat, lng, nearRingManager.getCachedList(),
+									getString(R.string.lbl_near_ring_list));
 						}
 						break;
 					case R.id.action_my_location_list:
