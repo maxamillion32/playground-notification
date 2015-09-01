@@ -49,4 +49,43 @@
                 android:src="@drawable/logo_spielplatz_radar" />
         </LinearLayout>
     </com.playground.notification.views.MaterialRippleLayout>
+
+
+
+    <com.playground.notification.views.MaterialRippleLayout
+        android:id="@+id/weather_by_ll"
+        style="@style/MaterialRippleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/common_white"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/lbl_data_source"
+                android:textColor="@color/common_black" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/support_openweathermap"
+                android:textColor="@color/common_black" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/common_transparent"
+                android:src="@drawable/ic_openweathermap" />
+        </LinearLayout>
+    </com.playground.notification.views.MaterialRippleLayout>
 </LinearLayout>

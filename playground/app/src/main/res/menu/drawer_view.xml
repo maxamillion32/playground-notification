@@ -31,7 +31,10 @@
         <menu>
             <item
                 android:id="@+id/action_radar"
-                android:title="spielplatz-radar.de" />
+                android:title="@string/support_spielplatz_radar" />
+            <item
+                android:id="@+id/action_weather"
+                android:title="@string/support_openweathermap" />
         </menu>
     </item>
 

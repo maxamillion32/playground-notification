@@ -4,6 +4,7 @@
     <string name="title_activity_maps">@string/application_name</string>
 
     <string name="support_spielplatz_radar">spielplatz-radar.de</string>
+    <string name="support_openweathermap">openweathermap.org</string>
 
     <string name="action_share">Share</string>
     <string name="action_about">About</string>

@@ -946,6 +946,10 @@ public class MapsActivity extends AppActivity implements LocationListener {
 						com.playground.notification.utils.Utils.openExternalBrowser(MapsActivity.this,
 								"http://" + getString(R.string.support_spielplatz_radar));
 						break;
+					case R.id.action_weather:
+						com.playground.notification.utils.Utils.openExternalBrowser(MapsActivity.this,
+								"http://" + getString(R.string.support_openweathermap));
+						break;
 					}
 				}
 				return true;

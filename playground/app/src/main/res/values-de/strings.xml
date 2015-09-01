@@ -27,7 +27,7 @@
 
 
     <string name="lbl_share_app_title">Tolle App für Dich</string>
-    <string name="lbl_share_app_content">Lieber Papa und Mama\n\nHier ist %1$s, ein sämtliches Werkzeug, Ihnen alle Spielplätze zu informieren\n\n%2$s</string>
+    <string name="lbl_share_app_content">Lieber Papa und Mama\n\nHier ist %1$s, ein sämtliches Werkzeug, Ihnen alle Spielplätze zu informieren.\n\n%2$s</string>
     <string name="lbl_share_ground_title">Hi! Hier ist ein Spielplatz für Dich.</string>
     <string name="lbl_share_ground_content">Lieber Papa und Mama,\n\nich teile hier einen Spielplatz für Euch, bringet Ihr Kids, viel Spaß zu machen.\n\nAuf der Karte:\n%1$s\n\n%2$s</string>
 
