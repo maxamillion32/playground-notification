@@ -20,8 +20,8 @@ import com.playground.notification.api.ApiNotInitializedException;
 import com.playground.notification.app.App;
 import com.playground.notification.app.activities.MapsActivity;
 import com.playground.notification.databinding.MyLocationBinding;
-import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.google.Matrix;
+import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.MyLocation;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.utils.Prefs;
@@ -233,12 +233,14 @@ public final class MyLocationFragment extends DialogFragment {
 			if(myLocation != null) {
 				manager.removeMyLocation(myLocation, mBinding.saveMyLocationIv, mBinding.myLocationVg );
 			} else {
-				InputMethodManager imm = (InputMethodManager) App.Instance.getSystemService(Context.INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(mBinding.myLocationNameTv.getWindowToken(), 0);
 				String name = mBinding.myLocationNameTv.getText().toString();
-				mGround.setId("my_" + mGround.getLatitude() + "," + mGround.getLongitude());
-				manager.addMyLocation(mGround, name, mBinding.saveMyLocationIv, mBinding.myLocationVg);
-				mBinding.shareGroundBtn.setVisibility(View.VISIBLE);
+				if (Utils.validateStr(App.Instance, name)) {
+					InputMethodManager imm = (InputMethodManager) App.Instance.getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(mBinding.myLocationNameTv.getWindowToken(), 0);
+					mGround.setId("my_" + mGround.getLatitude() + "," + mGround.getLongitude());
+					manager.addMyLocation(mGround, name, mBinding.saveMyLocationIv, mBinding.myLocationVg);
+					mBinding.shareGroundBtn.setVisibility(View.VISIBLE);
+				}
 			}
 		}
 

@@ -2,6 +2,7 @@
     <string name="app_name">Spielplätze App</string>
     <string name="application_name">Spielplätze App</string>
 
+    <string name="action_search">Suche</string>
     <string name="action_share">Teile</string>
     <string name="action_go">Gehe?</string>
     <string name="action_favorite">Favoritenliste(%1$d)</string>
@@ -114,4 +115,6 @@
     <string name="notify_weekend_title">Hey, es ist Wochenende, möchtest Du?</string>
     <string name="notify_weekend_content">Es ist ein schönes Wetter draußen, %1$s %2$s. Gehst Du nicht zu einem Spielplatz mit deinen Kindern :-)?</string>
     <string name="notify_warm_tips_title">Hey, Feierabend?</string>
+
+    <string name="lbl_exclude_chars">Die folgenden Zeichen sind nicht in der Abfrage erlaubt: / = ( ) : ;</string>
 </resources>

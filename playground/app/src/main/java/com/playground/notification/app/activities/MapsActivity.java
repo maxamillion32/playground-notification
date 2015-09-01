@@ -9,6 +9,8 @@ import java.util.Map;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
@@ -16,6 +18,7 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -24,6 +27,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -33,6 +39,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import com.chopping.bus.CloseDrawerEvent;
 import com.chopping.utils.Utils;
@@ -73,6 +80,7 @@ import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.api.ApiNotInitializedException;
 import com.playground.notification.app.App;
+import com.playground.notification.app.SearchSuggestionProvider;
 import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.AppListImpFragment;
 import com.playground.notification.app.fragments.GPlusFragment;
@@ -81,6 +89,11 @@ import com.playground.notification.app.fragments.PlaygroundDetailFragment;
 import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
 import com.playground.notification.databinding.ActivityMapsBinding;
+import com.playground.notification.ds.google.Geobound;
+import com.playground.notification.ds.google.Geocode;
+import com.playground.notification.ds.google.GeocodeList;
+import com.playground.notification.ds.google.Geolocation;
+import com.playground.notification.ds.google.Geometry;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.grounds.Playgrounds;
 import com.playground.notification.ds.grounds.Request;
@@ -153,6 +166,22 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	 * {@code true} if the map is forground.
 	 */
 	private boolean mVisible;
+	/**
+	 * Suggestion list while tipping.
+	 */
+	protected SearchRecentSuggestions mSuggestions;
+	/**
+	 * The search.
+	 */
+	private SearchView mSearchView;
+	/**
+	 * Search menu.
+	 */
+	private MenuItem mSearchMenu;
+	/**
+	 * Keyword that will be searched.
+	 */
+	private String mKeyword = "";
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -242,32 +271,88 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		initDrawer();
 		initBoard();
 		initAddFunctions();
+
+		//For search and suggestions.
+		mSuggestions = new SearchRecentSuggestions(this, getString(R.string.suggestion_auth),
+				SearchSuggestionProvider.MODE);
 	}
 
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		setIntent(intent);
-		if (intent.getSerializableExtra(EXTRAS_GROUND) != null) {
-			Playground playground = (Playground) intent.getSerializableExtra(EXTRAS_GROUND);
-			LatLng to = new LatLng(playground.getLatitude(), playground.getLongitude());
-			CameraUpdate update = CameraUpdateFactory.newLatLngZoom(to, 16);
-			if (playground instanceof MyLocation) {
-				MarkerOptions options = new MarkerOptions().position(to);
-				options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_saved_ground));
-				mMap.addMarker(options);
-			} else if (playground instanceof Favorite) {
-				MarkerOptions options = new MarkerOptions().position(to);
-				options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorited));
-				mMap.addMarker(options);
-			} else if (playground instanceof NearRing) {
-				mMap.addCircle(new CircleOptions().center(new LatLng(playground.getLatitude(),
-						playground.getLongitude())).radius(Prefs.getInstance().getAlarmArea()).strokeWidth(1)
-						.strokeColor(Color.BLUE).fillColor(getResources().getColor(R.color.common_blue_50)));
-				MarkerOptions options = new MarkerOptions().position(to);
-				mMap.addMarker(options);
+		if (!TextUtils.equals(intent.getAction(), Intent.ACTION_SEARCH)) {
+			if (intent.getSerializableExtra(EXTRAS_GROUND) != null) {
+				Playground playground = (Playground) intent.getSerializableExtra(EXTRAS_GROUND);
+				LatLng to = new LatLng(playground.getLatitude(), playground.getLongitude());
+				CameraUpdate update = CameraUpdateFactory.newLatLngZoom(to, 16);
+				if (playground instanceof MyLocation) {
+					MarkerOptions options = new MarkerOptions().position(to);
+					options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_saved_ground));
+					mMap.addMarker(options);
+				} else if (playground instanceof Favorite) {
+					MarkerOptions options = new MarkerOptions().position(to);
+					options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorited));
+					mMap.addMarker(options);
+				} else if (playground instanceof NearRing) {
+					mMap.addCircle(new CircleOptions().center(new LatLng(playground.getLatitude(),
+							playground.getLongitude())).radius(Prefs.getInstance().getAlarmArea()).strokeWidth(1)
+							.strokeColor(Color.BLUE).fillColor(getResources().getColor(R.color.common_blue_50)));
+					MarkerOptions options = new MarkerOptions().position(to);
+					mMap.addMarker(options);
+				}
+				mMap.moveCamera(update);
 			}
-			mMap.moveCamera(update);
+		} else {
+			mKeyword = intent.getStringExtra(SearchManager.QUERY);
+			if (!TextUtils.isEmpty(mKeyword) && com.playground.notification.utils.Utils.validateStr(App.Instance,
+					mKeyword)) {
+				mKeyword = mKeyword.trim();
+				mSearchView.setQueryHint(Html.fromHtml("<font color = #ffffff>" + mKeyword + "</font>"));
+
+				mKeyword = intent.getStringExtra(SearchManager.QUERY);
+				mKeyword = mKeyword.trim();
+				resetSearchView();
+
+				//No save for suggestions.
+				mSuggestions.saveRecentQuery(mKeyword, null);
+
+				//Move map to searched location.
+				doSearch();
+			}
+		}
+	}
+
+	private void doSearch() {
+		try {
+			Api.getGeocode(mKeyword, App.Instance.getDistanceMatrixKey(), new Callback<GeocodeList>() {
+				@Override
+				public void success(GeocodeList geocodeList, Response response) {
+					List<Geocode> geocodes = geocodeList.getGeocodeList();
+					if(geocodes != null && geocodes.size() > 0) {
+						Geocode geocode = geocodes.get(0);
+						if(geocode.getGeometry() != null) {
+							Geometry geometry = geocode.getGeometry();
+							Geobound geobound = geometry.getBound();
+							Geolocation geolocation = geometry.getLocation();
+							if(geobound != null) {
+								movedToUpdatedLocation(geobound);
+							} else {
+								if(geolocation != null) {
+									movedToUpdatedLocation(geolocation);
+								}
+							}
+						}
+					}
+				}
+
+				@Override
+				public void failure(RetrofitError error) {
+
+				}
+			});
+		} catch (ApiNotInitializedException e) {
+			//Ignore this request.
 		}
 	}
 
@@ -811,6 +896,42 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(MENU, menu);
+
+		//Search
+		mSearchMenu = menu.findItem(R.id.action_search);
+		MenuItemCompat.setOnActionExpandListener(mSearchMenu, new MenuItemCompat.OnActionExpandListener() {
+			@Override
+			public boolean onMenuItemActionExpand(MenuItem item) {
+				return true;
+			}
+
+			@Override
+			public boolean onMenuItemActionCollapse(MenuItem item) {
+				mKeyword = "";
+				return true;
+			}
+		});
+		mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchMenu);
+		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				return false;
+			}
+
+			@Override
+			public boolean onQueryTextSubmit(String s) {
+				InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+				mgr.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0);
+				resetSearchView();
+				return false;
+			}
+		});
+		mSearchView.setIconifiedByDefault(true);
+		SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+		if (searchManager != null) {
+			SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
+			mSearchView.setSearchableInfo(info);
+		}
 		return true;
 	}
 
@@ -903,6 +1024,36 @@ public class MapsActivity extends AppActivity implements LocationListener {
 
 
 	/**
+	 * Update current position on the map.
+	 *
+	 * @param geobound {@link Geobound}
+	 */
+	private void movedToUpdatedLocation(Geobound geobound) {
+		if (mMap != null && mVisible) {
+			LatLngBounds bounds = new LatLngBounds(new LatLng(geobound.getSouthwest().getLatitude(),geobound.getSouthwest().getLongitude()),
+					new LatLng(geobound.getNortheast().getLatitude(), geobound.getNortheast().getLongitude()));
+			CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+			mMap.moveCamera(update);
+			Log.d("pg:location", "method: movedToUpdatedLocation");
+		}
+	}
+
+	/**
+	 * Update current position on the map.
+	 *
+	 * @param geolocation {@link com.playground.notification.ds.google.Geolocation}
+	 */
+	private void movedToUpdatedLocation(Geolocation geolocation) {
+		if (mMap != null && mVisible) {
+			CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(geolocation.getLatitude(),
+					geolocation.getLongitude()), 16);
+			mMap.moveCamera(update);
+			Log.d("pg:location", "method: movedToUpdatedLocation");
+		}
+	}
+
+
+	/**
 	 * Set-up of navi-bar left.
 	 */
 	private void initDrawerContent() {
@@ -955,5 +1106,15 @@ public class MapsActivity extends AppActivity implements LocationListener {
 				return true;
 			}
 		});
+	}
+
+
+	/**
+	 * Reset the UI status of searchview.
+	 */
+	protected void resetSearchView() {
+		if (mSearchView != null) {
+			mSearchView.clearFocus();
+		}
 	}
 }

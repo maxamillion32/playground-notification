@@ -98,4 +98,19 @@ public final class Utils {
 		}
 		notifyBuilder.setLights(cxt.getResources().getColor(R.color.primary_color), 1000, 1000);
 	}
+
+	/**
+	 * Test whether the {@link String} is  valid value or not, if invalidate, shakes it.
+	 *
+	 */
+	public static boolean validateStr(Context cxt, String s) {
+		boolean val;
+		if (s.matches(".*[/=():;].*")) {
+			val = false;
+			com.chopping.utils.Utils.showLongToast(cxt, R.string.lbl_exclude_chars);
+		} else {
+			val = true;
+		}
+		return val;
+	}
 }

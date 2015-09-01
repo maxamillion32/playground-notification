@@ -53,6 +53,6 @@
         android:layout_gravity="center_vertical|end"
         android:layout_marginTop="5dp"
         android:gravity="center_vertical|end"
-        android:textColor="@color/brown_500"
+        android:textColor="@color/common_white"
         android:textStyle="bold" />
 </LinearLayout>

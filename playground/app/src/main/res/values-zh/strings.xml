@@ -2,6 +2,7 @@
     <string name="app_name">Playground App</string>
     <string name="application_name">Playground App</string>
 
+    <string name="action_search">搜索</string>
     <string name="action_share">分享</string>
     <string name="action_go">走?</string>
     <string name="action_favorite">收藏夹(%1$d)</string>
@@ -113,4 +114,6 @@
     <string name="notify_weekend_title">您好，周末了，放松下?</string>
     <string name="notify_weekend_content">外头天气真不错 %1$s %2$s. 不跟孩子一起出去玩，会很开心的哦 :-)?</string>
     <string name="notify_warm_tips_title">您好, 下班了?</string>
+
+    <string name="lbl_exclude_chars">这些字符是不能使用的 / = ( ) : ;</string>
 </resources>

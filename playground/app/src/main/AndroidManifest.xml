@@ -28,15 +28,30 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <provider
+            android:name=".app.SearchSuggestionProvider"
+            android:authorities="@string/suggestion_auth"
+            android:exported="false" />
+
         <activity
             android:name=".app.activities.MapsActivity"
             android:label="@string/title_activity_maps"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".activities.MapsActivity" />
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
 
         <activity
@@ -58,18 +73,23 @@
         <activity
             android:name=".app.activities.MyLocationListActivity"
             android:label="@string/lbl_my_location_list"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
 
-        <!--Include the AdActivity configChanges and theme. -->
-        <activity
-            android:name="com.google.android.gms.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent" />
+        <!--Include the AdActivity configChanges and theme. --><activity
+        android:name="com.google.android.gms.ads.AdActivity"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+        android:screenOrientation="portrait"
+        android:theme="@android:style/Theme.Translucent" />
 
-        <service android:name=".geofence.GeofenceManagerService" android:exported="false" android:enabled="true" />
-        <service android:name=".geofence.GeofenceTransitionsIntentService" android:exported="false" android:enabled="true" />
+        <service
+            android:name=".geofence.GeofenceManagerService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".geofence.GeofenceTransitionsIntentService"
+            android:enabled="true"
+            android:exported="false" />
 
         <!--Event handler for changing system packages.-->
         <receiver

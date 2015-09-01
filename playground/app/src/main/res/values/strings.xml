@@ -6,6 +6,7 @@
     <string name="support_spielplatz_radar">spielplatz-radar.de</string>
     <string name="support_openweathermap">openweathermap.org</string>
 
+    <string name="action_search">Search</string>
     <string name="action_share">Share</string>
     <string name="action_about">About</string>
     <string name="action_go">Going?</string>
@@ -183,4 +184,7 @@
     <string name="notify_weekend_title">Hi it\'s weekend, are you ready?</string>
     <string name="notify_weekend_content">It a nice weather outside, %1$s %2$s. You\'d better bring your kids and find a playground for fun :).</string>
     <string name="notify_warm_tips_title">Hi, end of work?</string>
+
+    <string name="suggestion_auth"  >com.playground.notification.app.SearchSuggestionProvider</string>
+    <string name="lbl_exclude_chars">The following characters are not allowed within the query / = ( ) : ;</string>
 </resources>

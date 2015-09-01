@@ -9,6 +9,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.playground.notification.ds.google.GeocodeList;
 import com.playground.notification.ds.google.Matrix;
 import com.playground.notification.ds.grounds.Playgrounds;
 import com.playground.notification.ds.grounds.Request;
@@ -140,6 +141,9 @@ public final class Api {
 		void getMatrix(@Query("origins") String origins, @Query("destinations") String destinations,
 				@Query("language") String language, @Query("mode") String mode, @Query("key") String key,
 				@Query("units") String units, Callback<Matrix> callback);
+
+		@GET("/maps/api/geocode/json")
+		void getGeocode(@Query("address") String address, @Query("key") String key, Callback<GeocodeList> callback);
 	}
 
 	/**
@@ -163,6 +167,12 @@ public final class Api {
 			String units, Callback<Matrix> callback) throws ApiNotInitializedException {
 		assertCall();
 		g.getMatrix(origins, destinations, language, mode, key, units, callback);
+	}
+
+	public static final void getGeocode(String address, String key, Callback<GeocodeList> callback) throws
+			ApiNotInitializedException {
+		assertCall();
+		g.getGeocode(address, key, callback);
 	}
 
 	public static final void getWeather( double lat, double lon, String language, String units, String APPID,
