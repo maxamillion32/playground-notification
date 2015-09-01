@@ -148,7 +148,7 @@ public final class Api {
 	static private interface W {
 		@GET("/data/2.5/weather")
 		void getWeather(@Query("lat") double lat, @Query("lon") double lon, @Query("lang") String language,
-				@Query("units") String units, Callback<Weather> callback);
+				@Query("units") String units,	@Query("APPID") String APPID,  Callback<Weather> callback);
 	}
 
 
@@ -165,10 +165,10 @@ public final class Api {
 		g.getMatrix(origins, destinations, language, mode, key, units, callback);
 	}
 
-	public static final void getWeather( double lat, double lon, String language, String units,
+	public static final void getWeather( double lat, double lon, String language, String units, String APPID,
 			Callback<Weather> callback) throws ApiNotInitializedException {
 		assertCall();
-		w.getWeather(lat, lon, language, units, callback);
+		w.getWeather(lat, lon, language, units, APPID, callback);
 	}
 
 	/**

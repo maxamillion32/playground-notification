@@ -86,7 +86,7 @@
     <string name="settings_traffic">Verkehrsstatus zeigen</string>
 
     <string name="settings_details">Spielplatzdetail</string>
-    <string name="details_units">Einheiten</string>
+    <string name="distance_units">Einheiten</string>
     <string-array name="units_types">
         <item>Kilometer</item>
         <item>Meilen</item>
@@ -101,4 +101,13 @@
         <item>Medium</item>
         <item>Große</item>
     </string-array>
+
+
+    <string name="settings_weather">Wetter</string>
+    <string name="weather_board_show">Zeige Wetter Bord</string>
+    <string name="weather_units">Einheiten</string>
+
+    <string name="settings_notification">Benachrichtigung</string>
+    <string name="notify_good_weather">Tipps für gutes Wetter</string>
+    <string name="notify_weekend">Weekend Call</string>
 </resources>

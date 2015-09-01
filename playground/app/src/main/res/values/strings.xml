@@ -125,12 +125,12 @@
     <string name="settings_traffic">Traffic status showing</string>
 
     <string name="settings_details">Playground-detail</string>
-    <string name="details_units">Units</string>
-    <string-array name="units_types">
+    <string name="distance_units">Units</string>
+    <string-array name="distance_units_types">
         <item>Kilometer</item>
         <item>Miles</item>
     </string-array>
-    <string-array name="units_values">
+    <string-array name="distance_units_values">
         <item>0</item>
         <item>1</item>
     </string-array>
@@ -161,4 +161,21 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+
+
+    <string name="settings_weather">Weather</string>
+    <string name="weather_board_show">Show weather board</string>
+    <string name="weather_units">Units</string>
+    <string-array name="weather_units_types">
+        <item>°C</item>
+        <item>°F</item>
+    </string-array>
+    <string-array name="weather_units_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string name="settings_notification">Notification</string>
+    <string name="notify_good_weather">Some warm tips</string>
+    <string name="notify_weekend">Weekend call</string>
 </resources>

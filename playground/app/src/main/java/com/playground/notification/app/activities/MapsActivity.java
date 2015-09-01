@@ -65,6 +65,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.playground.notification.R;
@@ -207,8 +209,6 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		switch (requestCode) {
 		case ConnectGoogleActivity.REQ:
 			if (resultCode == RESULT_OK) {
-				//Return from google-login.
-				//onYouCanUseApp();
 			} else {
 				ActivityCompat.finishAffinity(this);
 			}
@@ -216,16 +216,14 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		case REQ:
 			switch (resultCode) {
 			case Activity.RESULT_OK:
-				//				if (!mGoogleApiClient.isConnected()) {
-				//					if (!mGoogleApiClient.isConnecting()) {
-				//						mGoogleApiClient.connect();
-				//					}
-				//				}
 				break;
 			case Activity.RESULT_CANCELED:
 				exitAppDialog();
 				break;
 			}
+		case SettingsActivity.REQ:
+			askWeather();
+			break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
@@ -336,28 +334,55 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		NearRingManager.getInstance().init();
 		MyLocationManager.getInstance().init();
 		initDrawerContent();
-		//Ask weather
+		askWeather();
+	}
+
+	/**
+	 * Get weather status.
+	 */
+	private void askWeather() {
 		if (App.Instance.getCurrentLocation() != null) {
 			Location location = App.Instance.getCurrentLocation();
 			try {
+				String units = "metric";
+				switch (Prefs.getInstance().getWeatherUnitsType()) {
+				case "0":
+					units = "metric";
+					break;
+				case "1":
+					units = "imperial";
+					break;
+				}
 				Api.getWeather(location.getLatitude(), location.getLongitude(), Locale.getDefault().getLanguage(),
-						"metric", new Callback<Weather>() {
+						units, App.Instance.getWeatherKey(), new Callback<Weather>() {
 							@Override
 							public void success(Weather weather, Response response) {
-								mBinding.boardVg.setVisibility(View.VISIBLE);
-								WeatherDetail weatherDetail = weather.getDetails().get(0);
-								String temp =  getString(R.string.lbl_c, weather.getTemperature().getValue());
-								String weatherInfo = String.format("%s", temp );
-								mBinding.boardTv.setText(weatherInfo);
-								String url = String.format(Prefs.getInstance().getWeahterIconUrl(weatherDetail.getIcon()));
-								Picasso.with(App.Instance).load(url).into(mBinding.boardIconIv);
+								if (Prefs.getInstance().showWeatherBoard()) {
+									mBinding.boardVg.setVisibility(View.VISIBLE);
+									WeatherDetail weatherDetail = weather.getDetails().get(0);
+									int units = R.string.lbl_c;
+									switch (Prefs.getInstance().getWeatherUnitsType()) {
+									case "0":
+										units = R.string.lbl_c;
+										break;
+									case "1":
+										units = R.string.lbl_f;
+										break;
+									}
+									String temp = getString(units, weather.getTemperature().getValue());
+									String weatherInfo = String.format("%s", temp);
+									mBinding.boardTv.setText(weatherInfo);
+									String url = String.format(Prefs.getInstance().getWeahterIconUrl(
+											weatherDetail.getIcon()));
+									Picasso.with(App.Instance).load(url).into(mBinding.boardIconIv);
 
-								ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mBinding.boardVg);
-								float x = ViewHelper.getX(mBinding.boardVg);
-								float y = ViewHelper.getY(mBinding.boardVg);
-								ViewHelper.setPivotX(mBinding.boardVg, x / 2);
-								ViewHelper.setPivotY(mBinding.boardVg, y / 2);
-								animator.rotation(-5f).rotation(5f).setDuration(500) .start();
+									ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mBinding.boardVg);
+									float x = ViewHelper.getX(mBinding.boardVg);
+									float y = ViewHelper.getY(mBinding.boardVg);
+									ViewHelper.setPivotX(mBinding.boardVg, x / 2);
+									ViewHelper.setPivotY(mBinding.boardVg, y / 2);
+									animator.rotation(-5f).setDuration(500).start();
+								}
 							}
 
 							@Override
@@ -378,7 +403,15 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		mBinding.boardVg.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				v.setVisibility(View.GONE);
+
+				ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mBinding.boardVg);
+				animator.rotation(5f).setDuration(500).setListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						super.onAnimationEnd(animation);
+						mBinding.boardVg.setVisibility(View.GONE);
+					}
+				}).start();
 			}
 		});
 	}

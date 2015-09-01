@@ -229,7 +229,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 				break;
 			}
 			String units = "metric";
-			switch (prefs.getUnitsType()) {
+			switch (prefs.getDistanceUnitsType()) {
 			case "0":
 				units = "metric";
 				break;
@@ -356,7 +356,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 
 			Prefs prefs = Prefs.getInstance();
 			String units = "metric";
-			switch (prefs.getUnitsType()) {
+			switch (prefs.getDistanceUnitsType()) {
 			case "0":
 				break;
 			case "1":

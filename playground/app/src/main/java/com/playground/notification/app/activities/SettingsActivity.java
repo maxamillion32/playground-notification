@@ -31,7 +31,7 @@ public final class SettingsActivity extends PreferenceActivity implements Prefer
 	 */
 	private Toolbar mToolbar;
 
-
+	public static final int REQ = 0x88;
 
 	/**
 	 * Show an instance of SettingsActivity.
@@ -42,7 +42,7 @@ public final class SettingsActivity extends PreferenceActivity implements Prefer
 	public static void showInstance(Activity context) {
 		Intent intent = new Intent(context, SettingsActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		context.startActivity(intent);
+		ActivityCompat.startActivityForResult(context, intent, REQ, null);
 	}
 
 
@@ -101,17 +101,17 @@ public final class SettingsActivity extends PreferenceActivity implements Prefer
 		batteryType.setValue(value);
 		updateSummary(batteryType, value, R.array.battery_life_types);
 
-		ListPreference unitsType = (ListPreference) findPreference(Prefs.KEY_UNITS);
+		ListPreference unitsType = (ListPreference) findPreference(Prefs.KEY_DISTANCE_UNITS);
 		unitsType.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				updateSummary(preference, newValue, R.array.units_types);
+				updateSummary(preference, newValue, R.array.distance_units_types);
 				return true;
 			}
 		});
-		value = prefs.getUnitsType();
+		value = prefs.getDistanceUnitsType();
 		unitsType.setValue(value);
-		updateSummary(unitsType, value, R.array.units_types);
+		updateSummary(unitsType, value, R.array.distance_units_types);
 
 		ListPreference transMethodType = (ListPreference) findPreference(Prefs.KEY_TRANSPORTATION);
 		transMethodType.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
@@ -137,6 +137,19 @@ public final class SettingsActivity extends PreferenceActivity implements Prefer
 		value = prefs.getAlarmAreaValue();
 		alarmArea.setValue(value);
 		updateSummary(alarmArea, value, R.array.area_types);
+
+
+		ListPreference weatherUnits = (ListPreference) findPreference(Prefs.KEY_WEATHER_UNITS);
+		weatherUnits.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				updateSummary(preference, newValue, R.array.weather_units_types);
+				return true;
+			}
+		});
+		value = prefs.getWeatherUnitsType();
+		weatherUnits.setValue(value);
+		updateSummary(weatherUnits, value, R.array.weather_units_types);
 	}
 
 	/**

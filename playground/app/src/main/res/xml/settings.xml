@@ -2,23 +2,21 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-
-
     <PreferenceCategory
         android:layout="@layout/setting_category"
         android:title="@string/settings_map">
         <ListPreference
+            android:defaultValue="0"
             android:entries="@array/map_types"
             android:entryValues="@array/map_values"
             android:key="key.map.types"
-            android:defaultValue="0"
             android:layout="@layout/setting_item"
             android:title="@string/settings_map_types" />
         <ListPreference
+            android:defaultValue="0"
             android:entries="@array/battery_life_types"
             android:entryValues="@array/battery_life_values"
             android:key="key.battery.types"
-            android:defaultValue="0"
             android:layout="@layout/setting_item"
             android:title="@string/settings_battery" />
 
@@ -37,26 +35,22 @@
         android:title="@string/settings_details">
 
         <ListPreference
-            android:entries="@array/units_types"
-            android:entryValues="@array/units_values"
-            android:key="key.units"
             android:defaultValue="0"
+            android:entries="@array/distance_units_types"
+            android:entryValues="@array/distance_units_values"
+            android:key="key.distance.units"
             android:layout="@layout/setting_item"
-            android:title="@string/details_units" />
+            android:title="@string/distance_units" />
 
         <ListPreference
+            android:defaultValue="1"
             android:entries="@array/transportation_types"
             android:entryValues="@array/transportation_values"
             android:key="key.transportation"
-            android:defaultValue="1"
             android:layout="@layout/setting_item"
             android:title="@string/details_transportation" />
 
     </PreferenceCategory>
-
-
-
-
 
 
     <PreferenceCategory
@@ -64,13 +58,59 @@
         android:title="@string/settings_near_ring">
 
         <ListPreference
+            android:defaultValue="0"
             android:entries="@array/area_types"
             android:entryValues="@array/area_values"
             android:key="key.alarm.area"
-            android:defaultValue="0"
             android:layout="@layout/setting_item"
             android:title="@string/near_ring_alarm_area" />
 
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:layout="@layout/setting_category"
+        android:title="@string/settings_weather">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="key.weather.show.weather.board"
+            android:layout="@layout/setting_item"
+            android:summaryOff="@string/btn_no"
+            android:summaryOn="@string/btn_yes"
+            android:title="@string/weather_board_show" />
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/weather_units_types"
+            android:entryValues="@array/weather_units_values"
+            android:key="key.weather.units"
+            android:layout="@layout/setting_item"
+            android:title="@string/weather_units"/>
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:layout="@layout/setting_category"
+        android:title="@string/settings_notification">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="key.notification.warm.tips"
+            android:layout="@layout/setting_item"
+            android:summaryOff="@string/btn_no"
+            android:summaryOn="@string/btn_yes"
+            android:title="@string/notify_good_weather" />
+
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="key.notification.weekend.call"
+            android:layout="@layout/setting_item"
+            android:summaryOff="@string/btn_no"
+            android:summaryOn="@string/btn_yes"
+            android:title="@string/notify_weekend" />
 
     </PreferenceCategory>
 </PreferenceScreen>

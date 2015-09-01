@@ -70,9 +70,13 @@ public final class Prefs extends BasicPrefs {
 	public static final String KEY_MAP_TYPES = "key.map.types";
 	public static final String KEY_BATTERY_TYPES = "key.battery.types";
 	public static final String KEY_TRAFFIC_SHOWING = "key.traffic.showing";
-	public static final String KEY_UNITS = "key.units";
+	public static final String KEY_DISTANCE_UNITS = "key.distance.units";
 	public static final String KEY_TRANSPORTATION = "key.transportation";
 	public static final String KEY_ALARM_AREA = "key.alarm.area";
+	public static final String KEY_WEATHER_SHOW_WEATHER_BOARD = "key.weather.show.weather.board";
+	public static final String KEY_WEATHER_UNITS = "key.weather.units";
+	public static final String KEY_NOTIFICATION_WARM_TIPS = "key.notification.warm.tips";
+	public static final String KEY_NOTIFICATION_WEEKEND_CALL = "key.notification.weekend.call";
 
 	/**
 	 * The Instance.
@@ -252,8 +256,8 @@ public final class Prefs extends BasicPrefs {
 		return getBoolean(KEY_TRAFFIC_SHOWING, false);
 	}
 
-	public String getUnitsType() {
-		return getString(KEY_UNITS, "0");
+	public String getDistanceUnitsType() {
+		return getString(KEY_DISTANCE_UNITS, "0");
 	}
 
 	public String getTransportationMethod() {
@@ -275,6 +279,20 @@ public final class Prefs extends BasicPrefs {
 
 	public String getAlarmAreaValue() {
 		return getString(KEY_ALARM_AREA, "0");
+	}
+
+	public String getWeatherUnitsType() {
+		return getString(KEY_WEATHER_UNITS, "0");
+	}
+
+	public boolean showWeatherBoard() {
+		return getBoolean(KEY_WEATHER_SHOW_WEATHER_BOARD, true);
+	}
+	public boolean notificationWarmTips() {
+		return getBoolean(KEY_NOTIFICATION_WARM_TIPS, true);
+	}
+	public boolean notificationWeekendCall() {
+		return getBoolean(KEY_NOTIFICATION_WEEKEND_CALL, true);
 	}
 
 	/**

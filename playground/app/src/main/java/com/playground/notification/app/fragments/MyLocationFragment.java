@@ -128,7 +128,7 @@ public final class MyLocationFragment extends DialogFragment {
 				break;
 			}
 			String units = "metric";
-			switch (prefs.getUnitsType()) {
+			switch (prefs.getDistanceUnitsType()) {
 			case "0":
 				units = "metric";
 				break;
@@ -198,7 +198,7 @@ public final class MyLocationFragment extends DialogFragment {
 
 			Prefs prefs = Prefs.getInstance();
 			String units = "metric";
-			switch (prefs.getUnitsType()) {
+			switch (prefs.getDistanceUnitsType()) {
 			case "0":
 				break;
 			case "1":

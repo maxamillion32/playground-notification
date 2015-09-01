@@ -10,6 +10,8 @@ public final class Weather {
 	private List<WeatherDetail> mDetails;
 	@SerializedName("main")
 	private Temperature mTemperature;
+	@SerializedName("wind")
+	private Wind mWind;
 
 	public List<WeatherDetail> getDetails() {
 		return mDetails;
@@ -17,5 +19,9 @@ public final class Weather {
 
 	public Temperature getTemperature() {
 		return mTemperature;
+	}
+
+	public Wind getWind() {
+		return mWind;
 	}
 }

@@ -82,6 +82,10 @@ public final class App extends MultiDexApplication {
 	 * API key for requiring distance-matrix.
 	 */
 	private String mDistanceMatrixKey;
+	/**
+	 * API key for weather-API.
+	 */
+	private String mWeatherKey;
 
 	@Override
 	public void onCreate() {
@@ -95,6 +99,7 @@ public final class App extends MultiDexApplication {
 			prop.load(getClassLoader().getResourceAsStream("key.properties"));
 			Bmob.initialize(this, prop.getProperty("bmobkey"));
 			mDistanceMatrixKey = prop.getProperty("distancematrixkey");
+			mWeatherKey = prop.getProperty("weather_key");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -155,5 +160,11 @@ public final class App extends MultiDexApplication {
 	 */
 	public synchronized  void setCurrentLocation(Location currentLocation) {
 		mCurrentLocation = currentLocation;
+	}
+	/**
+	 * API key for weather-API.
+	 */
+	public String getWeatherKey() {
+		return mWeatherKey;
 	}
 }
