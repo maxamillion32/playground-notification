@@ -40,6 +40,9 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 
 import com.chopping.bus.CloseDrawerEvent;
 import com.chopping.utils.Utils;
@@ -252,7 +255,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 				break;
 			}
 		case SettingsActivity.REQ:
-			askWeatherBoard();
+			askWeatherBoard(App.Instance.getCurrentLocation());
 			break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -318,41 +321,77 @@ public class MapsActivity extends AppActivity implements LocationListener {
 				mSuggestions.saveRecentQuery(mKeyword, null);
 
 				//Move map to searched location.
-				doSearch();
+				doSearch(mKeyword);
 			}
 		}
 	}
 
-	private void doSearch() {
+	/**
+	 * Search a location.
+	 */
+	private void doSearch(String search) {
 		try {
-			Api.getGeocode(mKeyword, App.Instance.getDistanceMatrixKey(), new Callback<GeocodeList>() {
+			mBinding.loadPinPb.setVisibility(View.VISIBLE);
+			Api.getGeocode(search, App.Instance.getDistanceMatrixKey(), new Callback<GeocodeList>() {
 				@Override
 				public void success(GeocodeList geocodeList, Response response) {
 					List<Geocode> geocodes = geocodeList.getGeocodeList();
 					if(geocodes != null && geocodes.size() > 0) {
 						Geocode geocode = geocodes.get(0);
-						if(geocode.getGeometry() != null) {
-							Geometry geometry = geocode.getGeometry();
-							Geobound geobound = geometry.getBound();
-							Geolocation geolocation = geometry.getLocation();
-							if(geobound != null) {
-								movedToUpdatedLocation(geobound);
-							} else {
-								if(geolocation != null) {
-									movedToUpdatedLocation(geolocation);
-								}
-							}
-						}
+						movedToUpdatedLocation(geocode);
 					}
+					mBinding.loadPinPb.setVisibility(View.GONE);
 				}
 
 				@Override
 				public void failure(RetrofitError error) {
-
+					mBinding.loadPinPb.setVisibility(View.GONE);
 				}
 			});
 		} catch (ApiNotInitializedException e) {
 			//Ignore this request.
+		}
+	}
+
+
+
+	/**
+	 * Show a list of geocodes suggestions.
+	 */
+	private void completeGeocodeList(String address) {
+		if(TextUtils.isEmpty(address)) {
+			mBinding.geocodeLv.setVisibility(View.GONE);
+		} else {
+			mBinding.geocodeLv.setVisibility(View.VISIBLE);
+			try {
+				mBinding.loadPinPb.setVisibility(View.VISIBLE);
+				Api.getGeocode(address, App.Instance.getDistanceMatrixKey(), new Callback<GeocodeList>() {
+					@Override
+					public void success(GeocodeList geocodeList, Response response) {
+						final List<Geocode> geocodes = geocodeList.getGeocodeList();
+						if(geocodes != null ) {
+							ArrayAdapter<Geocode> adapter = new ArrayAdapter<>(MapsActivity.this, R.layout.search_item, geocodes);
+							mBinding.geocodeLv.setAdapter(adapter);
+							mBinding.geocodeLv.setOnItemClickListener(new OnItemClickListener() {
+								@Override
+								public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+									resetSearchView();
+									Geocode geocode = geocodes.get(position);
+									movedToUpdatedLocation(geocode);
+								}
+							});
+						}
+						mBinding.loadPinPb.setVisibility(View.GONE);
+					}
+
+					@Override
+					public void failure(RetrofitError error) {
+						mBinding.loadPinPb.setVisibility(View.GONE);
+					}
+				});
+			} catch (ApiNotInitializedException e) {
+				//Ignore this request.
+			}
 		}
 	}
 
@@ -419,15 +458,15 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		NearRingManager.getInstance().init();
 		MyLocationManager.getInstance().init();
 		initDrawerContent();
-		askWeatherBoard();
+		askWeatherBoard(App.Instance.getCurrentLocation());
 	}
 
 	/**
 	 * Get weather status.
 	 */
-	private void askWeatherBoard() {
-		if (App.Instance.getCurrentLocation() != null) {
-			Location location = App.Instance.getCurrentLocation();
+	private void askWeatherBoard(Location l) {
+		if (l != null) {
+			Location location = l;
 			try {
 				String units = "metric";
 				switch (Prefs.getInstance().getWeatherUnitsType()) {
@@ -466,7 +505,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 											}
 											String url = !TextUtils.isEmpty(weatherDetail.getIcon()) ?
 													prefs.getWeatherIconUrl(weatherDetail.getIcon()) :
-													prefs.getWeatherIconUrl("03d");
+													prefs.getWeatherIconUrl("50d");
 											Picasso.with(App.Instance).load(url).into(mBinding.boardIconIv);
 
 											ViewPropertyAnimator animator = ViewPropertyAnimator.animate(
@@ -915,6 +954,11 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
 			@Override
 			public boolean onQueryTextChange(String newText) {
+				if(TextUtils.isEmpty(newText)) {
+					completeGeocodeList(null);
+				} else {
+					completeGeocodeList(newText);
+				}
 				return false;
 			}
 
@@ -1049,6 +1093,32 @@ public class MapsActivity extends AppActivity implements LocationListener {
 					geolocation.getLongitude()), 16);
 			mMap.moveCamera(update);
 			Log.d("pg:location", "method: movedToUpdatedLocation");
+		}
+	}
+
+	/**
+	 * Update current position on the map.
+	 *
+	 * @param geocode {@link Geocode}
+	 */
+	private void movedToUpdatedLocation(Geocode geocode) {
+		if(geocode.getGeometry() != null) {
+			Geometry geometry = geocode.getGeometry();
+			Geobound geobound = geometry.getBound();
+			Geolocation geolocation = geometry.getLocation();
+			if(geobound != null) {
+				movedToUpdatedLocation(geobound);
+			} else {
+				if(geolocation != null) {
+					movedToUpdatedLocation(geolocation);
+				}
+			}
+			if(geolocation != null) {
+				Location location  = new Location("mock");
+				location.setLatitude(geolocation.getLatitude());
+				location.setLongitude(geolocation.getLongitude());
+				askWeatherBoard(location);
+			}
 		}
 	}
 

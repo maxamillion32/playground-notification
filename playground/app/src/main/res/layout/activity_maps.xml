@@ -67,11 +67,13 @@
                         android:layout_height="50dp"
                         android:layout_gravity="center_horizontal"
                         android:background="@color/common_transparent" />
+
                     <TextView
                         android:id="@+id/board_tv"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:layout_marginBottom="20dp"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal|bottom"
+                        android:layout_marginBottom="20dp"
                         android:gravity="center_horizontal"
                         android:text="@string/action_go" />
 
@@ -154,6 +156,13 @@
                 </RelativeLayout>
             </com.playground.notification.views.RevealLayout>
 
+            <ListView
+                android:id="@+id/geocode_lv"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:visibility="gone" />
         </FrameLayout>
 
 

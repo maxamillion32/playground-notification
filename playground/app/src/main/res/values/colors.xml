@@ -14,4 +14,5 @@
     <color name="common_black">#000000</color>
     <color name="common_white">#FFFFFF</color>
     <color name="common_transparent">@android:color/transparent</color>
+
 </resources>
