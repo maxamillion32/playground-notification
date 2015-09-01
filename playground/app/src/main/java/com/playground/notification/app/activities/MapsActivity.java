@@ -378,6 +378,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 									resetSearchView();
 									Geocode geocode = geocodes.get(position);
 									movedToUpdatedLocation(geocode);
+									parent.setVisibility(View.GONE);
 								}
 							});
 						}
