@@ -80,6 +80,7 @@ public final class Prefs extends BasicPrefs {
 	public static final String KEY_NOTIFICATION_WARM_TIPS = "key.notification.warm.tips";
 	public static final String KEY_NOTIFICATION_WEEKEND_CALL = "key.notification.weekend.call";
 
+	public static final String KEY_SHOWCASE_MYLOCATION = "showcase.mylocation";
 	/**
 	 * The Instance.
 	 */
@@ -332,6 +333,24 @@ public final class Prefs extends BasicPrefs {
 	}
 
 	public int getAds() {
-		return getInt(ADS, 0);
+		return getInt(ADS, 1);
+	}
+
+	/**
+	 * Set status of showcase of a type like : my-location etc.
+	 * <p/>
+	 * see. {@link #KEY_SHOWCASE_MYLOCATION}
+	 */
+	public void setShowcase(String name, boolean value) {
+		setBoolean(name, value);
+	}
+
+	/**
+	 * Get status of showcase of a type like : my-location etc.
+	 * <p/>
+	 * see. {@link #KEY_SHOWCASE_MYLOCATION}
+	 */
+	public boolean isShowcaseShown(String name) {
+		return getBoolean(name, false);
 	}
 }

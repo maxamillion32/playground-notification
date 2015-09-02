@@ -280,7 +280,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 
 		initDrawer();
 		initBoard();
-		initAddFunctions();
+		initAddMyLocation();
 
 		//For search and suggestions.
 		mSuggestions = new SearchRecentSuggestions(this, getString(R.string.suggestion_auth),
@@ -435,7 +435,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	/**
 	 * Define UI for add my-location.
 	 */
-	private void initAddFunctions() {
+	private void initAddMyLocation() {
 		mBinding.addPaneV.hide();
 		mBinding.exitAddBtn.setOnClickListener(new OnClickListener() {
 			@Override
@@ -451,6 +451,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 				mBinding.currentBtn.setVisibility(View.VISIBLE);
 				mBinding.addBtn.hide();
 				mBinding.addPaneV.show();
+				showcaseAddMyLocation();
 			}
 		});
 		mBinding.currentBtn.setOnLongClickListener(new OnLongClickListener() {
@@ -470,6 +471,32 @@ public class MapsActivity extends AppActivity implements LocationListener {
 				return true;
 			}
 		});
+	}
+
+	/**
+	 * {@link View} for showcase my-location.
+	 */
+	private View mShowcaseMyLocationV = null;
+	/**
+	 * A showcase for adding my location.
+	 */
+	private void showcaseAddMyLocation() {
+		Prefs prefs = Prefs.getInstance();
+		if(!prefs.isShowcaseShown(Prefs.KEY_SHOWCASE_MYLOCATION)) {
+			mShowcaseMyLocationV = getLayoutInflater().inflate(R.layout.showcase_add_my_location, mBinding.drawerLayout, false);
+			mBinding.drawerLayout.addView(mShowcaseMyLocationV);
+			prefs.setShowcase(Prefs.KEY_SHOWCASE_MYLOCATION, true);
+		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (mShowcaseMyLocationV != null) {
+			mBinding.drawerLayout.removeView(mShowcaseMyLocationV);
+			mShowcaseMyLocationV = null;
+		} else {
+			super.onBackPressed();
+		}
 	}
 
 	/**
