@@ -484,7 +484,11 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		Prefs prefs = Prefs.getInstance();
 		if(!prefs.isShowcaseShown(Prefs.KEY_SHOWCASE_MYLOCATION)) {
 			mShowcaseMyLocationV = getLayoutInflater().inflate(R.layout.showcase_add_my_location, mBinding.drawerLayout, false);
+			View cling = mShowcaseMyLocationV.findViewById(R.id.cling_iv);
+			ViewHelper.setAlpha(cling, 0f);
 			mBinding.drawerLayout.addView(mShowcaseMyLocationV);
+			ViewPropertyAnimator animator = ViewPropertyAnimator.animate(cling);
+			animator.alpha(1f).setDuration(1000).start();
 			prefs.setShowcase(Prefs.KEY_SHOWCASE_MYLOCATION, true);
 		}
 	}
@@ -492,8 +496,16 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	@Override
 	public void onBackPressed() {
 		if (mShowcaseMyLocationV != null) {
-			mBinding.drawerLayout.removeView(mShowcaseMyLocationV);
-			mShowcaseMyLocationV = null;
+			View cling = mShowcaseMyLocationV.findViewById(R.id.cling_iv);
+			ViewPropertyAnimator animator = ViewPropertyAnimator.animate(cling);
+			animator.alpha(0f).setDuration(1000).setListener(new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					super.onAnimationEnd(animation);
+					mBinding.drawerLayout.removeView(mShowcaseMyLocationV);
+					mShowcaseMyLocationV = null;
+				}
+			}).start();
 		} else {
 			super.onBackPressed();
 		}
