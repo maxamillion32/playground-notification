@@ -66,6 +66,8 @@ public final class Prefs extends BasicPrefs {
 	 */
 	private static final String KEY_WEATHER_API_HOST = "weather_api";
 
+	private static final String ADS="ads";
+
 	//All settings
 	public static final String KEY_MAP_TYPES = "key.map.types";
 	public static final String KEY_BATTERY_TYPES = "key.battery.types";
@@ -322,5 +324,14 @@ public final class Prefs extends BasicPrefs {
 	 */
 	public String getWeatherApiHost() {
 		return getString(KEY_WEATHER_API_HOST, null);
+	}
+
+
+	public void setAds(int c) {
+		setInt(ADS, c);
+	}
+
+	public int getAds() {
+		return getInt(ADS, 0);
 	}
 }

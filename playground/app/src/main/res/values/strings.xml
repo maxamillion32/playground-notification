@@ -187,4 +187,6 @@
 
     <string name="suggestion_auth"  >com.playground.notification.app.SearchSuggestionProvider</string>
     <string name="lbl_exclude_chars">The following characters are not allowed within the query / = ( ) : ;</string>
+
+    <string name="interstitial_ad_unit_id">ca-app-pub-9133982521997162/8275666931</string>
 </resources>

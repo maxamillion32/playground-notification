@@ -46,6 +46,9 @@ import android.widget.ArrayAdapter;
 
 import com.chopping.bus.CloseDrawerEvent;
 import com.chopping.utils.Utils;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -185,6 +188,10 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	 * Keyword that will be searched.
 	 */
 	private String mKeyword = "";
+	/**
+	 * The interstitial ad.
+	 */
+	private InterstitialAd mInterstitialAd;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -278,6 +285,35 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		//For search and suggestions.
 		mSuggestions = new SearchRecentSuggestions(this, getString(R.string.suggestion_auth),
 				SearchSuggestionProvider.MODE);
+
+		//Ads
+		buildAds();
+	}
+
+	/**
+	 * Build Admob.
+	 */
+	private void buildAds() {
+		int curTime = Prefs.getInstance().getAds();
+		int adsTimes = 5;
+		if (curTime % adsTimes == 0) {
+			// Create an ad.
+			mInterstitialAd = new InterstitialAd(this);
+			mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
+			// Create ad request.
+			AdRequest adRequest = new AdRequest.Builder().build();
+			// Begin loading your interstitial.
+			mInterstitialAd.setAdListener(new AdListener() {
+				@Override
+				public void onAdLoaded() {
+					super.onAdLoaded();
+					displayInterstitial();
+				}
+			});
+			mInterstitialAd.loadAd(adRequest);
+		}
+		curTime++;
+		Prefs.getInstance().setAds(curTime);
 	}
 
 	@Override
@@ -1186,6 +1222,16 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	protected void resetSearchView() {
 		if (mSearchView != null) {
 			mSearchView.clearFocus();
+		}
+	}
+
+
+	/**
+	 * Invoke displayInterstitial() when you are ready to display an interstitial.
+	 */
+	public void displayInterstitial() {
+		if (mInterstitialAd.isLoaded()) {
+			mInterstitialAd.show();
 		}
 	}
 }
