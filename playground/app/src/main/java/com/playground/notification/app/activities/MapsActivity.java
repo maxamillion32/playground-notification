@@ -482,33 +482,47 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	 */
 	private void showcaseAddMyLocation() {
 		Prefs prefs = Prefs.getInstance();
-		if(!prefs.isShowcaseShown(Prefs.KEY_SHOWCASE_MYLOCATION)) {
+		if(!prefs.isShowcaseShown(Prefs.KEY_SHOWCASE_MY_LOCATION)) {
 			mShowcaseMyLocationV = getLayoutInflater().inflate(R.layout.showcase_add_my_location, mBinding.drawerLayout, false);
 			View cling = mShowcaseMyLocationV.findViewById(R.id.cling_iv);
 			ViewHelper.setAlpha(cling, 0f);
 			mBinding.drawerLayout.addView(mShowcaseMyLocationV);
 			ViewPropertyAnimator animator = ViewPropertyAnimator.animate(cling);
 			animator.alpha(1f).setDuration(1000).start();
-			prefs.setShowcase(Prefs.KEY_SHOWCASE_MYLOCATION, true);
+			View close = mShowcaseMyLocationV.findViewById(R.id.close_btn);
+			close.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					closeShowcaseMyLocation();
+				}
+			});
+			prefs.setShowcase(Prefs.KEY_SHOWCASE_MY_LOCATION, true);
 		}
 	}
 
 	@Override
 	public void onBackPressed() {
 		if (mShowcaseMyLocationV != null) {
-			View cling = mShowcaseMyLocationV.findViewById(R.id.cling_iv);
-			ViewPropertyAnimator animator = ViewPropertyAnimator.animate(cling);
-			animator.alpha(0f).setDuration(1000).setListener(new AnimatorListenerAdapter() {
-				@Override
-				public void onAnimationEnd(Animator animation) {
-					super.onAnimationEnd(animation);
-					mBinding.drawerLayout.removeView(mShowcaseMyLocationV);
-					mShowcaseMyLocationV = null;
-				}
-			}).start();
+			closeShowcaseMyLocation();
 		} else {
 			super.onBackPressed();
 		}
+	}
+
+	/**
+	 * Close current showcase of my-location.
+	 */
+	private void closeShowcaseMyLocation() {
+		View cling = mShowcaseMyLocationV.findViewById(R.id.cling_iv);
+		ViewPropertyAnimator animator = ViewPropertyAnimator.animate(cling);
+		animator.alpha(0f).setDuration(1000).setListener(new AnimatorListenerAdapter() {
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				super.onAnimationEnd(animation);
+				mBinding.drawerLayout.removeView(mShowcaseMyLocationV);
+				mShowcaseMyLocationV = null;
+			}
+		}).start();
 	}
 
 	/**

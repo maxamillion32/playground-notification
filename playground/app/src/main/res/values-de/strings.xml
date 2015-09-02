@@ -117,4 +117,9 @@
     <string name="notify_warm_tips_title">Hey, Feierabend?</string>
 
     <string name="lbl_exclude_chars">Die folgenden Zeichen sind nicht in der Abfrage erlaubt: / = ( ) : ;</string>
+
+    <string name="showcase_fav">In die Favoritenliste hinzufügen</string>
+    <string name="showcase_near_ring">In die Near-Ringsliste hinzufügen. Du wirst informiert, falls Du nah zu diesem Spielplatz bist.</string>
+    <string name="showcase_navi">Navigiere zu diesem Spielplatz</string>
+    <string name="showcase_share">Den Spielplatz zu teilen.</string>
 </resources>

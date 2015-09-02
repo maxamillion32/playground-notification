@@ -17,6 +17,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorListenerAdapter;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.api.ApiNotInitializedException;
@@ -26,8 +29,8 @@ import com.playground.notification.app.activities.MapsActivity;
 import com.playground.notification.bus.ShowLocationRatingEvent;
 import com.playground.notification.databinding.PlaygroundDetailBinding;
 import com.playground.notification.databinding.RatingDialogBinding;
-import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.google.Matrix;
+import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Rating;
 import com.playground.notification.ds.sync.SyncPlayground;
 import com.playground.notification.sync.FavoriteManager;
@@ -208,7 +211,23 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 
 			Prefs prefs = Prefs.getInstance();
 			mBinding = DataBindingUtil.bind(view.findViewById(R.id.playground_detail_vg));
-
+			if(!prefs.isShowcaseShown(Prefs.KEY_SHOWCASE_NEAR_RING)) {
+				mBinding.showcaseVg.setVisibility(View.VISIBLE);
+				mBinding.closeBtn.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						ViewPropertyAnimator animator = ViewPropertyAnimator.animate(	mBinding.showcaseVg);
+						animator.alpha(0f).setDuration(1000).setListener(new AnimatorListenerAdapter() {
+							@Override
+							public void onAnimationEnd(Animator animation) {
+								super.onAnimationEnd(animation);
+								mBinding.showcaseVg.setVisibility(View.GONE);
+							}
+						}).start();
+					}
+				});
+				prefs.setShowcase(Prefs.KEY_SHOWCASE_NEAR_RING, true);
+			}
 
 			final String method;
 			switch (prefs.getTransportationMethod()) {

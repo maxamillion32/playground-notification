@@ -189,4 +189,10 @@
     <string name="lbl_exclude_chars">The following characters are not allowed within the query / = ( ) : ;</string>
 
     <string name="interstitial_ad_unit_id">ca-app-pub-9133982521997162/8275666931</string>
+
+
+    <string name="showcase_fav">Add this playground as favorite.</string>
+    <string name="showcase_near_ring">Add to Near-Ring list. You will be notified later when you\'re near to this playground.</string>
+    <string name="showcase_navi">Navigate you to this playground.</string>
+    <string name="showcase_share">Share this playground to your friends.</string>
 </resources>
