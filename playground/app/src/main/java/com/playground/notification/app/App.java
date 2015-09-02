@@ -244,7 +244,7 @@ public final class App extends MultiDexApplication {
 	};
 
 	private boolean isGoodWeatherCondition(WeatherDetail weatherDetail) {
-		return weatherDetail.getId() == 800 || weatherDetail.getId() == 801;
+		return weatherDetail.getId() == 800 || weatherDetail.getId() == 801 || weatherDetail.getId() == 802|| weatherDetail.getId() == 803;
 	}
 
 	@Override
@@ -335,11 +335,11 @@ public final class App extends MultiDexApplication {
 	 * Notify user.
 	 */
 	private void notify(String title, String desc, PendingIntent contentIntent) {
-		Utils.vibrateSound(this, mNotifyBuilder);
 		mNotifyBuilder = new NotificationCompat.Builder(this).setWhen(System.currentTimeMillis()).setSmallIcon(
 				R.drawable.ic_balloon).setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
 				new BigTextStyle().bigText(desc).setBigContentTitle(title).setSummaryText(desc)).setAutoCancel(true);
 		mNotifyBuilder.setContentIntent(contentIntent);
+		Utils.vibrateSound(this, mNotifyBuilder);
 		mNotificationManager.notify((int) System.currentTimeMillis(), mNotifyBuilder.build());
 	}
 }
