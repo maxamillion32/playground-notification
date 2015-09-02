@@ -2,7 +2,6 @@ package com.playground.notification.sync;
 
 import java.util.List;
 
-import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
@@ -12,7 +11,6 @@ import com.playground.notification.bus.NearRingListLoadingErrorEvent;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.NearRing;
 import com.playground.notification.ds.sync.SyncPlayground;
-import com.playground.notification.geofence.GeofenceManagerService;
 import com.playground.notification.utils.Prefs;
 
 import cn.bmob.v3.BmobQuery;
@@ -62,8 +60,9 @@ public final class NearRingManager extends SyncManager<NearRing> {
 				getCachedList().addAll(list);
 				setInit();
 
-				App.Instance.stopService(new Intent(App.Instance, GeofenceManagerService.class));
-				App.Instance.startService(new Intent(App.Instance, GeofenceManagerService.class));
+				//Don't build geofence when App brings to front.
+//				App.Instance.stopService(new Intent(App.Instance, GeofenceManagerService.class));
+//				App.Instance.startService(new Intent(App.Instance, GeofenceManagerService.class));
 			}
 
 			@Override

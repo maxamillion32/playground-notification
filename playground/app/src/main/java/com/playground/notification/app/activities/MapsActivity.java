@@ -108,6 +108,7 @@ import com.playground.notification.ds.sync.MyLocation;
 import com.playground.notification.ds.sync.NearRing;
 import com.playground.notification.ds.weather.Weather;
 import com.playground.notification.ds.weather.WeatherDetail;
+import com.playground.notification.geofence.GeofenceManagerService;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
@@ -290,6 +291,18 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		buildAds();
 	}
 
+	@Override
+	protected void onStart() {
+		super.onStart();
+		App.Instance.stopService(new Intent(App.Instance, GeofenceManagerService.class));
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		App.Instance.startService(new Intent(App.Instance, GeofenceManagerService.class));
+	}
+
 	/**
 	 * Build Admob.
 	 */
@@ -443,6 +456,9 @@ public class MapsActivity extends AppActivity implements LocationListener {
 				mBinding.currentBtn.setVisibility(View.GONE);
 				mBinding.addBtn.show();
 				mBinding.addPaneV.hide();
+				if (mShowcaseMyLocationV != null) {
+					closeShowcaseMyLocation();
+				}
 			}
 		});
 		mBinding.addBtn.setOnClickListener(new OnClickListener() {
