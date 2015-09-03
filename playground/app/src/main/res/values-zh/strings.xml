@@ -1,9 +1,10 @@
 <resources>
-    <string name="app_name">Playground App</string>
-    <string name="application_name">Playground App</string>
+    <string name="app_name">Playgrounds App</string>
+    <string name="application_name">Playgrounds App</string>
 
     <string name="action_search">搜索</string>
     <string name="action_share">分享</string>
+    <string name="action_about">关于</string>
     <string name="action_go">走?</string>
     <string name="action_favorite">收藏夹(%1$d)</string>
     <string name="action_near_ring">提醒圈子(%1$d)</string>
