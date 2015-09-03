@@ -1,10 +1,8 @@
 package com.playground.notification.app.activities;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -22,6 +20,7 @@ import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.util.ArrayMap;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -168,7 +167,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	/**
 	 * Current shown markers.
 	 */
-	private Map<Marker, Playground> mMarkerList = new LinkedHashMap<>();
+	private ArrayMap<Marker, Playground> mMarkerList = new ArrayMap<>();
 	/**
 	 * {@code true} if the map is forground.
 	 */
