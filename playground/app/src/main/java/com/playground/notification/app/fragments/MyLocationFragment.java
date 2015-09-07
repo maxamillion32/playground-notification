@@ -100,14 +100,16 @@ public final class MyLocationFragment extends DialogFragment {
 
 			MyLocationManager manager = MyLocationManager.getInstance();
 			MyLocation myLocation = manager.findInCache(playground);
-			if(myLocation != null) {
-				mBinding.saveMyLocationIv.setImageResource(R.drawable.ic_action_delete);
-				mBinding.shareGroundBtn.setVisibility(View.VISIBLE);
-			}
 
 			Prefs prefs = Prefs.getInstance();
 			mBinding = DataBindingUtil.bind(view.findViewById(R.id.my_location_vg));
 
+			if(myLocation != null) {
+				mBinding.saveMyLocationIv.setImageResource(R.drawable.ic_action_delete);
+				mBinding.shareGroundBtn.setVisibility(View.VISIBLE);
+				mBinding.myLocationNameTv.setText(myLocation.getLabel());
+				mBinding.myLocationNameTv.setEnabled(false);
+			}
 
 			final String method;
 			switch (prefs.getTransportationMethod()) {
