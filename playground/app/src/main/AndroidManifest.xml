@@ -106,6 +106,20 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="0bf5835ac1569fe382ff64839c0be3d3ed9396b9" />
+
+
+        <service
+            android:name=".app.AppGuardService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
+        <receiver
+            android:name=".app.BootReceiver"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

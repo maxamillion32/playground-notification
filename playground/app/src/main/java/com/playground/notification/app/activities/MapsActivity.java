@@ -85,6 +85,7 @@ import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.api.ApiNotInitializedException;
 import com.playground.notification.app.App;
+import com.playground.notification.app.AppGuardService;
 import com.playground.notification.app.SearchSuggestionProvider;
 import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.AppListImpFragment;
@@ -272,6 +273,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		stopService(new Intent(App.Instance, AppGuardService.class));
 
 		//Init data-binding.
 		mBinding = DataBindingUtil.setContentView(this, LAYOUT);
@@ -770,6 +772,8 @@ public class MapsActivity extends AppActivity implements LocationListener {
 
 	@Override
 	protected void onDestroy() {
+		startService(new Intent(App.Instance, AppGuardService.class));
+
 		stopLocationUpdates();
 		if (mMap != null) {
 			mMap.clear();
