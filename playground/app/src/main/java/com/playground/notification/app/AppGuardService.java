@@ -199,7 +199,11 @@ public class AppGuardService extends Service implements LocationListener {
 
 	@Override
 	public void onDestroy() {
-		unregisterReceiver(mReceiver);
+		try {
+			unregisterReceiver(mReceiver);
+		} catch (RuntimeException ex) {
+
+		}
 		stopLocating();
 		super.onDestroy();
 	}
