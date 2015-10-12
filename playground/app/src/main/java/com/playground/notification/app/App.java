@@ -34,6 +34,9 @@ package com.playground.notification.app;
 import java.io.IOException;
 import java.util.Properties;
 
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
@@ -70,6 +73,10 @@ public final class App extends MultiDexApplication {
 	{
 		Instance = this;
 	}
+
+	private IntentFilter mIntentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
+
+	private BroadcastReceiver mReceiver = new WakeupDeviceReceiver() ;
 
 	/**
 	 * Display-size.
@@ -133,6 +140,7 @@ public final class App extends MultiDexApplication {
 					});
 		}
 		mScreenSize = DeviceUtils.getScreenSize(this);
+		registerReceiver(mReceiver, mIntentFilter);
 	}
 
 	/**

@@ -1,21 +1,15 @@
 package com.playground.notification.app;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.support.v4.app.NotificationCompat.BigTextStyle;
 import android.support.v7.app.NotificationCompat;
 
@@ -44,7 +38,8 @@ import retrofit.client.Response;
  *
  * @author Xinyue Zhao
  */
-public class AppGuardService extends Service implements LocationListener {
+public class AppGuardService extends IntentService implements LocationListener {
+	public static final String EXTRAS_WEEKEND = AppGuardService.class.getName() + ".EXTRAS.WEEKEND";
 	/**
 	 * Connect to google-api.
 	 */
@@ -53,99 +48,23 @@ public class AppGuardService extends Service implements LocationListener {
 	 * Ask current location.
 	 */
 	private LocationRequest mLocationRequest;
-	/**
-	 * Wake-Up device.
-	 */
-	private WakeLock mWakeLock;
-	/**
-	 * wakelock
-	 */
-	private static final String WAKELOCK_KEY = "LOCATING_SERVICE";
-
 	private boolean mWeekendNotify = false;
+	private Intent mIntent;
 
 	private NotificationManager mNotificationManager;
-	private android.support.v4.app.NotificationCompat.Builder mNotifyBuilder;
-
-	private IntentFilter mIntentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
-
-	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context cxt, Intent intent) {
-			Prefs prefs = Prefs.getInstance();
-			if (!prefs.isEULAOnceConfirmed()) {
-				return;
-			}
-			Calendar calendar = Calendar.getInstance();
-			int month = calendar.get(Calendar.MONTH);
-			int hour = calendar.get(Calendar.HOUR_OF_DAY);
-			int min = calendar.get(Calendar.MINUTE);
-			int day = calendar.get(Calendar.DAY_OF_WEEK);
-			if (prefs.notificationWeekendCall() && (day == Calendar.SATURDAY || day == Calendar.SUNDAY)) {
-				if ((hour == 9 && min == 30) || (hour == 12 && min == 0) || (hour == 14 && min == 30)) {
-					mWeekendNotify = true;
-					notifyUser();
-				}
-			}
-			if (prefs.notificationWarmTips()) {
-				if (month >= Calendar.NOVEMBER && month <= Calendar.FEBRUARY) {
-					//Fall ~ Winter
-					if ((hour == 15 && min == 0) || (hour == 15 && min == 15) ){
-						mWeekendNotify = false;
-						notifyUser();
-					}
-				} else if (month >= Calendar.MARCH && month <= Calendar.MAY) {
-					//Spring
-					if ((hour == 15 && min == 30) || (hour == 16 && min == 0)) {
-						mWeekendNotify = false;
-						notifyUser();
-					}
-				} else if (month >= Calendar.JUNE && month <= Calendar.OCTOBER) {
-					//Summer
-					if ((hour == 15 && min == 40) || (hour == 16 && min == 0)) {
-						mWeekendNotify = false;
-						notifyUser();
-					}
-				}
-			}
 
 
-		}
-	};
-
-	private void notifyUser() {
-		if (mWakeLock == null) {
-			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-			mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_KEY);
-		}
-		mWakeLock.acquire();
-		startLocating();
+	public AppGuardService() {
+		super("AppGuardService");
 	}
 
 
 	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
-
-
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		//Utils.showShortToast(this, "AppGuardService");
+	protected void onHandleIntent(Intent intent) {
+		mIntent = intent;
+		mWeekendNotify = mIntent.getBooleanExtra(EXTRAS_WEEKEND, false);
 		mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-		registerReceiver(mReceiver, mIntentFilter);
-		return super.onStartCommand(intent, flags, startId);
-	}
-
-	@Override
-	public void onDestroy() {
-		try {
-			unregisterReceiver(mReceiver);
-		} catch (RuntimeException ex) {
-			//Ignore...
-		}
-		stopLocating();
-		super.onDestroy();
+		startLocating();
 	}
 
 
@@ -153,12 +72,13 @@ public class AppGuardService extends Service implements LocationListener {
 	 * Notify user.
 	 */
 	private void notify(String title, String desc, PendingIntent contentIntent) {
-		mNotifyBuilder = new NotificationCompat.Builder(this).setWhen(System.currentTimeMillis()).setSmallIcon(
-				R.drawable.ic_balloon).setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
-				new BigTextStyle().bigText(desc).setBigContentTitle(title).setSummaryText(desc)).setAutoCancel(true);
-		mNotifyBuilder.setContentIntent(contentIntent);
-		Utils.vibrateSound(this, mNotifyBuilder);
-		mNotificationManager.notify((int) System.currentTimeMillis(), mNotifyBuilder.build());
+		android.support.v4.app.NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(this).setWhen(
+				System.currentTimeMillis()).setSmallIcon(R.drawable.ic_balloon).setTicker(title).setContentTitle(title)
+				.setContentText(desc).setStyle(new BigTextStyle().bigText(desc).setBigContentTitle(title)
+						.setSummaryText(desc)).setAutoCancel(true);
+		notifyBuilder.setContentIntent(contentIntent);
+		Utils.vibrateSound(this, notifyBuilder);
+		mNotificationManager.notify((int) System.currentTimeMillis(), notifyBuilder.build());
 	}
 
 
@@ -172,8 +92,8 @@ public class AppGuardService extends Service implements LocationListener {
 		//Location request.
 		if (mLocationRequest == null) {
 			mLocationRequest = LocationRequest.create();
-			mLocationRequest.setInterval(500);
-			mLocationRequest.setFastestInterval(500);
+			mLocationRequest.setInterval(300);
+			mLocationRequest.setFastestInterval(300);
 			int ty = 0;
 			switch (Prefs.getInstance().getBatteryLifeType()) {
 			case "0":
@@ -197,7 +117,9 @@ public class AppGuardService extends Service implements LocationListener {
 					.addConnectionCallbacks(new ConnectionCallbacks() {
 						@Override
 						public void onConnected(Bundle bundle) {
-							startLocationUpdate();
+							if (mGoogleApiClient != null && mGoogleApiClient.isConnected() && mLocationRequest != null) {
+								LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, AppGuardService.this);
+							}
 						}
 
 						@Override
@@ -217,12 +139,6 @@ public class AppGuardService extends Service implements LocationListener {
 		}
 	}
 
-
-	private void startLocationUpdate() {
-		if (mGoogleApiClient != null && mGoogleApiClient.isConnected() && mLocationRequest != null) {
-			LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-		}
-	}
 
 	@Override
 	public void onLocationChanged(Location location) {
@@ -266,7 +182,7 @@ public class AppGuardService extends Service implements LocationListener {
 									String title = mWeekendNotify ? App.Instance.getString(
 											R.string.notify_weekend_title) : App.Instance.getString(
 											R.string.notify_warm_tips_title);
-									if ( isGoodWeatherCondition(weatherDetail)) {
+									if (isGoodWeatherCondition(weatherDetail)) {
 										PendingIntent pi = PendingIntent.getActivity(App.Instance,
 												(int) System.currentTimeMillis(), i, PendingIntent.FLAG_ONE_SHOT);
 										AppGuardService.this.notify(title, App.Instance.getString(
@@ -274,23 +190,16 @@ public class AppGuardService extends Service implements LocationListener {
 									}
 								}
 							}
-
-							if (mWakeLock != null) {
-								mWakeLock.release();
-							}
+							WakeupDeviceReceiver.completeWakefulIntent(mIntent);
 						}
 
 						@Override
 						public void failure(RetrofitError error) {
-							if (mWakeLock != null) {
-								mWakeLock.release();
-							}
+							WakeupDeviceReceiver.completeWakefulIntent(mIntent);
 						}
 					});
 		} catch (ApiNotInitializedException e) {
-			if (mWakeLock != null) {
-				mWakeLock.release();
-			}
+			WakeupDeviceReceiver.completeWakefulIntent(mIntent);
 		} finally {
 			stopLocating();
 		}
