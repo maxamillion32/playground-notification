@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -15,6 +14,8 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.support.v4.app.NotificationCompat.BigTextStyle;
 import android.support.v7.app.NotificationCompat;
 
@@ -25,7 +26,6 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
 import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.api.ApiNotInitializedException;
@@ -54,9 +54,16 @@ public class AppGuardService extends Service implements LocationListener {
 	 */
 	private LocationRequest mLocationRequest;
 	/**
-	 * Device location.
+	 * Wake-Up device.
 	 */
-	private Location mLocation;
+	private WakeLock mWakeLock;
+	/**
+	 * wakelock
+	 */
+	private static final String WAKELOCK_KEY = "LOCATING_SERVICE";
+
+	private boolean mWeekendNotify = false;
+
 	private NotificationManager mNotificationManager;
 	private android.support.v4.app.NotificationCompat.Builder mNotifyBuilder;
 
@@ -69,117 +76,51 @@ public class AppGuardService extends Service implements LocationListener {
 			if (!prefs.isEULAOnceConfirmed()) {
 				return;
 			}
-			if (mLocation != null) {
-				String units = "metric";
-				switch (prefs.getWeatherUnitsType()) {
-				case "0":
-					units = "metric";
-					break;
-				case "1":
-					units = "imperial";
-					break;
-				}
-				try {
-					Api.getWeather(mLocation.getLatitude(), mLocation.getLongitude(), Locale.getDefault().getLanguage(),
-							units, App.Instance.getWeatherKey(), new Callback<Weather>() {
-								@Override
-								public void success(Weather weather, Response response) {
-									Prefs prefs = Prefs.getInstance();
-									List<WeatherDetail> details = weather.getDetails();
-									if (details != null && details.size() > 0) {
-										WeatherDetail weatherDetail = details.get(0);
-										if (weatherDetail != null) {
-											int units = R.string.lbl_c;
-											switch (prefs.getWeatherUnitsType()) {
-											case "0":
-												units = R.string.lbl_c;
-												break;
-											case "1":
-												units = R.string.lbl_f;
-												break;
-											}
-											String temp = weather.getTemperature() != null ? getString(units,
-													weather.getTemperature().getValue()) : getString(units, 0f);
-											Calendar calendar = Calendar.getInstance();
-											int month = calendar.get(Calendar.MONTH);
-											int hour = calendar.get(Calendar.HOUR_OF_DAY);
-											int min = calendar.get(Calendar.MINUTE);
-											int day = calendar.get(Calendar.DAY_OF_WEEK);
-											Intent i = new Intent(App.Instance, MapsActivity.class);
-											i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-											if (day == Calendar.SATURDAY || day == Calendar.SUNDAY) {
-												if ((hour == 9 && min == 30 || hour == 12 && min == 0 || hour == 14 && min == 30 ) &&
-														isGoodWeatherCondition(weatherDetail)) {
-													if (prefs.notificationWeekendCall()) {
-														PendingIntent pi = PendingIntent.getActivity(App.Instance,
-																(int) System.currentTimeMillis(), i,
-																PendingIntent.FLAG_ONE_SHOT);
-														AppGuardService.this.notify(App.Instance.getString(
-																R.string.notify_weekend_title), App.Instance.getString(
-																R.string.notify_weekend_content,
-																weatherDetail.getDescription(), temp), pi);
-													}
-												}
-											}
-
-											if (month >= Calendar.NOVEMBER && month <= Calendar.FEBRUARY) {
-												//Fall ~ Winter
-												if (hour == 15 && min == 0 &&
-														isGoodWeatherCondition(weatherDetail)) {
-													if (prefs.notificationWarmTips()) {
-														PendingIntent pi = PendingIntent.getActivity(App.Instance,
-																(int) System.currentTimeMillis(), i,
-																PendingIntent.FLAG_ONE_SHOT);
-														AppGuardService.this.notify(App.Instance.getString(
-																		R.string.notify_warm_tips_title),
-																App.Instance.getString(R.string.notify_weekend_content,
-																		weatherDetail.getDescription(), temp), pi);
-													}
-												}
-											} else if (month >= Calendar.MARCH && month <= Calendar.MAY) {
-												//Spring
-												if (hour == 15 && min == 45 &&
-														(isGoodWeatherCondition(weatherDetail))) {
-													if (prefs.notificationWarmTips()) {
-														PendingIntent pi = PendingIntent.getActivity(App.Instance,
-																(int) System.currentTimeMillis(), i,
-																PendingIntent.FLAG_ONE_SHOT);
-														AppGuardService.this.notify(App.Instance.getString(
-																		R.string.notify_warm_tips_title),
-																App.Instance.getString(R.string.notify_weekend_content,
-																		weatherDetail.getDescription(), temp), pi);
-													}
-												}
-											} else if (month >= Calendar.JUNE && month <= Calendar.OCTOBER) {
-												//Summer
-												if (hour == 16 && min == 0 &&
-														(isGoodWeatherCondition(weatherDetail))) {
-													if (prefs.notificationWarmTips()) {
-														PendingIntent pi = PendingIntent.getActivity(App.Instance,
-																(int) System.currentTimeMillis(), i,
-																PendingIntent.FLAG_ONE_SHOT);
-														AppGuardService.this.notify(App.Instance.getString(
-																		R.string.notify_warm_tips_title),
-																App.Instance.getString(R.string.notify_weekend_content,
-																		weatherDetail.getDescription(), temp), pi);
-													}
-												}
-											}
-										}
-									}
-								}
-
-								@Override
-								public void failure(RetrofitError error) {
-
-								}
-							});
-				} catch (ApiNotInitializedException e) {
-					//Ignore this request.
+			Calendar calendar = Calendar.getInstance();
+			int month = calendar.get(Calendar.MONTH);
+			int hour = calendar.get(Calendar.HOUR_OF_DAY);
+			int min = calendar.get(Calendar.MINUTE);
+			int day = calendar.get(Calendar.DAY_OF_WEEK);
+			if (prefs.notificationWeekendCall() && (day == Calendar.SATURDAY || day == Calendar.SUNDAY)) {
+				if ((hour == 9 && min == 30) || (hour == 12 && min == 0) || (hour == 14 && min == 30)) {
+					mWeekendNotify = true;
+					notifyUser();
 				}
 			}
+			if (prefs.notificationWarmTips()) {
+				if (month >= Calendar.NOVEMBER && month <= Calendar.FEBRUARY) {
+					//Fall ~ Winter
+					if ((hour == 15 && min == 0) || (hour == 15 && min == 15) ){
+						mWeekendNotify = false;
+						notifyUser();
+					}
+				} else if (month >= Calendar.MARCH && month <= Calendar.MAY) {
+					//Spring
+					if ((hour == 15 && min == 30) || (hour == 16 && min == 0)) {
+						mWeekendNotify = false;
+						notifyUser();
+					}
+				} else if (month >= Calendar.JUNE && month <= Calendar.OCTOBER) {
+					//Summer
+					if ((hour == 15 && min == 40) || (hour == 16 && min == 0)) {
+						mWeekendNotify = false;
+						notifyUser();
+					}
+				}
+			}
+
+
 		}
 	};
+
+	private void notifyUser() {
+		if (mWakeLock == null) {
+			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+			mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_KEY);
+		}
+		mWakeLock.acquire();
+		startLocating();
+	}
 
 
 	@Override
@@ -193,7 +134,6 @@ public class AppGuardService extends Service implements LocationListener {
 		//Utils.showShortToast(this, "AppGuardService");
 		mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 		registerReceiver(mReceiver, mIntentFilter);
-		startLocating();
 		return super.onStartCommand(intent, flags, startId);
 	}
 
@@ -202,7 +142,7 @@ public class AppGuardService extends Service implements LocationListener {
 		try {
 			unregisterReceiver(mReceiver);
 		} catch (RuntimeException ex) {
-
+			//Ignore...
 		}
 		stopLocating();
 		super.onDestroy();
@@ -227,15 +167,13 @@ public class AppGuardService extends Service implements LocationListener {
 				weatherDetail.getId() == 803;
 	}
 
-	/**
-	 * Update device location to cooperate with weather information and show notification.
-	 */
+
 	private void startLocating() {
 		//Location request.
 		if (mLocationRequest == null) {
 			mLocationRequest = LocationRequest.create();
-			mLocationRequest.setInterval(AlarmManager.INTERVAL_HALF_HOUR);
-			mLocationRequest.setFastestInterval(AlarmManager.INTERVAL_FIFTEEN_MINUTES);
+			mLocationRequest.setInterval(500);
+			mLocationRequest.setFastestInterval(500);
 			int ty = 0;
 			switch (Prefs.getInstance().getBatteryLifeType()) {
 			case "0":
@@ -277,18 +215,9 @@ public class AppGuardService extends Service implements LocationListener {
 
 			mGoogleApiClient.connect();
 		}
-
-		//Setting turn/off location service of system.
-		LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(
-				mLocationRequest);
-		builder.setAlwaysShow(true);
-		builder.setNeedBle(true);
 	}
 
 
-	/**
-	 * Locate device.
-	 */
 	private void startLocationUpdate() {
 		if (mGoogleApiClient != null && mGoogleApiClient.isConnected() && mLocationRequest != null) {
 			LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -297,16 +226,83 @@ public class AppGuardService extends Service implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location location) {
-		mLocation = location;
+		Prefs prefs = Prefs.getInstance();
+		if (!prefs.isEULAOnceConfirmed()) {
+			return;
+		}
+		String units = "metric";
+		switch (prefs.getWeatherUnitsType()) {
+		case "0":
+			units = "metric";
+			break;
+		case "1":
+			units = "imperial";
+			break;
+		}
+		try {
+			Api.getWeather(location.getLatitude(), location.getLongitude(), Locale.getDefault().getLanguage(), units,
+					App.Instance.getWeatherKey(), new Callback<Weather>() {
+						@Override
+						public void success(Weather weather, Response response) {
+							Prefs prefs = Prefs.getInstance();
+							List<WeatherDetail> details = weather.getDetails();
+							if (details != null && details.size() > 0) {
+								WeatherDetail weatherDetail = details.get(0);
+								if (weatherDetail != null) {
+									int units = R.string.lbl_c;
+									switch (prefs.getWeatherUnitsType()) {
+									case "0":
+										units = R.string.lbl_c;
+										break;
+									case "1":
+										units = R.string.lbl_f;
+										break;
+									}
+									String temp = weather.getTemperature() != null ? getString(units,
+											weather.getTemperature().getValue()) : getString(units, 0f);
+
+									Intent i = new Intent(App.Instance, MapsActivity.class);
+									i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+									String title = mWeekendNotify ? App.Instance.getString(
+											R.string.notify_weekend_title) : App.Instance.getString(
+											R.string.notify_warm_tips_title);
+									if ( isGoodWeatherCondition(weatherDetail)) {
+										PendingIntent pi = PendingIntent.getActivity(App.Instance,
+												(int) System.currentTimeMillis(), i, PendingIntent.FLAG_ONE_SHOT);
+										AppGuardService.this.notify(title, App.Instance.getString(
+												R.string.notify_content, weatherDetail.getDescription(), temp), pi);
+									}
+								}
+							}
+
+							if (mWakeLock != null) {
+								mWakeLock.release();
+							}
+						}
+
+						@Override
+						public void failure(RetrofitError error) {
+							if (mWakeLock != null) {
+								mWakeLock.release();
+							}
+						}
+					});
+		} catch (ApiNotInitializedException e) {
+			if (mWakeLock != null) {
+				mWakeLock.release();
+			}
+		} finally {
+			stopLocating();
+		}
 	}
 
-	/**
-	 * Stop locate device position.
-	 */
+
 	private void stopLocating() {
 		if (mGoogleApiClient != null) {
 			LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 			mGoogleApiClient = null;
+		}
+		if (mLocationRequest != null) {
 			mLocationRequest = null;
 		}
 	}

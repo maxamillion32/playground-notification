@@ -182,7 +182,7 @@
     <string name="notify_weekend">Weekend call</string>
 
     <string name="notify_weekend_title">Hi it\'s weekend, are you ready?</string>
-    <string name="notify_weekend_content">It a nice weather outside, %1$s %2$s. You\'d better bring your kids and find a playground for fun :).</string>
+    <string name="notify_content">It a nice weather outside, %1$s %2$s. You\'d better bring your kids and find a playground for fun :).</string>
     <string name="notify_warm_tips_title">Hi, end of work?</string>
 
     <string name="suggestion_auth"  >com.playground.notification.app.SearchSuggestionProvider</string>
