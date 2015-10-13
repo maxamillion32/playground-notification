@@ -59,8 +59,8 @@ public final class WakeupDeviceReceiver extends WakefulBroadcastReceiver {
 	@NonNull
 	private Intent initService(Context context, boolean isWeekend) {
 		Intent service;
-		service = new Intent(context, AppGuardService.class);
-		service.putExtra(AppGuardService.EXTRAS_WEEKEND, isWeekend);
+		service = new Intent(context, NotifyUserService.class);
+		service.putExtra(NotifyUserService.EXTRAS_WEEKEND, isWeekend);
 		return service;
 	}
 }
