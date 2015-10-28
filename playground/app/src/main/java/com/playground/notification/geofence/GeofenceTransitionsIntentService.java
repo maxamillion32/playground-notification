@@ -73,7 +73,7 @@ public final class GeofenceTransitionsIntentService extends IntentService {
 
 								mSharePi = PendingIntent.getActivity(GeofenceTransitionsIntentService.this,
 										(int) System.currentTimeMillis(), Utils.getShareInformation(subject, content),
-										PendingIntent.FLAG_ONE_SHOT);
+										PendingIntent.FLAG_UPDATE_CURRENT);
 								AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Void>() {
 									@Override
 									protected Void doInBackground(Void... params) {
@@ -91,7 +91,7 @@ public final class GeofenceTransitionsIntentService extends IntentService {
 
 								mSharePi = PendingIntent.getActivity(GeofenceTransitionsIntentService.this,
 										(int) System.currentTimeMillis(), Utils.getShareInformation(subject, content),
-										PendingIntent.FLAG_ONE_SHOT);
+										PendingIntent.FLAG_UPDATE_CURRENT);
 								AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Void>() {
 									@Override
 									protected Void doInBackground(Void... params) {
