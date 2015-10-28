@@ -49,7 +49,6 @@ public class NotifyUserService extends IntentService implements LocationListener
 	 */
 	private LocationRequest mLocationRequest;
 	private boolean mWeekendNotify = false;
-	private Intent mIntent;
 
 	private NotificationManager mNotificationManager;
 
@@ -61,8 +60,7 @@ public class NotifyUserService extends IntentService implements LocationListener
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		mIntent = intent;
-		mWeekendNotify = mIntent.getBooleanExtra(EXTRAS_WEEKEND, false);
+		mWeekendNotify = intent.getBooleanExtra(EXTRAS_WEEKEND, false);
 		mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 		startLocating();
 	}
@@ -184,22 +182,22 @@ public class NotifyUserService extends IntentService implements LocationListener
 											R.string.notify_warm_tips_title);
 									if (isGoodWeatherCondition(weatherDetail)) {
 										PendingIntent pi = PendingIntent.getActivity(App.Instance,
-												(int) System.currentTimeMillis(), i, PendingIntent.FLAG_ONE_SHOT);
+												(int) System.currentTimeMillis(), i, PendingIntent.FLAG_UPDATE_CURRENT);
 										NotifyUserService.this.notify(title, App.Instance.getString(
 												R.string.notify_content, weatherDetail.getDescription(), temp), pi);
 									}
 								}
 							}
-							WakeupDeviceReceiver.completeWakefulIntent(mIntent);
+							//Ignore...
 						}
 
 						@Override
 						public void failure(RetrofitError error) {
-							WakeupDeviceReceiver.completeWakefulIntent(mIntent);
+							//Ignore...
 						}
 					});
 		} catch (ApiNotInitializedException e) {
-			WakeupDeviceReceiver.completeWakefulIntent(mIntent);
+			//Ignore...
 		} finally {
 			stopLocating();
 		}

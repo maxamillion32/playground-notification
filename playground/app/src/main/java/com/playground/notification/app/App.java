@@ -34,7 +34,6 @@ package com.playground.notification.app;
 import java.io.IOException;
 import java.util.Properties;
 
-import android.content.Intent;
 import android.location.Location;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
@@ -43,6 +42,8 @@ import com.chopping.net.TaskHelper;
 import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.PeriodicTask;
 import com.playground.notification.R;
 import com.playground.notification.utils.Prefs;
 
@@ -135,7 +136,26 @@ public final class App extends MultiDexApplication {
 					});
 		}
 		mScreenSize = DeviceUtils.getScreenSize(this);
-		startService(new Intent(this, AppGuardService.class));
+		startAppGuardService();
+	}
+
+	/**
+	 * A background service that will looking for time to notify user for some weather condition.
+	 */
+	private void startAppGuardService() {
+		long periodSecs = 1L; // the task should be executed every 30 seconds
+		long flexSecs = 0L; // the task can run as early as -15 seconds from the scheduled time
+		String tag = System.currentTimeMillis() + "";
+		PeriodicTask periodic = new PeriodicTask.Builder()
+				.setService(AppGuardService.class)
+		.setPeriod(periodSecs)
+				.setFlex(flexSecs)
+				.setTag(tag)
+				.setPersisted(true)
+				.setRequiredNetwork(com.google.android.gms.gcm.Task.NETWORK_STATE_ANY)
+				.setRequiresCharging(false)
+				.build();
+		GcmNetworkManager.getInstance(this).schedule(periodic);
 	}
 
 	/**
