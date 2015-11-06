@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.ProgressDialog;
@@ -12,9 +13,12 @@ import android.app.SearchableInfo;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.NavigationView;
@@ -88,7 +92,6 @@ import com.playground.notification.app.App;
 import com.playground.notification.app.SearchSuggestionProvider;
 import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.AppListImpFragment;
-import com.playground.notification.app.fragments.GPlusFragment;
 import com.playground.notification.app.fragments.MyLocationFragment;
 import com.playground.notification.app.fragments.PlaygroundDetailFragment;
 import com.playground.notification.bus.EULAConfirmedEvent;
@@ -192,6 +195,12 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	 * The interstitial ad.
 	 */
 	private InterstitialAd mInterstitialAd;
+
+
+	private static final String[] INITIAL_PERMS={
+			Manifest.permission.ACCESS_FINE_LOCATION,
+	};
+
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -820,9 +829,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		};
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-		//Navi-head
-		getSupportFragmentManager().beginTransaction().replace(R.id.gplus_container, GPlusFragment.newInstance(
-				getApplication())).commit();
+
 	}
 
 	/**
@@ -834,6 +841,23 @@ public class MapsActivity extends AppActivity implements LocationListener {
 					mgr.getCachedList().size()));
 		} else {
 			mBinding.navView.getMenu().findItem(itemResId).setTitle(getString(itemTitleResId, 0));
+		}
+	}
+
+	private boolean canAccessLocation() {
+		return(hasPermission(Manifest.permission.ACCESS_FINE_LOCATION));
+	}
+
+	private boolean hasPermission(String perm) {
+		return(PackageManager.PERMISSION_GRANTED==checkSelfPermission(perm));
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+		if (canAccessLocation()) {
+			setUpMapIfNeeded();
+		} else {
+			ActivityCompat.finishAffinity(this);
 		}
 	}
 
@@ -849,7 +873,13 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		if (mDrawerToggle != null) {
 			mDrawerToggle.syncState();
 		}
-		setUpMapIfNeeded();
+
+		if (VERSION.SDK_INT >= VERSION_CODES.M && !canAccessLocation() ) {
+			requestPermissions(INITIAL_PERMS, 0);
+		} else {
+			setUpMapIfNeeded();
+		}
+
 		mVisible = true;
 	}
 
