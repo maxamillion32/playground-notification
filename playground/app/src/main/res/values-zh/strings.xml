@@ -33,7 +33,7 @@
     <string name="lbl_share_ground_content">亲爱的爸爸妈妈，\n\n这里我分享一个不错的地方，让您和您的孩子一起玩。\n\n地图上找到:\n%1$s\n\n%2$s</string>
 
     <string name="lbl_hello">您好 %1$s!</string>
-    <string name="lbl_welcome">欢饮使用 %1$s\n. 找到一个好地方，跟您的孩子一起玩耍， 走吧！</string>
+    <string name="lbl_welcome">很高兴您能使用 %1$s\n. 找到一个好地方，跟您的孩子一起玩耍， 走吧！</string>
     <string name="lbl_connect_google">连接谷歌…</string>
     <string name="lbl_logout_gplus">登出</string>
 
