@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
@@ -34,17 +35,21 @@
             android:name=".app.SearchSuggestionProvider"
             android:authorities="@string/suggestion_auth"
             android:exported="false" />
-
         <activity
-            android:name=".app.activities.MapsActivity"
-            android:label="@string/title_activity_maps"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait">
+            android:name=".app.activities.SplashActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".app.activities.MapsActivity"
+            android:label="@string/title_activity_maps"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
+
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".activities.MapsActivity" />

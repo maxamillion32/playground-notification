@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.ProgressDialog;
@@ -13,12 +12,9 @@ import android.app.SearchableInfo;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
-import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.location.Location;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.NavigationView;
@@ -197,10 +193,6 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	private InterstitialAd mInterstitialAd;
 
 
-	private static final String[] INITIAL_PERMS={
-			Manifest.permission.ACCESS_FINE_LOCATION,
-	};
-
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -249,6 +241,18 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	public static void showInstance(Activity cxt, Playground ground) {
 		Intent intent = new Intent(cxt, MapsActivity.class);
 		intent.putExtra(EXTRAS_GROUND, ground);
+		intent.setFlags(FLAG_ACTIVITY_SINGLE_TOP | FLAG_ACTIVITY_CLEAR_TOP);
+		ActivityCompat.startActivity(cxt, intent, null);
+	}
+
+	/**
+	 * Show single instance of {@link MapsActivity}
+	 *
+	 * @param cxt
+	 * 		{@link Activity}.
+	 */
+	public static void showInstance(Activity cxt) {
+		Intent intent = new Intent(cxt, MapsActivity.class);
 		intent.setFlags(FLAG_ACTIVITY_SINGLE_TOP | FLAG_ACTIVITY_CLEAR_TOP);
 		ActivityCompat.startActivity(cxt, intent, null);
 	}
@@ -844,22 +848,8 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		}
 	}
 
-	private boolean canAccessLocation() {
-		return(hasPermission(Manifest.permission.ACCESS_FINE_LOCATION));
-	}
 
-	private boolean hasPermission(String perm) {
-		return(PackageManager.PERMISSION_GRANTED==checkSelfPermission(perm));
-	}
 
-	@Override
-	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-		if (canAccessLocation()) {
-			setUpMapIfNeeded();
-		} else {
-			ActivityCompat.finishAffinity(this);
-		}
-	}
 
 	@Override
 	protected void onResume() {
@@ -874,11 +864,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 			mDrawerToggle.syncState();
 		}
 
-		if (VERSION.SDK_INT >= VERSION_CODES.M && !canAccessLocation() ) {
-			requestPermissions(INITIAL_PERMS, 0);
-		} else {
-			setUpMapIfNeeded();
-		}
+		setUpMapIfNeeded();
 
 		mVisible = true;
 	}

@@ -135,4 +135,6 @@
     <string name="showcase_near_ring">添加到－－提醒圈子－－，以后我可以提醒您，如果您接近这个圈子。</string>
     <string name="showcase_navi">导航到这个地方。</string>
     <string name="showcase_share">分享这个地方给您的朋友们。</string>
+
+    <string name="msg_permission_prompt">没有－读取电话状态，写入存储，位置－的权限，应用无法运行…</string>
 </resources>

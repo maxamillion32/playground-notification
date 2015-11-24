@@ -122,4 +122,7 @@
     <string name="showcase_near_ring">In die Near-Ringsliste hinzufügen. Du wirst informiert, falls Du nah zu diesem Spielplatz bist.</string>
     <string name="showcase_navi">Navigiere zu diesem Spielplatz.</string>
     <string name="showcase_share">Den Spielplatz zu teilen.</string>
+
+    <string name="msg_permission_prompt">Ohne Berechtigung von "Read Phone State", "Write External Storage" und "Lokalisierung" kann die App nicht weiter gehen…</string>
+
 </resources>
