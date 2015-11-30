@@ -23,6 +23,7 @@
     <string name="btn_close_app">停止使用</string>
     <string name="btn_close">关闭</string>
     <string name="btn_exit">关闭</string>
+    <string name="btn_app_rating">应用评价</string>
 
      <string name="lbl_play_service">应用需要Play服务，下载？</string>
 

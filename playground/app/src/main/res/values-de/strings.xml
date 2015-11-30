@@ -22,6 +22,7 @@
     <string name="btn_close_app">App schließen</string>
     <string name="btn_close">Schließen</string>
     <string name="btn_exit">ausschalten</string>
+    <string name="btn_app_rating">App bewerten</string>
 
      <string name="lbl_play_service">Diese App braucht Google Play Service, Sie müssen erst herunterladen dann
         weiter.</string>

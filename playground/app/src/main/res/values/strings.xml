@@ -28,6 +28,7 @@
     <string name="btn_close_app">Close app</string>
     <string name="btn_close">Close</string>
     <string name="btn_exit">Exit</string>
+    <string name="btn_app_rating">App rating</string>
 
     <string name="lbl_play_service">This application needs Google Play Service, you must install it first.</string>
 

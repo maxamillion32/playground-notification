@@ -1,4 +1,4 @@
-package com.playground.notification.app;
+package com.playground.notification.app.noactivities;
 
 import java.util.List;
 import java.util.Locale;
@@ -23,6 +23,7 @@ import com.google.android.gms.location.LocationServices;
 import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.api.ApiNotInitializedException;
+import com.playground.notification.app.App;
 import com.playground.notification.app.activities.MapsActivity;
 import com.playground.notification.ds.weather.Weather;
 import com.playground.notification.ds.weather.WeatherDetail;

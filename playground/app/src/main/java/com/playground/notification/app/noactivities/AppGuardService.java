@@ -1,38 +1,31 @@
-package com.playground.notification.app;
+package com.playground.notification.app.noactivities;
 
 
 import java.util.Calendar;
 
+import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
-import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.GcmTaskService;
-import com.google.android.gms.gcm.TaskParams;
 import com.playground.notification.utils.Prefs;
 
-public final class AppGuardService extends GcmTaskService {
+public final class AppGuardService extends IntentService {
 	private static final String TAG = "AppGuardService";
-	private static int sLastHour = -1;
-	private static int sLastMin = -1;
+
+
+	public AppGuardService() {
+		super(TAG);
+	}
 
 	@Override
-	public int onRunTask(TaskParams taskParams) {
-		synchronized (AppGuardService.TAG) {
-			Intent service = null;
-			Prefs prefs = Prefs.getInstance();
-			if (!prefs.isEULAOnceConfirmed()) {
-				return GcmNetworkManager.RESULT_SUCCESS;
-			}
+	protected void onHandleIntent(Intent intent) {
+		Intent service = null;
+		Prefs prefs = Prefs.getInstance();
+		if (prefs.isEULAOnceConfirmed()) {
 			Calendar calendar = Calendar.getInstance();
 			int hour = calendar.get(Calendar.HOUR_OF_DAY);
 			int min = calendar.get(Calendar.MINUTE);
-			if (hour == sLastHour && min == sLastMin) {
-				return GcmNetworkManager.RESULT_SUCCESS;
-			}
-			sLastHour = hour;
-			sLastMin = min;
 			int month = calendar.get(Calendar.MONTH);
 			int day = calendar.get(Calendar.DAY_OF_WEEK);
 			if (prefs.notificationWeekendCall() && (day == Calendar.SATURDAY || day == Calendar.SUNDAY)) {
@@ -64,8 +57,6 @@ public final class AppGuardService extends GcmTaskService {
 			if (service != null) {
 				startService(service);
 			}
-
-			return GcmNetworkManager.RESULT_SUCCESS;
 		}
 	}
 

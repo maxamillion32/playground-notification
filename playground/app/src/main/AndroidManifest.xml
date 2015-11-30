@@ -116,21 +116,20 @@
 
 
         <service
-            android:name=".app.AppGuardService"
+            android:name=".app.noactivities.AppGuardService"
             android:exported="true"
-            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE"
-            android:enabled="true"  >
-            <intent-filter>
-                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY"/>
-            </intent-filter>
-        </service>
+            android:enabled="true"  />
         <service
-            android:name=".app.NotifyUserService"
+            android:name=".app.noactivities.NotifyUserService"
             android:enabled="true"
             android:exported="false" >
         </service>
+        <service
+            android:name=".app.noactivities.TickerService"
+            android:enabled="true"
+            android:exported="true"/>
         <receiver
-            android:name=".app.BootReceiver"
+            android:name=".app.noactivities.BootReceiver"
             android:enabled="true" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
