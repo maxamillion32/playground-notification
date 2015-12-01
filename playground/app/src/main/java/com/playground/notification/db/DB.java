@@ -21,19 +21,19 @@ public final class DB {
 	/**
 	 * {@link Context}.
 	 */
-	private Context mContext;
+	private        Context        mContext;
 	/**
 	 * Impl singleton pattern.
 	 */
-	private static DB sInstance;
+	private static DB             sInstance;
 	/**
 	 * Helper class that create, delete, update tables of database.
 	 */
-	private DatabaseHelper mDatabaseHelper;
+	private        DatabaseHelper mDatabaseHelper;
 	/**
 	 * The database object.
 	 */
-	private SQLiteDatabase mDB;
+	private        SQLiteDatabase mDB;
 
 	/**
 	 * Constructor of {@link DB}. Impl singleton pattern so that it is private.
@@ -41,7 +41,7 @@ public final class DB {
 	 * @param cxt
 	 * 		{@link Context}.
 	 */
-	private DB(Context cxt) {
+	private DB( Context cxt ) {
 		mContext = cxt;
 	}
 
@@ -53,9 +53,9 @@ public final class DB {
 	 *
 	 * @return The {@link DB} singleton.
 	 */
-	public static DB getInstance(Context cxt) {
-		if (sInstance == null) {
-			sInstance = new DB(cxt);
+	public static DB getInstance( Context cxt ) {
+		if( sInstance == null ) {
+			sInstance = new DB( cxt );
 		}
 		return sInstance;
 	}
@@ -64,7 +64,7 @@ public final class DB {
 	 * Open database.
 	 */
 	public synchronized void open() {
-		mDatabaseHelper = new DatabaseHelper(mContext);
+		mDatabaseHelper = new DatabaseHelper( mContext );
 		mDB = mDatabaseHelper.getReadableDatabase();
 	}
 
@@ -77,13 +77,15 @@ public final class DB {
 
 	/**
 	 * Get locations between northeast and southwest.
+	 *
 	 * @return The result of locations between.
 	 */
-	public synchronized Cursor search(LatLng northeast, LatLng southwest) {
-		if (mDB == null || !mDB.isOpen()) {
+	public synchronized Cursor search( LatLng northeast, LatLng southwest ) {
+		if( mDB == null || !mDB.isOpen() ) {
 			open();
 		}
-		String mainQuery = "SELECT * FROM grounds WHERE " + "latitude <= " + northeast.latitude + " AND latitude >= " + southwest.latitude + " AND longitude <= " +  northeast.longitude + " AND longitude >= " +  southwest.longitude;
-		return mDB.rawQuery(mainQuery, null);
+		String mainQuery = "SELECT * FROM grounds WHERE " + "latitude <= " + northeast.latitude + " AND latitude >= " + southwest.latitude +
+						   " AND longitude <= " + northeast.longitude + " AND longitude >= " + southwest.longitude;
+		return mDB.rawQuery( mainQuery, null );
 	}
 }

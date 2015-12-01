@@ -9,7 +9,7 @@ public final class GeocodeList {
 	@SerializedName("results")
 	private List<Geocode> mGeocodeList;
 	@SerializedName("status")
-	private String mStatus;
+	private String        mStatus;
 
 	public List<Geocode> getGeocodeList() {
 		return mGeocodeList;

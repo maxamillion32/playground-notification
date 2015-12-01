@@ -21,8 +21,8 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String DATABASE_NAME;
 
 	static {
-		File dbDir = App.Instance.getExternalFilesDir(Environment.DIRECTORY_DCIM);
-		File dbFile = new File(dbDir, "playgrounds.db");
+		File dbDir  = App.Instance.getExternalFilesDir( Environment.DIRECTORY_DCIM );
+		File dbFile = new File( dbDir, "playgrounds.db" );
 		DATABASE_NAME = dbFile.getAbsolutePath();
 	}
 
@@ -34,17 +34,17 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
 	 * @param context
 	 * 		{@link Context}.
 	 */
-	public DatabaseHelper(Context context) {
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	public DatabaseHelper( Context context ) {
+		super( context, DATABASE_NAME, null, DATABASE_VERSION );
 	}
 
 	@Override
-	public void onCreate(SQLiteDatabase db) {
+	public void onCreate( SQLiteDatabase db ) {
 
 	}
 
 	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+	public void onUpgrade( SQLiteDatabase db, int oldVersion, int newVersion ) {
 
 	}
 }

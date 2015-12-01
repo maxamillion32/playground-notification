@@ -49,28 +49,28 @@ public final class NearRingManager extends SyncManager<NearRing> {
 	public synchronized void init() {
 		//Load from backend.
 		BmobQuery<NearRing> q = new BmobQuery<>();
-		q.setCachePolicy(CachePolicy.NETWORK_ELSE_CACHE);
-		q.addWhereEqualTo("mUID", Prefs.getInstance().getGoogleId());
-		q.findObjects(App.Instance, new FindListener<NearRing>() {
+		q.setCachePolicy( CachePolicy.NETWORK_ELSE_CACHE );
+		q.addWhereEqualTo( "mUID", Prefs.getInstance().getGoogleId() );
+		q.findObjects( App.Instance, new FindListener<NearRing>() {
 			@Override
-			public void onSuccess(List<NearRing> list) {
-				if (getCachedList().size() > 0) {
+			public void onSuccess( List<NearRing> list ) {
+				if( getCachedList().size() > 0 ) {
 					getCachedList().clear();
 				}
-				getCachedList().addAll(list);
+				getCachedList().addAll( list );
 				setInit();
 
 				//Don't build geofence when App brings to front.
-//				App.Instance.stopService(new Intent(App.Instance, GeofenceManagerService.class));
-//				App.Instance.startService(new Intent(App.Instance, GeofenceManagerService.class));
+				//				App.Instance.stopService(new Intent(App.Instance, GeofenceManagerService.class));
+				//				App.Instance.startService(new Intent(App.Instance, GeofenceManagerService.class));
 			}
 
 			@Override
-			public void onError(int i, String s) {
+			public void onError( int i, String s ) {
 				setInit();
-				EventBus.getDefault().post(new NearRingListLoadingErrorEvent());
+				EventBus.getDefault().post( new NearRingListLoadingErrorEvent() );
 			}
-		});
+		} );
 	}
 
 
@@ -84,11 +84,11 @@ public final class NearRingManager extends SyncManager<NearRing> {
 	 * @param viewForSnack
 	 * 		{@link View} anchor for showing {@link Snackbar} messages.
 	 */
-	public synchronized void addNearRing(Playground newGround, android.widget.ImageView v, View viewForSnack) {
-		add(new NearRing(Prefs.getInstance().getGoogleId(), newGround), v, viewForSnack);
+	public synchronized void addNearRing( Playground newGround, android.widget.ImageView v, View viewForSnack ) {
+		add( new NearRing( Prefs.getInstance().getGoogleId(), newGround ), v, viewForSnack );
 		//Save performance, don't do it every time.
-//		App.Instance.stopService(new Intent(App.Instance, GeofenceManagerService.class));
-//		App.Instance.startService(new Intent(App.Instance, GeofenceManagerService.class));
+		//		App.Instance.stopService(new Intent(App.Instance, GeofenceManagerService.class));
+		//		App.Instance.startService(new Intent(App.Instance, GeofenceManagerService.class));
 	}
 
 
@@ -102,16 +102,16 @@ public final class NearRingManager extends SyncManager<NearRing> {
 	 * @param viewForSnack
 	 * 		{@link View} anchor for showing {@link Snackbar} messages.
 	 */
-	public synchronized void removeNearRing(SyncPlayground oldT, android.widget.ImageView v, View viewForSnack) {
-		NearRing delNearRing = new NearRing(Prefs.getInstance().getGoogleId(), oldT);
-		delNearRing.setObjectId(oldT.getObjectId());
-		remove(delNearRing, v, viewForSnack);
+	public synchronized void removeNearRing( SyncPlayground oldT, android.widget.ImageView v, View viewForSnack ) {
+		NearRing delNearRing = new NearRing( Prefs.getInstance().getGoogleId(), oldT );
+		delNearRing.setObjectId( oldT.getObjectId() );
+		remove( delNearRing, v, viewForSnack );
 		//Save performance, don't do it every time.
-//		App.Instance.stopService(new Intent(App.Instance, GeofenceManagerService.class));
-//		App.Instance.startService(new Intent(App.Instance, GeofenceManagerService.class));
+		//		App.Instance.stopService(new Intent(App.Instance, GeofenceManagerService.class));
+		//		App.Instance.startService(new Intent(App.Instance, GeofenceManagerService.class));
 	}
 
-@Override
+	@Override
 	protected int getAddSuccessText() {
 		return R.string.lbl_near_ring;
 	}

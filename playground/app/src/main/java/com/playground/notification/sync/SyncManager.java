@@ -20,7 +20,7 @@ import cn.bmob.v3.listener.DeleteListener;
 import cn.bmob.v3.listener.SaveListener;
 
 
-public  abstract class SyncManager<T extends SyncPlayground> {
+public abstract class SyncManager<T extends SyncPlayground> {
 	private List<T> mCachedList = new LinkedList<>();
 	private boolean mInit;
 	/**
@@ -30,17 +30,15 @@ public  abstract class SyncManager<T extends SyncPlayground> {
 	}
 
 
-
-	public boolean isCached(Playground ground) {
-		return ground != null && mCachedList.contains(ground);
+	public boolean isCached( Playground ground ) {
+		return ground != null && mCachedList.contains( ground );
 	}
 
 
-
 	@Nullable
-	public T findInCache(Playground ground) {
-		for (T cached : mCachedList) {
-			if (cached.equals(ground)) {
+	public T findInCache( Playground ground ) {
+		for( T cached : mCachedList ) {
+			if( cached.equals( ground ) ) {
 				return cached;
 			}
 		}
@@ -48,106 +46,104 @@ public  abstract class SyncManager<T extends SyncPlayground> {
 	}
 
 
-	protected void add(T newT, ImageView v, View viewForSnack) {
+	protected void add( T newT, ImageView v, View viewForSnack ) {
 		//Same bookmark should not be added again.
-		if (mCachedList.contains(newT)) {
+		if( mCachedList.contains( newT ) ) {
 			return;
 		}
-		mCachedList.add(newT);
-		v.setImageResource(getAddedIcon());
-		v.setEnabled(false);
-		addInternal(newT, v, viewForSnack);
+		mCachedList.add( newT );
+		v.setImageResource( getAddedIcon() );
+		v.setEnabled( false );
+		addInternal( newT, v, viewForSnack );
 	}
 
 
-	private void addInternal(final T newT, final ImageView v, View viewForSnack) {
-		final WeakReference<View> anchor = new WeakReference<>(viewForSnack);
-		final WeakReference<ImageView> actionBtn = new WeakReference<>(v);
-		newT.save(App.Instance, new SaveListener() {
+	private void addInternal( final T newT, final ImageView v, View viewForSnack ) {
+		final WeakReference<View>      anchor    = new WeakReference<>( viewForSnack );
+		final WeakReference<ImageView> actionBtn = new WeakReference<>( v );
+		newT.save( App.Instance, new SaveListener() {
 			@Override
 			public void onSuccess() {
 				View anchorV = anchor.get();
-				View btn = actionBtn.get();
-				if (anchorV != null) {
-					Snackbar.make(anchorV, getAddSuccessText(), Snackbar.LENGTH_SHORT).show();
+				View btn     = actionBtn.get();
+				if( anchorV != null ) {
+					Snackbar.make( anchorV, getAddSuccessText(), Snackbar.LENGTH_SHORT ).show();
 				}
-				if (btn != null) {
-					btn.setEnabled(true);
+				if( btn != null ) {
+					btn.setEnabled( true );
 				}
 			}
 
 			@Override
-			public void onFailure(int i, String s) {
-				View anchorV = anchor.get();
-				ImageView btn = actionBtn.get();
-				if (anchorV != null) {
-					Snackbar.make(anchorV, R.string.meta_load_error, Snackbar.LENGTH_LONG).setAction(R.string.btn_retry,
-							new OnClickListener() {
-								@Override
-								public void onClick(View v) {
-									addInternal(newT, actionBtn.get(), anchor.get());
-								}
-							}).show();
+			public void onFailure( int i, String s ) {
+				View      anchorV = anchor.get();
+				ImageView btn     = actionBtn.get();
+				if( anchorV != null ) {
+					Snackbar.make( anchorV, R.string.meta_load_error, Snackbar.LENGTH_LONG ).setAction( R.string.btn_retry, new OnClickListener() {
+						@Override
+						public void onClick( View v ) {
+							addInternal( newT, actionBtn.get(), anchor.get() );
+						}
+					} ).show();
 				}
-				if (btn != null) {
-					btn.setEnabled(true);
-					btn.setImageResource(getRemovedIcon());
+				if( btn != null ) {
+					btn.setEnabled( true );
+					btn.setImageResource( getRemovedIcon() );
 				}
 			}
-		});
+		} );
 	}
 
-	protected void remove(T oldT, ImageView v, View viewForSnack) {
-		boolean isCached = isCached(oldT);
-		if (isCached) {
-			for (T cached : mCachedList) {
-				if (cached.equals(oldT)) {
-					mCachedList.remove(cached);
+	protected void remove( T oldT, ImageView v, View viewForSnack ) {
+		boolean isCached = isCached( oldT );
+		if( isCached ) {
+			for( T cached : mCachedList ) {
+				if( cached.equals( oldT ) ) {
+					mCachedList.remove( cached );
 					break;
 				}
 			}
-			v.setImageResource(getRemovedIcon());
-			v.setEnabled(false);
-			removeInternal(oldT, v, viewForSnack);
+			v.setImageResource( getRemovedIcon() );
+			v.setEnabled( false );
+			removeInternal( oldT, v, viewForSnack );
 		}
 	}
 
 
-	private void removeInternal(final T syncPlayground, ImageView v, View viewForSnack) {
-		final WeakReference<View> anchor = new WeakReference<>(viewForSnack);
-		final WeakReference<ImageView> actionBtn = new WeakReference<>(v);
-		syncPlayground.delete(App.Instance, new DeleteListener() {
+	private void removeInternal( final T syncPlayground, ImageView v, View viewForSnack ) {
+		final WeakReference<View>      anchor    = new WeakReference<>( viewForSnack );
+		final WeakReference<ImageView> actionBtn = new WeakReference<>( v );
+		syncPlayground.delete( App.Instance, new DeleteListener() {
 			@Override
 			public void onSuccess() {
 				View anchorV = anchor.get();
-				View btn = actionBtn.get();
-				if (anchorV != null) {
-					Snackbar.make(anchorV, getRemoveSuccessText(), Snackbar.LENGTH_SHORT).show();
+				View btn     = actionBtn.get();
+				if( anchorV != null ) {
+					Snackbar.make( anchorV, getRemoveSuccessText(), Snackbar.LENGTH_SHORT ).show();
 				}
-				if (btn != null) {
-					btn.setEnabled(true);
+				if( btn != null ) {
+					btn.setEnabled( true );
 				}
 			}
 
 			@Override
-			public void onFailure(int i, String s) {
-				View anchorV = anchor.get();
-				ImageView btn = actionBtn.get();
-				if (anchorV != null) {
-					Snackbar.make(anchorV, R.string.meta_load_error, Snackbar.LENGTH_LONG).setAction(R.string.btn_retry,
-							new OnClickListener() {
-								@Override
-								public void onClick(View v) {
-									removeInternal(syncPlayground, actionBtn.get(), anchor.get());
-								}
-							}).show();
+			public void onFailure( int i, String s ) {
+				View      anchorV = anchor.get();
+				ImageView btn     = actionBtn.get();
+				if( anchorV != null ) {
+					Snackbar.make( anchorV, R.string.meta_load_error, Snackbar.LENGTH_LONG ).setAction( R.string.btn_retry, new OnClickListener() {
+						@Override
+						public void onClick( View v ) {
+							removeInternal( syncPlayground, actionBtn.get(), anchor.get() );
+						}
+					} ).show();
 				}
-				if (btn != null) {
-					btn.setEnabled(true);
-					btn.setImageResource(getAddedIcon());
+				if( btn != null ) {
+					btn.setEnabled( true );
+					btn.setImageResource( getAddedIcon() );
 				}
 			}
-		});
+		} );
 	}
 
 	/**
@@ -165,9 +161,9 @@ public  abstract class SyncManager<T extends SyncPlayground> {
 		return mCachedList;
 	}
 
-	protected abstract  int getAddSuccessText() ;
+	protected abstract int getAddSuccessText();
 
-	protected abstract int getRemoveSuccessText() ;
+	protected abstract int getRemoveSuccessText();
 
 	protected abstract int getAddedIcon();
 

@@ -11,7 +11,7 @@ public final class Matrix {
 	@SerializedName("origin_addresses")
 	private List<String> mOrigin;
 	@SerializedName("rows")
-	private List<Row> mRows;
+	private List<Row>    mRows;
 
 	public List<String> getDestination() {
 		return mDestination;

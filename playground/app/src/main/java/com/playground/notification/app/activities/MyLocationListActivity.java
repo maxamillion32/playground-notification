@@ -37,12 +37,12 @@ import com.playground.notification.utils.Prefs;
  * @author Xinyue Zhao
  */
 public final class MyLocationListActivity extends AppActivity {
-	public static final int REQ = 0x91;
-	private static final int GRID_COL_COUNT = 3;
+	public static final  int REQ             = 0x91;
+	private static final int GRID_COL_COUNT  = 3;
 	/**
 	 * Main layout for this component.
 	 */
-	private static final int LAYOUT = R.layout.activity_my_location_list;
+	private static final int LAYOUT          = R.layout.activity_my_location_list;
 	/**
 	 * Action-mode menu.
 	 */
@@ -54,7 +54,7 @@ public final class MyLocationListActivity extends AppActivity {
 	/**
 	 * User action-mode for delete images.
 	 */
-	private ActionMode mActionMode;
+	private ActionMode            mActionMode;
 	/**
 	 * Data-binding.
 	 */
@@ -70,10 +70,9 @@ public final class MyLocationListActivity extends AppActivity {
 	 * @param e
 	 * 		Event {@link SelectItemEvent}.
 	 */
-	public void onEvent(SelectItemEvent e) {
-		toggleSelection(e.getPosition());
+	public void onEvent( SelectItemEvent e ) {
+		toggleSelection( e.getPosition() );
 	}
-
 
 
 	/**
@@ -82,42 +81,42 @@ public final class MyLocationListActivity extends AppActivity {
 	 * @param e
 	 * 		Event {@link  StartActionModeEvent}.
 	 */
-	public void onEvent(StartActionModeEvent e) {
+	public void onEvent( StartActionModeEvent e ) {
 		//See more about action-mode.
 		//http://databasefaq.com/index.php/answer/19065/android-android-fragments-recyclerview-android-actionmode-problems-with-implementing-contextual-action-mode-in-recyclerview-fragment
-		mActionMode = startSupportActionMode(new Callback() {
+		mActionMode = startSupportActionMode( new Callback() {
 			@Override
-			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-				mode.getMenuInflater().inflate(MENU_ACTIONMODE, menu);
-				mBinding.toolbar.setVisibility(View.GONE);
+			public boolean onCreateActionMode( ActionMode mode, Menu menu ) {
+				mode.getMenuInflater().inflate( MENU_ACTIONMODE, menu );
+				mBinding.toolbar.setVisibility( View.GONE );
 
-				mAdp.setActionMode(true);
+				mAdp.setActionMode( true );
 				mAdp.notifyDataSetChanged();
 				return true;
 			}
 
 			@Override
-			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			public boolean onPrepareActionMode( ActionMode mode, Menu menu ) {
 				return false;
 			}
 
 			@Override
-			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			public boolean onActionItemClicked( ActionMode mode, MenuItem item ) {
 				//It has only "delete".
-				List<Integer> selectedPositions = mAdp.getSelectedItems();
-				List<MyLocation> myLocations = new ArrayList<>();
-				for(Integer pos : selectedPositions) {
-					myLocations.add(mAdp.getData().get(pos));
+				List<Integer>    selectedPositions = mAdp.getSelectedItems();
+				List<MyLocation> myLocations       = new ArrayList<>();
+				for( Integer pos : selectedPositions ) {
+					myLocations.add( mAdp.getData().get( pos ) );
 				}
 				//Remove on remote.
-				for(MyLocation location : myLocations) {
-					MyLocation del = new MyLocation(Prefs.getInstance().getGoogleId(), location.getLabel(), location);
-					del.setObjectId(location.getObjectId());
-					del.delete(App.Instance);
+				for( MyLocation location : myLocations ) {
+					MyLocation del = new MyLocation( Prefs.getInstance().getGoogleId(), location.getLabel(), location );
+					del.setObjectId( location.getObjectId() );
+					del.delete( App.Instance );
 				}
 				//Remove on cache.
-				for(MyLocation alreadyRemoved : myLocations) {
-					mAdp.getData().remove(alreadyRemoved);
+				for( MyLocation alreadyRemoved : myLocations ) {
+					mAdp.getData().remove( alreadyRemoved );
 				}
 				mAdp.notifyDataSetChanged();
 				mActionMode.finish();
@@ -125,15 +124,15 @@ public final class MyLocationListActivity extends AppActivity {
 			}
 
 			@Override
-			public void onDestroyActionMode(ActionMode mode) {
+			public void onDestroyActionMode( ActionMode mode ) {
 				mActionMode = null;
-				mBinding.toolbar.setVisibility(View.VISIBLE);
+				mBinding.toolbar.setVisibility( View.VISIBLE );
 
 				mAdp.clearSelection();
-				mAdp.setActionMode(false);
+				mAdp.setActionMode( false );
 				mAdp.notifyDataSetChanged();
 			}
-		});
+		} );
 	}
 
 	/**
@@ -142,8 +141,8 @@ public final class MyLocationListActivity extends AppActivity {
 	 * @param e
 	 * 		Event {@link com.playground.notification.bus.OpenPlaygroundEvent}.
 	 */
-	public void onEvent(OpenPlaygroundEvent e) {
-		MapsActivity.showInstance(this, e.getPlayground());
+	public void onEvent( OpenPlaygroundEvent e ) {
+		MapsActivity.showInstance( this, e.getPlayground() );
 	}
 	//------------------------------------------------
 
@@ -153,44 +152,43 @@ public final class MyLocationListActivity extends AppActivity {
 	 * @param cxt
 	 * 		{@link Context}.
 	 */
-	public static void showInstance(Activity cxt ) {
-		Intent intent = new Intent(cxt, MyLocationListActivity.class);
-		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		ActivityCompat.startActivity(cxt, intent, null);
+	public static void showInstance( Activity cxt ) {
+		Intent intent = new Intent( cxt, MyLocationListActivity.class );
+		intent.setFlags( Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP );
+		ActivityCompat.startActivity( cxt, intent, null );
 	}
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	protected void onCreate( Bundle savedInstanceState ) {
+		super.onCreate( savedInstanceState );
 		//Init data-binding.
-		mBinding = DataBindingUtil.setContentView(this, LAYOUT);
+		mBinding = DataBindingUtil.setContentView( this, LAYOUT );
 		//Init application basic elements.
-		setUpErrorHandling((ViewGroup) findViewById(R.id.error_content));
+		setUpErrorHandling( (ViewGroup) findViewById( R.id.error_content ) );
 
 		//App-bar.
-		setSupportActionBar(mBinding.toolbar);
-		mBinding.toolbar.setTitle(R.string.lbl_my_location_list);
+		setSupportActionBar( mBinding.toolbar );
+		mBinding.toolbar.setTitle( R.string.lbl_my_location_list );
 		ActionBar actionBar = getSupportActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setDefaultDisplayHomeAsUpEnabled(true);
+		actionBar.setDisplayHomeAsUpEnabled( true );
+		actionBar.setDefaultDisplayHomeAsUpEnabled( true );
 
 		//List of gallery.
-		ScreenSize screenSize = DeviceUtils.getScreenSize(App.Instance);
-		mBinding.listRv.setLayoutManager(new GridLayoutManager(this, GRID_COL_COUNT));
-		mAdp = new MyLocationListAdapter(MyLocationManager.getInstance().getCachedList(), GRID_COL_COUNT, screenSize.Width);
-		mBinding.listRv.setAdapter(mAdp);
+		ScreenSize screenSize = DeviceUtils.getScreenSize( App.Instance );
+		mBinding.listRv.setLayoutManager( new GridLayoutManager( this, GRID_COL_COUNT ) );
+		mAdp = new MyLocationListAdapter( MyLocationManager.getInstance().getCachedList(), GRID_COL_COUNT, screenSize.Width );
+		mBinding.listRv.setAdapter( mAdp );
 	}
 
 
-
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			ActivityCompat.finishAfterTransition(this);
-			break;
+	public boolean onOptionsItemSelected( MenuItem item ) {
+		switch( item.getItemId() ) {
+			case android.R.id.home:
+				ActivityCompat.finishAfterTransition( this );
+				break;
 		}
-		return super.onOptionsItemSelected(item);
+		return super.onOptionsItemSelected( item );
 	}
 
 	/**
@@ -199,14 +197,14 @@ public final class MyLocationListActivity extends AppActivity {
 	 * @param position
 	 * 		The select position.
 	 */
-	private void toggleSelection(int position) {
-		mAdp.toggleSelection(position);
+	private void toggleSelection( int position ) {
+		mAdp.toggleSelection( position );
 		int count = mAdp.getSelectedItemCount();
 
-		if (count == 0) {
+		if( count == 0 ) {
 			mActionMode.finish();
 		} else {
-			mActionMode.setTitle(String.valueOf(count));
+			mActionMode.setTitle( String.valueOf( count ) );
 			mActionMode.invalidate();
 		}
 	}

@@ -22,38 +22,41 @@ public class SplashActivity extends AppCompatActivity {
 
 
 	@Override
-	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-			@NonNull int[] grantResults) {
+	public void onRequestPermissionsResult( int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults ) {
 		// delegate the permission handling to generated method
-		SplashActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+		SplashActivityPermissionsDispatcher.onRequestPermissionsResult( this, requestCode, grantResults );
 	}
 
 
-	@NeedsPermissions({permission.READ_PHONE_STATE, permission.WRITE_EXTERNAL_STORAGE, permission.ACCESS_COARSE_LOCATION, permission.ACCESS_FINE_LOCATION})
+	@NeedsPermissions({ permission.READ_PHONE_STATE , permission.WRITE_EXTERNAL_STORAGE , permission.ACCESS_COARSE_LOCATION ,
+						permission.ACCESS_FINE_LOCATION
+	})
 	void getPermissions() {
-		MapsActivity.showInstance(this);
-		ActivityCompat.finishAfterTransition(this);
+		MapsActivity.showInstance( this );
+		ActivityCompat.finishAfterTransition( this );
 	}
 
 
-	@DeniedPermissions({permission.READ_PHONE_STATE, permission.WRITE_EXTERNAL_STORAGE, permission.ACCESS_COARSE_LOCATION, permission.ACCESS_FINE_LOCATION})
+	@DeniedPermissions({ permission.READ_PHONE_STATE , permission.WRITE_EXTERNAL_STORAGE , permission.ACCESS_COARSE_LOCATION ,
+						 permission.ACCESS_FINE_LOCATION
+	})
 	void noPermissions() {
-		Snackbar.make(findViewById(R.id.splash_v), R.string.msg_permission_prompt, Snackbar.LENGTH_INDEFINITE).setAction(
+		Snackbar.make( findViewById( R.id.splash_v ), R.string.msg_permission_prompt, Snackbar.LENGTH_INDEFINITE ).setAction(
 				R.string.btn_agree, new OnClickListener() {
 					@Override
-					public void onClick(View v) {
-						ActivityCompat.finishAffinity(SplashActivity.this);
+					public void onClick( View v ) {
+						ActivityCompat.finishAffinity( SplashActivity.this );
 					}
-				}).show();
+				} ).show();
 
 	}
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_splash);
-		SplashActivityPermissionsDispatcher.getPermissionsWithCheck(this);
+	protected void onCreate( Bundle savedInstanceState ) {
+		requestWindowFeature( Window.FEATURE_NO_TITLE );
+		getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
+		super.onCreate( savedInstanceState );
+		setContentView( R.layout.activity_splash );
+		SplashActivityPermissionsDispatcher.getPermissionsWithCheck( this );
 	}
 }

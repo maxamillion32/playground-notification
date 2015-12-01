@@ -7,21 +7,21 @@ import com.google.gson.annotations.SerializedName;
 
 public final class Request {
 	@SerializedName("left")
-	private double mWest;
+	private double       mWest;
 	@SerializedName("bottom")
-	private double mSouth;
+	private double       mSouth;
 	@SerializedName("right")
-	private double mEast;
+	private double       mEast;
 	@SerializedName("top")
-	private double mNorth;
+	private double       mNorth;
 	@SerializedName("width")
-	private int mWidth;
+	private int          mWidth;
 	@SerializedName("height")
-	private int mHeight;
+	private int          mHeight;
 	@SerializedName("filter")
 	private List<String> mFilter;
 	@SerializedName("ts")
-	private long mTimestamps;
+	private long         mTimestamps;
 	@SerializedName("result")
 	private List<String> mResult;
 
@@ -30,7 +30,7 @@ public final class Request {
 		return mWest;
 	}
 
-	public void setWest(double west) {
+	public void setWest( double west ) {
 		mWest = west;
 	}
 
@@ -38,7 +38,7 @@ public final class Request {
 		return mSouth;
 	}
 
-	public void setSouth(double south) {
+	public void setSouth( double south ) {
 		mSouth = south;
 	}
 
@@ -46,7 +46,7 @@ public final class Request {
 		return mEast;
 	}
 
-	public void setEast(double east) {
+	public void setEast( double east ) {
 		mEast = east;
 	}
 
@@ -54,7 +54,7 @@ public final class Request {
 		return mNorth;
 	}
 
-	public void setNorth(double north) {
+	public void setNorth( double north ) {
 		mNorth = north;
 	}
 
@@ -62,7 +62,7 @@ public final class Request {
 		return mWidth;
 	}
 
-	public void setWidth(int width) {
+	public void setWidth( int width ) {
 		mWidth = width;
 	}
 
@@ -70,7 +70,7 @@ public final class Request {
 		return mHeight;
 	}
 
-	public void setHeight(int height) {
+	public void setHeight( int height ) {
 		mHeight = height;
 	}
 
@@ -78,7 +78,7 @@ public final class Request {
 		return mFilter;
 	}
 
-	public void setFilter(List<String> filter) {
+	public void setFilter( List<String> filter ) {
 		mFilter = filter;
 	}
 
@@ -86,7 +86,7 @@ public final class Request {
 		return mTimestamps;
 	}
 
-	public void setTimestamps(long timestamps) {
+	public void setTimestamps( long timestamps ) {
 		mTimestamps = timestamps;
 	}
 
@@ -94,7 +94,7 @@ public final class Request {
 		return mResult;
 	}
 
-	public void setResult(List<String> result) {
+	public void setResult( List<String> result ) {
 		mResult = result;
 	}
 }

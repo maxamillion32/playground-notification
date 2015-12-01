@@ -15,15 +15,15 @@ public final class Prefs extends BasicPrefs {
 	 * <p/>
 	 * {@code true} if EULA has been shown and agreed.
 	 */
-	private static final String KEY_EULA_SHOWN = "key.eula.shown";
+	private static final String KEY_EULA_SHOWN          = "key.eula.shown";
 	/**
 	 * Download-info of application.
 	 */
-	private static final String KEY_APP_DOWNLOAD = "key.app.download";
+	private static final String KEY_APP_DOWNLOAD        = "key.app.download";
 	/**
 	 * Google's ID
 	 */
-	private static final String KEY_GOOGLE_ID = "key.google.id";
+	private static final String KEY_GOOGLE_ID           = "key.google.id";
 	/**
 	 * The display-name of Google's user.
 	 */
@@ -31,28 +31,28 @@ public final class Prefs extends BasicPrefs {
 	/**
 	 * Url to user's profile-image.
 	 */
-	private static final String KEY_GOOGLE_THUMB_URL = "key.google.thumb.url";
+	private static final String KEY_GOOGLE_THUMB_URL    = "key.google.thumb.url";
 
 	/**
 	 * API host defined in config.
 	 */
-	private static final String KEY_API_HOST = "api_host";
+	private static final String KEY_API_HOST               = "api_host";
 	/**
 	 * API search defined in config.
 	 */
-	private static final String KEY_API_SEARCH = "api_search";
+	private static final String KEY_API_SEARCH             = "api_search";
 	/**
 	 * Google API's host.
 	 */
-	private static final String KEY_GOOGLE_API_HOST = "google_api_host";
+	private static final String KEY_GOOGLE_API_HOST        = "google_api_host";
 	/**
 	 * Map preview size for my-location-list.
 	 */
-	private static final String KEY_MY_LOC_PRE = "my_loc_pre";
+	private static final String KEY_MY_LOC_PRE             = "my_loc_pre";
 	/**
 	 * Map preview size for detail-view.
 	 */
-	private static final String KEY_DETAIL_PRE="detail_pre";
+	private static final String KEY_DETAIL_PRE             = "detail_pre";
 	/**
 	 * Host name for Google's map search engine.
 	 */
@@ -60,28 +60,28 @@ public final class Prefs extends BasicPrefs {
 	/**
 	 * Url to load a icon of current weather.
 	 */
-	private static final String KEY_WEATHER_ICON_URL = "weather_icon_url";
+	private static final String KEY_WEATHER_ICON_URL       = "weather_icon_url";
 	/**
 	 * The weather-API host.
 	 */
-	private static final String KEY_WEATHER_API_HOST = "weather_api";
+	private static final String KEY_WEATHER_API_HOST       = "weather_api";
 
-	private static final String ADS="ads";
+	private static final String ADS = "ads";
 
 	//All settings
-	public static final String KEY_MAP_TYPES = "key.map.types";
-	public static final String KEY_BATTERY_TYPES = "key.battery.types";
-	public static final String KEY_TRAFFIC_SHOWING = "key.traffic.showing";
-	public static final String KEY_DISTANCE_UNITS = "key.distance.units";
-	public static final String KEY_TRANSPORTATION = "key.transportation";
-	public static final String KEY_ALARM_AREA = "key.alarm.area";
+	public static final String KEY_MAP_TYPES                  = "key.map.types";
+	public static final String KEY_BATTERY_TYPES              = "key.battery.types";
+	public static final String KEY_TRAFFIC_SHOWING            = "key.traffic.showing";
+	public static final String KEY_DISTANCE_UNITS             = "key.distance.units";
+	public static final String KEY_TRANSPORTATION             = "key.transportation";
+	public static final String KEY_ALARM_AREA                 = "key.alarm.area";
 	public static final String KEY_WEATHER_SHOW_WEATHER_BOARD = "key.weather.show.weather.board";
-	public static final String KEY_WEATHER_UNITS = "key.weather.units";
-	public static final String KEY_NOTIFICATION_WARM_TIPS = "key.notification.warm.tips";
-	public static final String KEY_NOTIFICATION_WEEKEND_CALL = "key.notification.weekend.call";
+	public static final String KEY_WEATHER_UNITS              = "key.weather.units";
+	public static final String KEY_NOTIFICATION_WARM_TIPS     = "key.notification.warm.tips";
+	public static final String KEY_NOTIFICATION_WEEKEND_CALL  = "key.notification.weekend.call";
 
 	public static final String KEY_SHOWCASE_MY_LOCATION = "showcase.my.location";
-	public static final String KEY_SHOWCASE_NEAR_RING = "showcase.near.ring";
+	public static final String KEY_SHOWCASE_NEAR_RING   = "showcase.near.ring";
 
 	/**
 	 * The Instance.
@@ -89,7 +89,7 @@ public final class Prefs extends BasicPrefs {
 	private static Prefs sInstance;
 
 	private Prefs() {
-		super(null);
+		super( null );
 	}
 
 	/**
@@ -98,8 +98,8 @@ public final class Prefs extends BasicPrefs {
 	 * @param context
 	 * 		A context object.
 	 */
-	private Prefs(Context context) {
-		super(context);
+	private Prefs( Context context ) {
+		super( context );
 	}
 
 	/**
@@ -110,11 +110,11 @@ public final class Prefs extends BasicPrefs {
 	 *
 	 * @return single instance of DeviceData
 	 */
-	public static Prefs createInstance(Context context) {
-		if (sInstance == null) {
-			synchronized (Prefs.class) {
-				if (sInstance == null) {
-					sInstance = new Prefs(context);
+	public static Prefs createInstance( Context context ) {
+		if( sInstance == null ) {
+			synchronized( Prefs.class ) {
+				if( sInstance == null ) {
+					sInstance = new Prefs( context );
 				}
 			}
 		}
@@ -138,7 +138,7 @@ public final class Prefs extends BasicPrefs {
 	 * @return {@code true} if EULA has been shown and agreed.
 	 */
 	public boolean isEULAOnceConfirmed() {
-		return getBoolean(KEY_EULA_SHOWN, false);
+		return getBoolean( KEY_EULA_SHOWN, false );
 	}
 
 	/**
@@ -148,8 +148,8 @@ public final class Prefs extends BasicPrefs {
 	 * @param isConfirmed
 	 * 		{@code true} if EULA has been shown and agreed.
 	 */
-	public void setEULAOnceConfirmed(boolean isConfirmed) {
-		setBoolean(KEY_EULA_SHOWN, isConfirmed);
+	public void setEULAOnceConfirmed( boolean isConfirmed ) {
+		setBoolean( KEY_EULA_SHOWN, isConfirmed );
 	}
 
 
@@ -157,78 +157,70 @@ public final class Prefs extends BasicPrefs {
 	 * @return Download-info of application.
 	 */
 	public String getAppDownloadInfo() {
-		return getString(KEY_APP_DOWNLOAD, null);
+		return getString( KEY_APP_DOWNLOAD, null );
 	}
 
 	/**
 	 * Set download-info of application.
 	 */
-	public void setAppDownloadInfo(String appDownloadInfo) {
-		setString(KEY_APP_DOWNLOAD, appDownloadInfo);
+	public void setAppDownloadInfo( String appDownloadInfo ) {
+		setString( KEY_APP_DOWNLOAD, appDownloadInfo );
 	}
-
-
-	/**
-	 * Google's ID
-	 */
-	public void setGoogleId(String id) {
-		setString(KEY_GOOGLE_ID, id);
-	}
-
 	/**
 	 * Google's ID
 	 */
 	public String getGoogleId() {
-		return getString(KEY_GOOGLE_ID, null);
+		return getString( KEY_GOOGLE_ID, null );
 	}
-
 	/**
-	 * The display-name of Google's user.
+	 * Google's ID
 	 */
-	public void setGoogleDisplayName(String displayName) {
-		setString(KEY_GOOGLE_DISPLAY_NAME, displayName);
+	public void setGoogleId( String id ) {
+		setString( KEY_GOOGLE_ID, id );
 	}
-
 	/**
 	 * The display-name of Google's user.
 	 */
 	public String getGoogleDisplayName() {
-		return getString(KEY_GOOGLE_DISPLAY_NAME, null);
+		return getString( KEY_GOOGLE_DISPLAY_NAME, null );
 	}
-
 	/**
 	 * The display-name of Google's user.
 	 */
-	public void setGoogleThumbUrl(String thumbUrl) {
-		setString(KEY_GOOGLE_THUMB_URL, thumbUrl);
+	public void setGoogleDisplayName( String displayName ) {
+		setString( KEY_GOOGLE_DISPLAY_NAME, displayName );
 	}
-
 	/**
 	 * Url to user's profile-image.
 	 */
 	public String getGoogleThumbUrl() {
-		return getString(KEY_GOOGLE_THUMB_URL, null);
+		return getString( KEY_GOOGLE_THUMB_URL, null );
 	}
-
+	/**
+	 * The display-name of Google's user.
+	 */
+	public void setGoogleThumbUrl( String thumbUrl ) {
+		setString( KEY_GOOGLE_THUMB_URL, thumbUrl );
+	}
 	/**
 	 * API host defined in config.
 	 */
 	public String getApiHost() {
-		return getString(KEY_API_HOST, null);
+		return getString( KEY_API_HOST, null );
 	}
 
 	/**
 	 * API search defined in config.
 	 */
 	public String getApiSearch() {
-		return getString(KEY_API_SEARCH, null);
+		return getString( KEY_API_SEARCH, null );
 	}
 
 	/**
 	 * Google API's host.
 	 */
 	public String getGoogleApiHost() {
-		return getString(KEY_GOOGLE_API_HOST, null);
+		return getString( KEY_GOOGLE_API_HOST, null );
 	}
 
 	/**
@@ -237,7 +229,7 @@ public final class Prefs extends BasicPrefs {
 	 * @return Size in format {@code "23x34"};
 	 */
 	public String getMyLocationPreviewSize() {
-		return getString(KEY_MY_LOC_PRE, null);
+		return getString( KEY_MY_LOC_PRE, null );
 	}
 
 	/**
@@ -246,58 +238,58 @@ public final class Prefs extends BasicPrefs {
 	 * @return Size in format {@code "23x34"};
 	 */
 	public String getDetailPreviewSize() {
-		return getString(KEY_DETAIL_PRE, null);
+		return getString( KEY_DETAIL_PRE, null );
 	}
 
 	public String getMapType() {
-		return getString(KEY_MAP_TYPES, "0");
+		return getString( KEY_MAP_TYPES, "0" );
 	}
 
 	public String getBatteryLifeType() {
-		return getString(KEY_BATTERY_TYPES, "0");
+		return getString( KEY_BATTERY_TYPES, "0" );
 	}
 
 	public boolean isTrafficShowing() {
-		return getBoolean(KEY_TRAFFIC_SHOWING, false);
+		return getBoolean( KEY_TRAFFIC_SHOWING, false );
 	}
 
 	public String getDistanceUnitsType() {
-		return getString(KEY_DISTANCE_UNITS, "0");
+		return getString( KEY_DISTANCE_UNITS, "0" );
 	}
 
 	public String getTransportationMethod() {
-		return getString(KEY_TRANSPORTATION, "1");
+		return getString( KEY_TRANSPORTATION, "1" );
 	}
 
 	public int getAlarmArea() {
-		switch (getString(KEY_ALARM_AREA, "0")) {
-		case "0":
-			return 100;
-		case "1":
-			return 150;
-		case "2":
-			return 200;
-		default:
-			return 100;
+		switch( getString( KEY_ALARM_AREA, "0" ) ) {
+			case "0":
+				return 100;
+			case "1":
+				return 150;
+			case "2":
+				return 200;
+			default:
+				return 100;
 		}
 	}
 
 	public String getAlarmAreaValue() {
-		return getString(KEY_ALARM_AREA, "0");
+		return getString( KEY_ALARM_AREA, "0" );
 	}
 
 	public String getWeatherUnitsType() {
-		return getString(KEY_WEATHER_UNITS, "0");
+		return getString( KEY_WEATHER_UNITS, "0" );
 	}
 
 	public boolean showWeatherBoard() {
-		return getBoolean(KEY_WEATHER_SHOW_WEATHER_BOARD, true);
+		return getBoolean( KEY_WEATHER_SHOW_WEATHER_BOARD, true );
 	}
 	public boolean notificationWarmTips() {
-		return getBoolean(KEY_NOTIFICATION_WARM_TIPS, true);
+		return getBoolean( KEY_NOTIFICATION_WARM_TIPS, true );
 	}
 	public boolean notificationWeekendCall() {
-		return getBoolean(KEY_NOTIFICATION_WEEKEND_CALL, true);
+		return getBoolean( KEY_NOTIFICATION_WEEKEND_CALL, true );
 	}
 
 	/**
@@ -306,45 +298,42 @@ public final class Prefs extends BasicPrefs {
 	 * @return The host name of Google'map search.
 	 */
 	public String getGoogleMapSearchHost() {
-		return getString(KEY_GOOGLE_MAP_SEARCH_HOST, null);
+		return getString( KEY_GOOGLE_MAP_SEARCH_HOST, null );
 	}
 
 	/**
 	 * Url to load a icon of current weather.
 	 *
-	 * @param name Icon's name.
+	 * @param name
+	 * 		Icon's name.
+	 *
 	 * @return A completed URL to an icon.
 	 */
-	public String getWeatherIconUrl(String name) {
-		return String.format(getString(KEY_WEATHER_ICON_URL, null), name);
+	public String getWeatherIconUrl( String name ) {
+		return String.format( getString( KEY_WEATHER_ICON_URL, null ), name );
 	}
 
 	/**
 	 * The weather-API host.
 	 *
-	 *
 	 * @return The host of API.
 	 */
 	public String getWeatherApiHost() {
-		return getString(KEY_WEATHER_API_HOST, null);
+		return getString( KEY_WEATHER_API_HOST, null );
 	}
-
-
-	public void setAds(int c) {
-		setInt(ADS, c);
-	}
-
 	public int getAds() {
-		return getInt(ADS, 1);
+		return getInt( ADS, 1 );
 	}
-
+	public void setAds( int c ) {
+		setInt( ADS, c );
+	}
 	/**
 	 * Set status of showcase of a type like : my-location etc.
 	 * <p/>
 	 * see. {@link #KEY_SHOWCASE_MY_LOCATION}, {@link #KEY_SHOWCASE_NEAR_RING}
 	 */
-	public void setShowcase(String name, boolean value) {
-		setBoolean(name, value);
+	public void setShowcase( String name, boolean value ) {
+		setBoolean( name, value );
 	}
 
 	/**
@@ -352,7 +341,7 @@ public final class Prefs extends BasicPrefs {
 	 * <p/>
 	 * see. {@link #KEY_SHOWCASE_MY_LOCATION}, {@link #KEY_SHOWCASE_NEAR_RING}
 	 */
-	public boolean isShowcaseShown(String name) {
-		return getBoolean(name, false);
+	public boolean isShowcaseShown( String name ) {
+		return getBoolean( name, false );
 	}
 }

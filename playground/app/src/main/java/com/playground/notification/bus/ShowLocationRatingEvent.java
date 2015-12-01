@@ -6,7 +6,7 @@ import com.playground.notification.ds.grounds.Playground;
 public final class ShowLocationRatingEvent {
 	private Playground mPlayground;
 
-	public ShowLocationRatingEvent(Playground ground) {
+	public ShowLocationRatingEvent( Playground ground ) {
 		mPlayground = ground;
 	}
 

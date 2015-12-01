@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 public final class WeatherDetail {
 	@SerializedName("id")
-	private long mId;
+	private long   mId;
 	@SerializedName("main")
 	private String mName;
 	@SerializedName("description")

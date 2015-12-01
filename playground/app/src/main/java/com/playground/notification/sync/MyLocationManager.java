@@ -47,23 +47,23 @@ public final class MyLocationManager extends SyncManager<MyLocation> {
 	public synchronized void init() {
 		//Load from backend.
 		BmobQuery<MyLocation> q = new BmobQuery<>();
-		q.setCachePolicy(CachePolicy.NETWORK_ELSE_CACHE);
-		q.addWhereEqualTo("mUID", Prefs.getInstance().getGoogleId());
-		q.findObjects(App.Instance, new FindListener<MyLocation>() {
+		q.setCachePolicy( CachePolicy.NETWORK_ELSE_CACHE );
+		q.addWhereEqualTo( "mUID", Prefs.getInstance().getGoogleId() );
+		q.findObjects( App.Instance, new FindListener<MyLocation>() {
 			@Override
-			public void onSuccess(List<MyLocation> list) {
-				if (getCachedList().size() > 0) {
+			public void onSuccess( List<MyLocation> list ) {
+				if( getCachedList().size() > 0 ) {
 					getCachedList().clear();
 				}
-				getCachedList().addAll(list);
+				getCachedList().addAll( list );
 				setInit();
 			}
 
 			@Override
-			public void onError(int i, String s) {
+			public void onError( int i, String s ) {
 				setInit();
 			}
-		});
+		} );
 	}
 
 
@@ -79,9 +79,8 @@ public final class MyLocationManager extends SyncManager<MyLocation> {
 	 * @param viewForSnack
 	 * 		{@link View} anchor for showing {@link Snackbar} messages.
 	 */
-	public synchronized void addMyLocation(Playground newGround, String name, android.widget.ImageView v,
-			View viewForSnack) {
-		add(new MyLocation(Prefs.getInstance().getGoogleId(), name, newGround), v, viewForSnack);
+	public synchronized void addMyLocation( Playground newGround, String name, android.widget.ImageView v, View viewForSnack ) {
+		add( new MyLocation( Prefs.getInstance().getGoogleId(), name, newGround ), v, viewForSnack );
 	}
 
 
@@ -95,8 +94,8 @@ public final class MyLocationManager extends SyncManager<MyLocation> {
 	 * @param viewForSnack
 	 * 		{@link View} anchor for showing {@link Snackbar} messages.
 	 */
-	public synchronized void removeMyLocation(MyLocation oldT, android.widget.ImageView v, View viewForSnack) {
-		remove(oldT, v, viewForSnack);
+	public synchronized void removeMyLocation( MyLocation oldT, android.widget.ImageView v, View viewForSnack ) {
+		remove( oldT, v, viewForSnack );
 	}
 
 	@Override

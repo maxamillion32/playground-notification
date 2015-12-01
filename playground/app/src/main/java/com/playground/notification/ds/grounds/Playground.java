@@ -17,25 +17,22 @@ public class Playground extends BmobObject implements Serializable {
 	@SerializedName("lon")
 	private double mLongitude;
 
-	public Playground(String id, double latitude, double longitude) {
+	public Playground( String id, double latitude, double longitude ) {
 		mId = id;
 		mLatitude = latitude;
 		mLongitude = longitude;
 	}
 
-	public Playground( double latitude, double longitude) {
+	public Playground( double latitude, double longitude ) {
 		mLatitude = latitude;
 		mLongitude = longitude;
 	}
-
-	public void setId(String id) {
-		mId = id;
-	}
-
 	public String getId() {
 		return mId;
 	}
-
+	public void setId( String id ) {
+		mId = id;
+	}
 	public double getLatitude() {
 		return mLatitude;
 	}
@@ -45,13 +42,14 @@ public class Playground extends BmobObject implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals( Object o ) {
 		try {
-			if (o == null)
+			if( o == null ) {
 				return false;
+			}
 			Playground other = (Playground) o;
-			return !TextUtils.isEmpty(other.getId()) && getId().equals(other.getId());
-		} catch (NullPointerException e) {
+			return !TextUtils.isEmpty( other.getId() ) && getId().equals( other.getId() );
+		} catch( NullPointerException e ) {
 			return false;
 		}
 	}

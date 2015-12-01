@@ -8,7 +8,7 @@ package com.playground.notification.bus;
 public final class SelectItemEvent {
 	private int mPosition;
 
-	public SelectItemEvent(int position) {
+	public SelectItemEvent( int position ) {
 		mPosition = position;
 	}
 

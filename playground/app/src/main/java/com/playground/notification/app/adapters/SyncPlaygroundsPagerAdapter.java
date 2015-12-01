@@ -18,18 +18,17 @@ import com.playground.notification.ds.sync.SyncPlayground;
  */
 public final class SyncPlaygroundsPagerAdapter extends FragmentPagerAdapter {
 	private List<? extends SyncPlayground> mGrounds;
-	private LatLng mFrom;
+	private LatLng                         mFrom;
 
-	public SyncPlaygroundsPagerAdapter(LatLng from, List<? extends SyncPlayground> grounds, FragmentManager fm) {
-		super(fm);
+	public SyncPlaygroundsPagerAdapter( LatLng from, List<? extends SyncPlayground> grounds, FragmentManager fm ) {
+		super( fm );
 		mFrom = from;
 		mGrounds = grounds;
 	}
 
 	@Override
-	public Fragment getItem(int position) {
-		return PlaygroundDetailFragment.newInstance(App.Instance, mFrom.latitude, mFrom.longitude, mGrounds.get(
-				position), true);
+	public Fragment getItem( int position ) {
+		return PlaygroundDetailFragment.newInstance( App.Instance, mFrom.latitude, mFrom.longitude, mGrounds.get( position ), true );
 	}
 
 	@Override

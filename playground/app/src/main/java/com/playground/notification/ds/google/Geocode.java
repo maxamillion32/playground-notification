@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 public final class Geocode {
 	@SerializedName("formatted_address")
-	private String mAddress;
+	private String   mAddress;
 	@SerializedName("geometry")
 	private Geometry mGeometry;
 

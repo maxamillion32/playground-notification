@@ -13,8 +13,8 @@ import com.playground.notification.app.App;
  */
 public final class BootReceiver extends BroadcastReceiver {
 	@Override
-	public void onReceive(Context context, Intent intent) {
-		App.Instance.startService(new Intent(App.Instance, TickerService.class));
+	public void onReceive( Context context, Intent intent ) {
+		App.Instance.startService( new Intent( App.Instance, TickerService.class ) );
 	}
 }
 

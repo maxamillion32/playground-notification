@@ -40,125 +40,125 @@ import retrofit.RetrofitError;
  * @author Xinyue Zhao
  */
 public final class GeofenceTransitionsIntentService extends IntentService {
-	private NotificationManager mNotificationManager;
+	private NotificationManager                               mNotificationManager;
 	private android.support.v4.app.NotificationCompat.Builder mNotifyBuilder;
-	private PendingIntent mSharePi;
+	private PendingIntent                                     mSharePi;
 
 	public GeofenceTransitionsIntentService() {
-		super("GeofenceTransitionsIntentService");
+		super( "GeofenceTransitionsIntentService" );
 	}
 
 	@Override
-	protected void onHandleIntent(Intent intent) {
-		mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-		GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
-		int geofenceTransition = geofencingEvent.getGeofenceTransition();
-		if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
+	protected void onHandleIntent( Intent intent ) {
+		mNotificationManager = (NotificationManager) this.getSystemService( Context.NOTIFICATION_SERVICE );
+		GeofencingEvent geofencingEvent    = GeofencingEvent.fromIntent( intent );
+		int             geofenceTransition = geofencingEvent.getGeofenceTransition();
+		if( geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ) {
 			List<Geofence> geofences = geofencingEvent.getTriggeringGeofences();
 
 			NearRingManager nearRingManager = NearRingManager.getInstance();
-			for (Geofence geofence : geofences) {
+			for( Geofence geofence : geofences ) {
 				List<NearRing> rings = nearRingManager.getCachedList();
-				for (final NearRing ring : rings) {
-					if (ring.getId().equals(geofence.getRequestId())) {
-						final String url =
-								Prefs.getInstance().getGoogleMapSearchHost() + ring.getLatitude() + "," + ring.getLongitude();
-						com.tinyurl4j.Api.getTinyUrl(url, new Callback<Response>() {
+				for( final NearRing ring : rings ) {
+					if( ring.getId().equals( geofence.getRequestId() ) ) {
+						final String url = Prefs.getInstance().getGoogleMapSearchHost() + ring.getLatitude() + "," + ring.getLongitude();
+						com.tinyurl4j.Api.getTinyUrl( url, new Callback<Response>() {
 							@Override
-							public void success(com.tinyurl4j.data.Response response,
-									retrofit.client.Response response2) {
-								String subject = App.Instance.getString(R.string.lbl_share_ground_title);
-								String content = App.Instance.getString(R.string.lbl_share_ground_content,
-										response.getResult(), Prefs.getInstance().getAppDownloadInfo());
+							public void success( com.tinyurl4j.data.Response response, retrofit.client.Response response2 ) {
+								String subject = App.Instance.getString( R.string.lbl_share_ground_title );
+								String content = App.Instance.getString( R.string.lbl_share_ground_content, response.getResult(),
+																		 Prefs.getInstance().getAppDownloadInfo()
+								);
 
-								mSharePi = PendingIntent.getActivity(GeofenceTransitionsIntentService.this,
-										(int) System.currentTimeMillis(), Utils.getShareInformation(subject, content),
-										PendingIntent.FLAG_UPDATE_CURRENT);
-								AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Void>() {
+								mSharePi = PendingIntent.getActivity( GeofenceTransitionsIntentService.this, (int) System.currentTimeMillis(),
+																	  Utils.getShareInformation( subject, content ), PendingIntent.FLAG_UPDATE_CURRENT
+								);
+								AsyncTaskCompat.executeParallel( new AsyncTask<Void, Void, Void>() {
 									@Override
-									protected Void doInBackground(Void... params) {
-										notifyNearRing(ring);
+									protected Void doInBackground( Void... params ) {
+										notifyNearRing( ring );
 										return null;
 									}
-								});
+								} );
 							}
 
 							@Override
-							public void failure(RetrofitError error) {
-								String subject = App.Instance.getString(R.string.lbl_share_ground_title);
-								String content = App.Instance.getString(R.string.lbl_share_ground_content, url,
-										Prefs.getInstance().getAppDownloadInfo());
+							public void failure( RetrofitError error ) {
+								String subject = App.Instance.getString( R.string.lbl_share_ground_title );
+								String content = App.Instance.getString( R.string.lbl_share_ground_content, url,
+																		 Prefs.getInstance().getAppDownloadInfo()
+								);
 
-								mSharePi = PendingIntent.getActivity(GeofenceTransitionsIntentService.this,
-										(int) System.currentTimeMillis(), Utils.getShareInformation(subject, content),
-										PendingIntent.FLAG_UPDATE_CURRENT);
-								AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Void>() {
+								mSharePi = PendingIntent.getActivity( GeofenceTransitionsIntentService.this, (int) System.currentTimeMillis(),
+																	  Utils.getShareInformation( subject, content ), PendingIntent.FLAG_UPDATE_CURRENT
+								);
+								AsyncTaskCompat.executeParallel( new AsyncTask<Void, Void, Void>() {
 									@Override
-									protected Void doInBackground(Void... params) {
-										notifyNearRing(ring);
+									protected Void doInBackground( Void... params ) {
+										notifyNearRing( ring );
 										return null;
 									}
-								});
+								} );
 							}
-						});
+						} );
 					}
 				}
 			}
 		}
 	}
 
-	private void notifyNearRing(NearRing ring) {
-		Prefs prefs = Prefs.getInstance();
-		String latlng = ring.getLatitude() + "," + ring.getLongitude();
-		String maptype = prefs.getMapType().equals("0") ? "roadmap" : "hybrid";
+	private void notifyNearRing( NearRing ring ) {
+		Prefs  prefs   = Prefs.getInstance();
+		String latlng  = ring.getLatitude() + "," + ring.getLongitude();
+		String maptype = prefs.getMapType().equals( "0" ) ? "roadmap" : "hybrid";
 		String url = prefs.getGoogleApiHost() + "maps/api/staticmap?center=" + latlng +
-				"&zoom=16&size=520x300&markers=color:red%7Clabel:S%7C" + latlng + "&key=" +
-				App.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
+					 "&zoom=16&size=520x300&markers=color:red%7Clabel:S%7C" + latlng + "&key=" +
+					 App.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
 
 		Intent i;
-		if (App.Instance != null && App.Instance.getCurrentLocation() != null) {
+		if( App.Instance != null && App.Instance.getCurrentLocation() != null ) {
 			Location location = App.Instance.getCurrentLocation();
-			i = Utils.getMapWeb(new LatLng(location.getLatitude(), location.getLongitude()), new LatLng(
-					ring.getLatitude(), ring.getLongitude()));
+			i = Utils.getMapWeb(
+					new LatLng( location.getLatitude(), location.getLongitude() ), new LatLng( ring.getLatitude(), ring.getLongitude() ) );
 		} else {
-			i = new Intent(this, MapsActivity.class);
-			i.putExtra(MapsActivity.EXTRAS_GROUND, (Serializable)ring);
-			i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			i = new Intent( this, MapsActivity.class );
+			i.putExtra( MapsActivity.EXTRAS_GROUND, (Serializable) ring );
+			i.setFlags( Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP );
 		}
-		PendingIntent contentIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), i,
-				PendingIntent.FLAG_ONE_SHOT);
+		PendingIntent contentIntent = PendingIntent.getActivity( this, (int) System.currentTimeMillis(), i, PendingIntent.FLAG_ONE_SHOT );
 
-		Picasso picasso = Picasso.with(this);
+		Picasso picasso = Picasso.with( this );
 		try {
-			notify(getString(R.string.lbl_notify_title), getString(R.string.lbl_notify_content), url, contentIntent,
-					picasso);
-		} catch (NullPointerException | IOException | OutOfMemoryError e) {
-			fallbackNotify(getString(R.string.lbl_notify_title), getString(R.string.lbl_notify_content), contentIntent);
+			notify( getString( R.string.lbl_notify_title ), getString( R.string.lbl_notify_content ), url, contentIntent, picasso );
+		} catch( NullPointerException|IOException|OutOfMemoryError e ) {
+			fallbackNotify( getString( R.string.lbl_notify_title ), getString( R.string.lbl_notify_content ), contentIntent );
 		}
 	}
 
 
-	private void notify(String title, String desc, String image, PendingIntent contentIntent, Picasso picasso) throws
-			IOException, OutOfMemoryError {
-		Bitmap bitmap = picasso.load(image).get();
-		mNotifyBuilder = new NotificationCompat.Builder(this).setWhen(System.currentTimeMillis()).setSmallIcon(
-				R.drawable.ic_geofence_notify).setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
-				new BigPictureStyle().bigPicture(bitmap).setBigContentTitle(title).setSummaryText(desc)).addAction(
-				R.drawable.ic_share_notification, getString(R.string.action_share), mSharePi).setAutoCancel(true)
-				.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_geofence_notify));
-		mNotifyBuilder.setContentIntent(contentIntent);
+	private void notify( String title, String desc, String image, PendingIntent contentIntent, Picasso picasso ) throws IOException,
+																														OutOfMemoryError {
+		Bitmap bitmap = picasso.load( image ).get();
+		mNotifyBuilder = new NotificationCompat.Builder( this ).setWhen( System.currentTimeMillis() ).setSmallIcon( R.drawable.ic_geofence_notify )
+				.setTicker( title ).setContentTitle( title ).setContentText( desc ).setStyle( new BigPictureStyle().bigPicture( bitmap )
+																									  .setBigContentTitle( title )
+																									  .setSummaryText( desc ) ).addAction(
+						R.drawable.ic_share_notification, getString( R.string.action_share ), mSharePi ).setAutoCancel( true ).setLargeIcon(
+						BitmapFactory.decodeResource( getResources(), R.drawable.ic_geofence_notify ) );
+		mNotifyBuilder.setContentIntent( contentIntent );
 
-		Utils.vibrateSound(this, mNotifyBuilder);
+		Utils.vibrateSound( this, mNotifyBuilder );
 
-		mNotificationManager.notify((int) System.currentTimeMillis(), mNotifyBuilder.build());
+		mNotificationManager.notify( (int) System.currentTimeMillis(), mNotifyBuilder.build() );
 	}
 
-	private void fallbackNotify(String title, String desc, PendingIntent contentIntent) {
-		mNotifyBuilder = new NotificationCompat.Builder(this).setWhen(System.currentTimeMillis()).setSmallIcon(
-				R.drawable.ic_geofence_notify).setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
-				new BigTextStyle().bigText(desc).setBigContentTitle(title).setSummaryText(desc)).addAction(
-				R.drawable.ic_share_notification, getString(R.string.action_share), mSharePi).setAutoCancel(true);
-		mNotifyBuilder.setContentIntent(contentIntent);
-		mNotificationManager.notify((int) System.currentTimeMillis(), mNotifyBuilder.build());
+	private void fallbackNotify( String title, String desc, PendingIntent contentIntent ) {
+		mNotifyBuilder = new NotificationCompat.Builder( this ).setWhen( System.currentTimeMillis() ).setSmallIcon( R.drawable.ic_geofence_notify )
+				.setTicker( title ).setContentTitle( title ).setContentText( desc ).setStyle( new BigTextStyle().bigText( desc )
+																									  .setBigContentTitle( title )
+																									  .setSummaryText( desc ) ).addAction(
+						R.drawable.ic_share_notification, getString( R.string.action_share ), mSharePi ).setAutoCancel( true );
+		mNotifyBuilder.setContentIntent( contentIntent );
+		mNotificationManager.notify( (int) System.currentTimeMillis(), mNotifyBuilder.build() );
 	}
 }

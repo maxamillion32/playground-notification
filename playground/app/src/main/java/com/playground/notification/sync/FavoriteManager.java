@@ -49,24 +49,24 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 	public synchronized void init() {
 		//Load from backend.
 		BmobQuery<Favorite> q = new BmobQuery<>();
-		q.setCachePolicy(CachePolicy.NETWORK_ELSE_CACHE);
-		q.addWhereEqualTo("mUID", Prefs.getInstance().getGoogleId());
-		q.findObjects(App.Instance, new FindListener<Favorite>() {
+		q.setCachePolicy( CachePolicy.NETWORK_ELSE_CACHE );
+		q.addWhereEqualTo( "mUID", Prefs.getInstance().getGoogleId() );
+		q.findObjects( App.Instance, new FindListener<Favorite>() {
 			@Override
-			public void onSuccess(List<Favorite> list) {
-				if (getCachedList().size() > 0) {
+			public void onSuccess( List<Favorite> list ) {
+				if( getCachedList().size() > 0 ) {
 					getCachedList().clear();
 				}
-				getCachedList().addAll(list);
+				getCachedList().addAll( list );
 				setInit();
 			}
 
 			@Override
-			public void onError(int i, String s) {
+			public void onError( int i, String s ) {
 				setInit();
-				EventBus.getDefault().post(new FavoriteListLoadingErrorEvent());
+				EventBus.getDefault().post( new FavoriteListLoadingErrorEvent() );
 			}
-		});
+		} );
 	}
 
 
@@ -80,8 +80,8 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 	 * @param viewForSnack
 	 * 		{@link View} anchor for showing {@link Snackbar} messages.
 	 */
-	public synchronized void addFavorite(Playground newGround, android.widget.ImageView v, View viewForSnack) {
-		add(new Favorite(Prefs.getInstance().getGoogleId(), newGround), v, viewForSnack);
+	public synchronized void addFavorite( Playground newGround, android.widget.ImageView v, View viewForSnack ) {
+		add( new Favorite( Prefs.getInstance().getGoogleId(), newGround ), v, viewForSnack );
 	}
 
 
@@ -95,10 +95,10 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 	 * @param viewForSnack
 	 * 		{@link View} anchor for showing {@link Snackbar} messages.
 	 */
-	public synchronized void removeFavorite(SyncPlayground oldT, android.widget.ImageView v, View viewForSnack) {
-		Favorite delFav = new Favorite(Prefs.getInstance().getGoogleId(), oldT);
-		delFav.setObjectId(oldT.getObjectId());
-		remove(delFav, v, viewForSnack);
+	public synchronized void removeFavorite( SyncPlayground oldT, android.widget.ImageView v, View viewForSnack ) {
+		Favorite delFav = new Favorite( Prefs.getInstance().getGoogleId(), oldT );
+		delFav.setObjectId( oldT.getObjectId() );
+		remove( delFav, v, viewForSnack );
 	}
 
 	@Override

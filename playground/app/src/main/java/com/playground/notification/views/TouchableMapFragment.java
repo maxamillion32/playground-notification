@@ -13,14 +13,14 @@ import com.google.android.gms.maps.SupportMapFragment;
  * @author Xinyue Zhao
  */
 public final class TouchableMapFragment extends SupportMapFragment {
-	public View mOriginalContentView;
+	public View             mOriginalContentView;
 	public TouchableWrapper mTouchView;
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-		mOriginalContentView = super.onCreateView(inflater, parent, savedInstanceState);
-		mTouchView = new TouchableWrapper(getActivity());
-		mTouchView.addView(mOriginalContentView);
+	public View onCreateView( LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState ) {
+		mOriginalContentView = super.onCreateView( inflater, parent, savedInstanceState );
+		mTouchView = new TouchableWrapper( getActivity() );
+		mTouchView.addView( mOriginalContentView );
 		return mTouchView;
 	}
 

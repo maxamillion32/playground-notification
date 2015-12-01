@@ -20,7 +20,7 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
 	private static final String TAG = SelectableAdapter.class.getSimpleName();
 
 	private SparseBooleanArray selectedItems;
-	private boolean mActionMode;
+	private boolean            mActionMode;
 
 	public SelectableAdapter() {
 		selectedItems = new SparseBooleanArray();
@@ -35,8 +35,8 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
 	 *
 	 * @return true if the item is selected, false otherwise
 	 */
-	public boolean isSelected(int position) {
-		return getSelectedItems().contains(position);
+	public boolean isSelected( int position ) {
+		return getSelectedItems().contains( position );
 	}
 
 
@@ -46,13 +46,13 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
 	 * @param position
 	 * 		Position of the item to toggle the selection status for
 	 */
-	public void toggleSelection(int position) {
-		if (selectedItems.get(position, false)) {
-			selectedItems.delete(position);
+	public void toggleSelection( int position ) {
+		if( selectedItems.get( position, false ) ) {
+			selectedItems.delete( position );
 		} else {
-			selectedItems.put(position, true);
+			selectedItems.put( position, true );
 		}
-		notifyItemChanged(position);
+		notifyItemChanged( position );
 	}
 
 	/**
@@ -61,8 +61,8 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
 	public void clearSelection() {
 		List<Integer> selection = getSelectedItems();
 		selectedItems.clear();
-		for (Integer i : selection) {
-			notifyItemChanged(i);
+		for( Integer i : selection ) {
+			notifyItemChanged( i );
 		}
 	}
 
@@ -81,9 +81,9 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
 	 * @return List of selected items ids
 	 */
 	public List<Integer> getSelectedItems() {
-		List<Integer> items = new ArrayList<>(selectedItems.size());
-		for (int i = 0; i < selectedItems.size(); ++i) {
-			items.add(selectedItems.keyAt(i));
+		List<Integer> items = new ArrayList<>( selectedItems.size() );
+		for( int i = 0; i < selectedItems.size(); ++i ) {
+			items.add( selectedItems.keyAt( i ) );
 		}
 		return items;
 	}
@@ -93,7 +93,7 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
 		return mActionMode;
 	}
 
-	public void setActionMode(boolean actionMode) {
+	public void setActionMode( boolean actionMode ) {
 		mActionMode = actionMode;
 	}
 }

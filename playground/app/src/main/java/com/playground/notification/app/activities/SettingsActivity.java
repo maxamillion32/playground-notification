@@ -39,34 +39,33 @@ public final class SettingsActivity extends PreferenceActivity implements Prefer
 	 * @param context
 	 * 		A context object.
 	 */
-	public static void showInstance(Activity context) {
-		Intent intent = new Intent(context, SettingsActivity.class);
-		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		ActivityCompat.startActivityForResult(context, intent, REQ, null);
+	public static void showInstance( Activity context ) {
+		Intent intent = new Intent( context, SettingsActivity.class );
+		intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP );
+		ActivityCompat.startActivityForResult( context, intent, REQ, null );
 	}
 
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.settings);
+	public void onCreate( Bundle savedInstanceState ) {
+		super.onCreate( savedInstanceState );
+		addPreferencesFromResource( R.xml.settings );
 
-		mToolbar = (Toolbar) getLayoutInflater().inflate(R.layout.toolbar, null, false);
-		addContentView(mToolbar, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-		mToolbar.setTitle(R.string.action_settings);
-		mToolbar.setTitleTextColor(getResources().getColor(R.color.common_white));
-		mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-		mToolbar.setNavigationOnClickListener(new OnClickListener() {
+		mToolbar = (Toolbar) getLayoutInflater().inflate( R.layout.toolbar, null, false );
+		addContentView( mToolbar, new LayoutParams( LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT ) );
+		mToolbar.setTitle( R.string.action_settings );
+		mToolbar.setTitleTextColor( getResources().getColor( R.color.common_white ) );
+		mToolbar.setNavigationIcon( R.drawable.ic_arrow_back_white_24dp );
+		mToolbar.setNavigationOnClickListener( new OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				ActivityCompat.finishAfterTransition(SettingsActivity.this);
+			public void onClick( View v ) {
+				ActivityCompat.finishAfterTransition( SettingsActivity.this );
 			}
-		});
-		setTitle(R.string.action_settings);
+		} );
+		setTitle( R.string.action_settings );
 
 
-		((MarginLayoutParams) findViewById(android.R.id.list).getLayoutParams()).topMargin = (int) (getActionBarHeight(
-				this) * 1.2);
+		( (MarginLayoutParams) findViewById( android.R.id.list ).getLayoutParams() ).topMargin = (int) ( getActionBarHeight( this ) * 1.2 );
 
 		initSettings();
 	}
@@ -77,89 +76,89 @@ public final class SettingsActivity extends PreferenceActivity implements Prefer
 	private void initSettings() {
 		Prefs prefs = Prefs.getInstance();
 
-		ListPreference mapType = (ListPreference) findPreference(Prefs.KEY_MAP_TYPES);
-		mapType.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+		ListPreference mapType = (ListPreference) findPreference( Prefs.KEY_MAP_TYPES );
+		mapType.setOnPreferenceChangeListener( new OnPreferenceChangeListener() {
 			@Override
-			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				updateSummary(preference, newValue, R.array.map_types);
+			public boolean onPreferenceChange( Preference preference, Object newValue ) {
+				updateSummary( preference, newValue, R.array.map_types );
 				return true;
 			}
-		});
+		} );
 		String value = prefs.getMapType();
-		updateSummary(mapType, value, R.array.map_types);
+		updateSummary( mapType, value, R.array.map_types );
 
 
-		ListPreference batteryType = (ListPreference) findPreference(Prefs.KEY_BATTERY_TYPES);
-		batteryType.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+		ListPreference batteryType = (ListPreference) findPreference( Prefs.KEY_BATTERY_TYPES );
+		batteryType.setOnPreferenceChangeListener( new OnPreferenceChangeListener() {
 			@Override
-			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				updateSummary(preference, newValue, R.array.battery_life_types);
+			public boolean onPreferenceChange( Preference preference, Object newValue ) {
+				updateSummary( preference, newValue, R.array.battery_life_types );
 				return true;
 			}
-		});
+		} );
 		value = prefs.getBatteryLifeType();
-		batteryType.setValue(value);
-		updateSummary(batteryType, value, R.array.battery_life_types);
+		batteryType.setValue( value );
+		updateSummary( batteryType, value, R.array.battery_life_types );
 
-		ListPreference unitsType = (ListPreference) findPreference(Prefs.KEY_DISTANCE_UNITS);
-		unitsType.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+		ListPreference unitsType = (ListPreference) findPreference( Prefs.KEY_DISTANCE_UNITS );
+		unitsType.setOnPreferenceChangeListener( new OnPreferenceChangeListener() {
 			@Override
-			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				updateSummary(preference, newValue, R.array.distance_units_types);
+			public boolean onPreferenceChange( Preference preference, Object newValue ) {
+				updateSummary( preference, newValue, R.array.distance_units_types );
 				return true;
 			}
-		});
+		} );
 		value = prefs.getDistanceUnitsType();
-		unitsType.setValue(value);
-		updateSummary(unitsType, value, R.array.distance_units_types);
+		unitsType.setValue( value );
+		updateSummary( unitsType, value, R.array.distance_units_types );
 
-		ListPreference transMethodType = (ListPreference) findPreference(Prefs.KEY_TRANSPORTATION);
-		transMethodType.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+		ListPreference transMethodType = (ListPreference) findPreference( Prefs.KEY_TRANSPORTATION );
+		transMethodType.setOnPreferenceChangeListener( new OnPreferenceChangeListener() {
 			@Override
-			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				updateSummary(preference, newValue, R.array.transportation_types);
+			public boolean onPreferenceChange( Preference preference, Object newValue ) {
+				updateSummary( preference, newValue, R.array.transportation_types );
 				return true;
 			}
-		});
+		} );
 		value = prefs.getTransportationMethod();
-		transMethodType.setValue(value);
-		updateSummary(transMethodType, value, R.array.transportation_types);
+		transMethodType.setValue( value );
+		updateSummary( transMethodType, value, R.array.transportation_types );
 
 
-		ListPreference alarmArea = (ListPreference) findPreference(Prefs.KEY_ALARM_AREA);
-		alarmArea.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+		ListPreference alarmArea = (ListPreference) findPreference( Prefs.KEY_ALARM_AREA );
+		alarmArea.setOnPreferenceChangeListener( new OnPreferenceChangeListener() {
 			@Override
-			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				updateSummary(preference, newValue, R.array.area_types);
+			public boolean onPreferenceChange( Preference preference, Object newValue ) {
+				updateSummary( preference, newValue, R.array.area_types );
 				return true;
 			}
-		});
+		} );
 		value = prefs.getAlarmAreaValue();
-		alarmArea.setValue(value);
-		updateSummary(alarmArea, value, R.array.area_types);
+		alarmArea.setValue( value );
+		updateSummary( alarmArea, value, R.array.area_types );
 
 
-		ListPreference weatherUnits = (ListPreference) findPreference(Prefs.KEY_WEATHER_UNITS);
-		weatherUnits.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+		ListPreference weatherUnits = (ListPreference) findPreference( Prefs.KEY_WEATHER_UNITS );
+		weatherUnits.setOnPreferenceChangeListener( new OnPreferenceChangeListener() {
 			@Override
-			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				updateSummary(preference, newValue, R.array.weather_units_types);
+			public boolean onPreferenceChange( Preference preference, Object newValue ) {
+				updateSummary( preference, newValue, R.array.weather_units_types );
 				return true;
 			}
-		});
+		} );
 		value = prefs.getWeatherUnitsType();
-		weatherUnits.setValue(value);
-		updateSummary(weatherUnits, value, R.array.weather_units_types);
+		weatherUnits.setValue( value );
+		updateSummary( weatherUnits, value, R.array.weather_units_types );
 	}
 
 	/**
 	 * Update settings summary.
 	 */
-	private void updateSummary(Preference preference, Object newValue, int valuesResId) {
-		Resources res = getResources();
-		int pos = Integer.valueOf(newValue.toString());
-		String summary = (res.getStringArray(valuesResId))[pos];
-		preference.setSummary(summary);
+	private void updateSummary( Preference preference, Object newValue, int valuesResId ) {
+		Resources res     = getResources();
+		int       pos     = Integer.valueOf( newValue.toString() );
+		String    summary = ( res.getStringArray( valuesResId ) )[ pos ];
+		preference.setSummary( summary );
 	}
 
 
@@ -171,22 +170,20 @@ public final class SettingsActivity extends PreferenceActivity implements Prefer
 	 *
 	 * @return Height of bar.
 	 */
-	public static int getActionBarHeight(Activity activity) {
+	public static int getActionBarHeight( Activity activity ) {
 		int[] abSzAttr;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ) {
 			abSzAttr = new int[] { android.R.attr.actionBarSize };
 		} else {
 			abSzAttr = new int[] { R.attr.actionBarSize };
 		}
-		TypedArray a = activity.obtainStyledAttributes(abSzAttr);
-		return a.getDimensionPixelSize(0, -1);
+		TypedArray a = activity.obtainStyledAttributes( abSzAttr );
+		return a.getDimensionPixelSize( 0, -1 );
 	}
 
 
-
-
 	@Override
-	public boolean onPreferenceChange(Preference preference, Object newValue) {
+	public boolean onPreferenceChange( Preference preference, Object newValue ) {
 
 		return true;
 	}

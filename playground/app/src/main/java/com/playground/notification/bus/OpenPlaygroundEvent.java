@@ -6,7 +6,7 @@ import com.playground.notification.ds.grounds.Playground;
 public final class OpenPlaygroundEvent {
 	private Playground mPlayground;
 
-	public OpenPlaygroundEvent(Playground playground) {
+	public OpenPlaygroundEvent( Playground playground ) {
 		mPlayground = playground;
 	}
 

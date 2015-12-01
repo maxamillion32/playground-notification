@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 public final class Geometry {
 	@SerializedName("bounds")
-	private Geobound mBound;
+	private Geobound    mBound;
 	@SerializedName("location")
 	private Geolocation mLocation;
 
