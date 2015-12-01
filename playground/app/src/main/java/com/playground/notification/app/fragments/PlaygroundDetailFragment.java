@@ -7,10 +7,8 @@ import java.util.Locale;
 import android.app.Activity;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -115,8 +113,6 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 		public void onViewCreated(View view, Bundle savedInstanceState) {
 			super.onViewCreated(view, savedInstanceState);
 			mBinding = DataBindingUtil.bind(view.findViewById(R.id.rating_dialog_vg));
-			Drawable progress = mBinding.locationRb.getProgressDrawable();
-			DrawableCompat.setTint(progress, getResources().getColor(R.color.primary_dark_color));
 			getDialog().setTitle(R.string.lbl_rating);
 			Rating rating = ((Rating) getArguments().getSerializable("rating"));
 			if (rating != null) {
