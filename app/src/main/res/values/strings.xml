@@ -1,0 +1,201 @@
+<resources>
+    <string name="app_name">Playgrounds App</string>
+    <string name="application_name">Playgrounds App</string>
+    <string name="title_activity_maps">@string/application_name</string>
+
+    <string name="support_spielplatz_radar">spielplatz-radar.de</string>
+    <string name="support_openweathermap">openweathermap.org</string>
+
+    <string name="action_search">Search</string>
+    <string name="action_share">Share</string>
+    <string name="action_about">About</string>
+    <string name="action_go">Going?</string>
+    <string name="action_favorite">Favorite(%1$d)</string>
+    <string name="action_near_ring">Near-Rings(%1$d)</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_more_apps">More Apps</string>
+    <string name="action_data_support">Data support</string>
+    <string name="action_delete_all">Delete all</string>
+    <string name="action_my_location_list">My locations(%1$d)</string>
+
+    <string name="btn_confirm">Confirm</string>
+    <string name="btn_ok">Ok</string>
+    <string name="btn_yes">Yes</string>
+    <string name="btn_no">No</string>
+    <string name="btn_agree">I agree.</string>
+    <string name="btn_not_agree">I do not agree.</string>
+    <string name="btn_begin">Begin now</string>
+    <string name="btn_close_app">Close app</string>
+    <string name="btn_close">Close</string>
+    <string name="btn_exit">Exit</string>
+    <string name="btn_app_rating">App rating</string>
+
+    <string name="lbl_play_service">This application needs Google Play Service, you must install it first.</string>
+
+    <!-- Shown in the 'About' window of the app. -->
+    <string name="about_body">&lt;b&gt;%1$s &lt;/b&gt;&lt;br&gt;Version %2$s &lt;br&gt;</string>
+    <!-- Shown as a link in the About screen of the app; user can click it to see the licenses. -->
+    <string name="about_licenses">Open Source Licenses</string>
+    <!-- Shown as a link in the About screen of the app; user can click to see the EULA. -->
+    <string name="about_eula">End User License Agreement</string>
+    <string name="about_eula_legal_text">Your use of this application is governed by a)Activating permissions of
+        hardware that the features of this application need and work well. b)The Google Terms of
+        Service (http://www.google.com/intl/en/policies/terms/), Google\'s Privacy
+        Policy(http://www.google.com/intl/en/policies/privacy/). c)Any applicable Google service-specific terms of service of privacy
+        policies. Google\'s terms of service and privacy policies may be updated from time to time and without
+        notice.\n\n\nBy using the application, your agree to the use of your data and permissions of your hardware in
+        accordance with Google\'s Privacy Policy and Google Terms of Service.</string>
+    <string name="play_service_url">market://details?id=com.google.android.gms</string>
+    <string name="play_service_web">https://play.google.com/store/apps/details?id=com.google.android.gms</string>
+
+
+
+    <string name="lbl_share_download_app">Download %1$s:\n%2$s</string>
+    <string name="lbl_store_url">https://play.google.com/store/apps/details?id=%1$s</string>
+    <string name="lbl_share_app_title">Super App for you</string>
+    <string name="lbl_share_app_content">Dear Papa and Mama\n\nHere is %1$s, a powerful tool to help you find playgrounds near you for your kids.\n\n%2$s</string>
+    <string name="lbl_share_ground_title">Hi! Here is a playground for children.</string>
+    <string name="lbl_share_ground_content">Dear Papa und Mama,\n\nI want to share a playground for your child(ren) here.\n\nMap:\n%1$s\n\n%2$s</string>
+
+
+    <string name="lbl_hello">Hello %1$s!</string>
+    <string name="lbl_welcome">Welcome to %1$s\n. I provide vision of play-fields around you and notify you when you\'re near them.</string>
+    <string name="lbl_connect_google">Connecting on Google…</string>
+    <string name="lbl_logout_gplus">Logout</string>
+
+    <string name="lbl_location">Location</string>
+    <string name="lbl_data_source">Data-source: </string>
+
+    <string name="lbl_driving">Driving</string>
+    <string name="lbl_walking">Walking</string>
+    <string name="lbl_bicycling">Bicycling</string>
+    <string name="lbl_transit">Transit</string>
+    
+    <string name="lbl_favorite">Save favorite</string>
+    <string name="lbl_remove_favorite">Remove favorite</string>
+    <string name="lbl_near_ring">Add to near-ring</string>
+    <string name="lbl_remove_near_ring">Remove from near-ring</string>
+    <string name="lbl_no_location_service">The application must be exited for the reason that the network or location service can not be turned on.</string>
+
+    <string name="lbl_rating">Rating</string>
+
+    <string name="lbl_load_cfg">Loading application configurations.</string>
+
+    <string name="lbl_go">Go</string>
+
+    <string name="lbl_my_location_enter">Define you own playground by long-clicking on the center balloon.</string>
+    <string name="lbl_no_current_location">Can not catch your current location.</string>
+    <string name="lbl_name">Name</string>
+    <string name="lbl_saved">Saved</string>
+    <string name="lbl_deleted">Removed</string>
+
+    <string name="lbl_my_location_list">My locations</string>
+    <string name="lbl_favorite_list">Favorite(%1$s/%2$d)</string>
+    <string name="lbl_near_ring_list">Near-Rings(%1$s/%2$d)</string>
+
+    <string name="lbl_notify_title">You\'re near to a playground.</string>
+    <string name="lbl_notify_content">Hi I detect a playground near to you, ready?</string>
+
+    <string name="lbl_c" formatted="false">%1$.0f °C</string>
+    <string name="lbl_f" formatted="false">%1$.0f °F</string>
+
+    <string name="settings_map">Map &amp; Locating</string>
+
+    <string name="settings_map_types">Types</string>
+    <string-array name="map_types">
+        <item>Card</item>
+        <item>Satellite</item>
+    </string-array>
+    <string-array name="map_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string name="settings_battery">Battery Life</string>
+    <string-array name="battery_life_types">
+        <item>Balanced</item>
+        <item>High accuracy</item>
+        <item>Coarse accuracy</item>
+        <item>Almost zero accuracy</item>
+    </string-array>
+    <string-array name="battery_life_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2 </item>
+        <item>3</item>
+    </string-array>
+
+    <string name="settings_traffic">Traffic status showing</string>
+
+    <string name="settings_details">Playground-detail</string>
+    <string name="distance_units">Units</string>
+    <string-array name="distance_units_types">
+        <item>Kilometer</item>
+        <item>Miles</item>
+    </string-array>
+    <string-array name="distance_units_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string name="details_transportation">Transportation</string>
+    <string-array name="transportation_types">
+        <item>@string/lbl_driving</item>
+        <item>@string/lbl_walking</item>
+        <item>@string/lbl_bicycling</item>
+        <item>@string/lbl_transit</item>
+    </string-array>
+    <string-array name="transportation_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string name="settings_near_ring">Near Rings</string>
+    <string name="near_ring_alarm_area">Alarm area</string>
+    <string-array name="area_types">
+        <item>Standard</item>
+        <item>Medium</item>
+        <item>Large</item>
+    </string-array>
+    <string-array name="area_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+
+    <string name="settings_weather">Weather</string>
+    <string name="weather_board_show">Show weather board</string>
+    <string name="weather_units">Units</string>
+    <string-array name="weather_units_types">
+        <item>°C</item>
+        <item>°F</item>
+    </string-array>
+    <string-array name="weather_units_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string name="settings_notification">Notification</string>
+    <string name="notify_good_weather">Some warm tips</string>
+    <string name="notify_weekend">Weekend call</string>
+
+    <string name="notify_weekend_title">Hi it\'s weekend, are you ready?</string>
+    <string name="notify_content">It a nice weather outside, %1$s %2$s. You\'d better bring your kids and find a playground for fun :).</string>
+    <string name="notify_warm_tips_title">Hi, end of work?</string>
+
+    <string name="suggestion_auth"  >com.playground.notification.app.SearchSuggestionProvider</string>
+    <string name="lbl_exclude_chars">The following characters are not allowed within the query / = ( ) : ;</string>
+
+    <string name="interstitial_ad_unit_id">ca-app-pub-9133982521997162/8275666931</string>
+
+
+    <string name="showcase_fav">Add this playground as favorite.</string>
+    <string name="showcase_near_ring">Add to Near-Ring list. You will be notified later when you\'re near to this playground.</string>
+    <string name="showcase_navi">Navigate you to this playground.</string>
+    <string name="showcase_share">Share this playground to your friends.</string>
+
+    <string name="msg_permission_prompt">Without "Read Phone State", "Write External Storage" and "Location permission" the App can\'t work…</string>
+</resources>

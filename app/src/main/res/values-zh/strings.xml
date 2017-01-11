@@ -1,0 +1,141 @@
+<resources>
+    <string name="app_name">Playgrounds App</string>
+    <string name="application_name">Playgrounds App</string>
+
+    <string name="action_search">搜索</string>
+    <string name="action_share">分享</string>
+    <string name="action_about">关于</string>
+    <string name="action_go">走?</string>
+    <string name="action_favorite">收藏夹(%1$d)</string>
+    <string name="action_near_ring">提醒圈子(%1$d)</string>
+    <string name="action_settings">设置</string>
+    <string name="action_more_apps">更多应用</string>
+    <string name="action_data_support">数据来源</string>
+    <string name="action_delete_all">删除所有</string>
+    <string name="action_my_location_list">自己找到的地方(%1$d)</string>
+
+    <string name="btn_confirm">确认</string>
+    <string name="btn_yes">是</string>
+    <string name="btn_no">不</string>
+    <string name="btn_agree">同意</string>
+    <string name="btn_not_agree">不同意</string>
+    <string name="btn_begin">开始</string>
+    <string name="btn_close_app">停止使用</string>
+    <string name="btn_close">关闭</string>
+    <string name="btn_exit">关闭</string>
+    <string name="btn_app_rating">应用评价</string>
+
+     <string name="lbl_play_service">应用需要Play服务，下载？</string>
+
+
+    <string name="lbl_share_app_title">一个不错的应用</string>
+    <string name="lbl_share_app_content">亲爱的爸爸妈妈\n\n这里是 %1$s，用她可以找到不错的地方让您和您的孩子一起玩。\n\n%2$s</string>
+    <string name="lbl_share_ground_title">你好！Playground App 在这里！</string>
+    <string name="lbl_share_ground_content">亲爱的爸爸妈妈，\n\n这里我分享一个不错的地方，让您和您的孩子一起玩。\n\n地图上找到:\n%1$s\n\n%2$s</string>
+
+    <string name="lbl_hello">您好 %1$s!</string>
+    <string name="lbl_welcome">很高兴您能使用 %1$s\n. 找到一个好地方，跟您的孩子一起玩耍， 走吧！</string>
+    <string name="lbl_connect_google">连接谷歌…</string>
+    <string name="lbl_logout_gplus">登出</string>
+
+    <string name="lbl_data_source">数据来源： </string>
+
+    <string name="lbl_driving">开车</string>
+    <string name="lbl_walking">步行</string>
+    <string name="lbl_bicycling">骑车</string>
+    <string name="lbl_transit">公交</string>
+
+    <string name="lbl_favorite">被收藏</string>
+    <string name="lbl_remove_favorite">不再收藏</string>
+    <string name="lbl_near_ring">添加到提醒圈</string>
+    <string name="lbl_remove_near_ring">移除提醒圈</string>
+    <string name="lbl_no_location_service">必须关闭应用，因为无法找到网络或者地理定位。</string>
+
+    <string name="lbl_rating">评价</string>
+
+    <string name="lbl_load_cfg">提取应用配置</string>
+
+    <string name="lbl_go">走</string>
+
+    <string name="lbl_my_location_enter">长按中间的气泡，您就可以添加自己找到的地方，将来还能来玩。</string>
+    <string name="lbl_no_current_location">当前地理位置无法被捕捉到。</string>
+    <string name="lbl_name">名字</string>
+    <string name="lbl_saved">保存了</string>
+    <string name="lbl_deleted">删除了</string>
+
+    <string name="lbl_my_location_list">自己找到的地方</string>
+    <string name="lbl_favorite_list">收藏夹(%1$s/%2$d)</string>
+    <string name="lbl_near_ring_list">提醒圈子(%1$s/%2$d)</string>
+
+    <string name="lbl_notify_title">您正接近一个可以玩耍的地方。</string>
+    <string name="lbl_notify_content">Hey, 想不想和小朋友一起去玩?</string>
+
+
+    <!-- Shown in the 'About' window of the app. -->
+    <string name="about_body">&lt;b&gt;%1$s &lt;/b&gt;&lt;br&gt;版本%2$s &lt;br&gt;</string>
+    <!-- Shown as a link in the About screen of the app; user can click it to see the licenses. -->
+    <string name="about_licenses">开源许可证</string>
+    <!-- Shown as a link in the About screen of the app; user can click to see the EULA. -->
+    <string name="about_eula">最终用户许可协议</string>
+        <string name="about_eula_legal_text">使用该应用程序需要遵守以下条款 a)激活必要硬件使用权限，使应用程序能正确执行任务
+            b)谷歌服务条款(http://www.google.com/intl/en/policies/terms/)，谷歌隐私政策(http://www.google.com/intl/en/policies/privacy/). c)任何谷歌服务特定的服务条款和隐私政策。谷歌服务条款和隐私政策可能会不定时更新，恕不另行通知。\n\n一旦您使用了本应用程序，即表示您同意我们根据谷歌的隐私政策和服务条款使用您的数据和相关硬件权限。</string>
+
+
+
+
+    <string name="settings_map">地图 &amp; 地理定位</string>
+    <string name="settings_map_types">类型</string>
+    <string-array name="map_types">
+        <item>地图</item>
+        <item>卫星</item>
+    </string-array>
+
+    <string name="settings_battery">电池</string>
+    <string-array name="battery_life_types">
+        <item>平衡</item>
+        <item>精确</item>
+        <item>模糊</item>
+        <item>从其他应用获取</item>
+    </string-array>
+
+    <string name="settings_traffic">交通情况</string>
+
+    <string name="settings_details">详细</string>
+    <string name="distance_units">单位</string>
+    <string-array name="units_types">
+        <item>公制</item>
+        <item>英制</item>
+    </string-array>
+
+    <string name="details_transportation">交通工具首选</string>
+
+
+    <string name="near_ring_alarm_area">提醒圈子范围</string>
+    <string-array name="area_types">
+        <item>标准</item>
+        <item>中等</item>
+        <item>很大</item>
+    </string-array>
+
+
+    <string name="settings_weather">天气</string>
+    <string name="weather_board_show">显示天气板</string>
+    <string name="weather_units">单位</string>
+
+    <string name="settings_notification">通知</string>
+    <string name="notify_good_weather">通知一个好天气的状况</string>
+    <string name="notify_weekend">周末温馨提示</string>
+
+    <string name="notify_weekend_title">您好，周末了，放松下?</string>
+    <string name="notify_content">外头天气真不错 %1$s %2$s. 不跟孩子一起出去玩，会很开心的哦 :-)?</string>
+    <string name="notify_warm_tips_title">您好, 下班了?</string>
+
+    <string name="lbl_exclude_chars">这些字符是不能使用的 / = ( ) : ;</string>
+
+    <string name="showcase_fav">收藏这个地方。</string>
+    <string name="showcase_near_ring">添加到－－提醒圈子－－，以后我可以提醒您，如果您接近这个圈子。</string>
+    <string name="showcase_navi">导航到这个地方。</string>
+    <string name="showcase_share">分享这个地方给您的朋友们。</string>
+
+    <string name="msg_permission_prompt">没有－读取电话状态，写入存储，位置－的权限，应用无法运行…</string>
+</resources>
