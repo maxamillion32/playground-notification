@@ -1,0 +1,129 @@
+<resources>
+    <string name="app_name">Spielplätze App</string>
+    <string name="application_name">Spielplätze App</string>
+
+    <string name="action_search">Suche</string>
+    <string name="action_share">Teile</string>
+    <string name="action_go">Gehe?</string>
+    <string name="action_favorite">Favoritenliste(%1$d)</string>
+    <string name="action_near_ring">Near-Rings(%1$d)</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="action_more_apps">Weitere Apps</string>
+    <string name="action_data_support">Datenquelle</string>
+    <string name="action_delete_all">Alle entfernen</string>
+    <string name="action_my_location_list">Meine Lokalisationen(%1$d)</string>
+
+    <string name="btn_confirm">Sicher</string>
+    <string name="btn_yes">Ja</string>
+    <string name="btn_no">Nein</string>
+    <string name="btn_agree">Stimmt zu.</string>
+    <string name="btn_not_agree">Stimmt nicht zu.</string>
+    <string name="btn_begin">Starten</string>
+    <string name="btn_close_app">App schließen</string>
+    <string name="btn_close">Schließen</string>
+    <string name="btn_exit">ausschalten</string>
+    <string name="btn_app_rating">App bewerten</string>
+
+     <string name="lbl_play_service">Diese App braucht Google Play Service, Sie müssen erst herunterladen dann
+        weiter.</string>
+
+
+    <string name="lbl_share_app_title">Tolle App für Dich</string>
+    <string name="lbl_share_app_content">Lieber Papa und Mama\n\nHier ist %1$s, ein sämtliches Werkzeug, Ihnen alle Spielplätze zu informieren.\n\n%2$s</string>
+    <string name="lbl_share_ground_title">Hi! Hier ist ein Spielplatz für Dich.</string>
+    <string name="lbl_share_ground_content">Lieber Papa und Mama,\n\nich teile hier einen Spielplatz für Euch, bringet Ihr Kids, viel Spaß zu machen.\n\nAuf der Karte:\n%1$s\n\n%2$s</string>
+
+    <string name="lbl_hello">Hallo %1$s!</string>
+    <string name="lbl_welcome">Willkommen bei %1$s\n. Ein Radar &amp; Broadcast für alle Kinderspielplätze neben dir.</string>
+    <string name="lbl_connect_google">Verbindung an Google…</string>
+    <string name="lbl_logout_gplus">Abmelden</string>
+
+    <string name="lbl_data_source">Datenquelle: </string>
+
+    <string name="lbl_driving">Auto fahren</string>
+    <string name="lbl_walking">Zu Fuß</string>
+    <string name="lbl_bicycling">Fahrrad</string>
+    <string name="lbl_transit">Bus, Bahn</string>
+
+    <string name="lbl_favorite">wurde favorisiert</string>
+    <string name="lbl_remove_favorite">wurde nicht favorisiert</string>
+    <string name="lbl_near_ring">wurde als Near-Ring hinzugefügt</string>
+    <string name="lbl_remove_near_ring">wurde aus Near-Rings entfernt</string>
+    <string name="lbl_no_location_service">Die App muss geschlossen werden, da entweder der Lokalisationsserver oder Netzwerk nicht verfügbar ist.</string>
+
+    <string name="lbl_rating">Bewerten</string>
+
+    <string name="lbl_load_cfg">App-Konfiguration wird geladen.</string>
+
+    <string name="lbl_go">Gehe</string>
+
+    <string name="lbl_my_location_enter">Ein Laner Druck auf dem Ballon kannst Du eigenen Spielplatz hinzufügen.</string>
+    <string name="lbl_no_current_location">Deine aktuelle Lokalisation ist unklar.</string>
+    <string name="lbl_name">Name</string>
+    <string name="lbl_saved">wurde gespeichert</string>
+    <string name="lbl_deleted">wurde entfernt</string>
+
+    <string name="lbl_my_location_list">Meine Lokalisationen</string>
+    <string name="lbl_favorite_list">Favoritenliste(%1$s/%2$d)</string>
+    <string name="lbl_near_ring_list">Near-Rings(%1$s/%2$d)</string>
+
+    <string name="lbl_notify_title">Du bist ehe nah zu einem Spielplatz.</string>
+    <string name="lbl_notify_content">Hey, bist Du schon bereit zu dem Platz?</string>
+
+    <string name="settings_map">Karte &amp; Lokalisieren</string>
+    <string name="settings_map_types">Typ</string>
+    <string-array name="map_types">
+        <item>Map</item>
+        <item>Satelliten</item>
+    </string-array>
+
+    <string name="settings_battery">Battery</string>
+    <string-array name="battery_life_types">
+        <item>Ausgeglichen</item>
+        <item>Hohe Genauigkeit</item>
+        <item>Grobe Genauigkeit</item>
+        <item>Keine Genauigkeit</item>
+    </string-array>
+
+    <string name="settings_traffic">Verkehrsstatus zeigen</string>
+
+    <string name="settings_details">Spielplatzdetail</string>
+    <string name="distance_units">Einheiten</string>
+    <string-array name="units_types">
+        <item>Kilometer</item>
+        <item>Meilen</item>
+    </string-array>
+
+    <string name="details_transportation">Verkehrsmittel</string>
+
+
+    <string name="near_ring_alarm_area">Alarmbereich</string>
+    <string-array name="area_types">
+        <item>Standard</item>
+        <item>Medium</item>
+        <item>Große</item>
+    </string-array>
+
+
+    <string name="settings_weather">Wetter</string>
+    <string name="weather_board_show">Zeige Wetter Bord</string>
+    <string name="weather_units">Einheiten</string>
+
+    <string name="settings_notification">Benachrichtigung</string>
+    <string name="notify_good_weather">Tipps für gutes Wetter</string>
+    <string name="notify_weekend">Weekend Call</string>
+
+    <string name="notify_weekend_title">Hey, es ist Wochenende, möchtest Du?</string>
+    <string name="notify_content">Es ist ein schönes Wetter draußen, %1$s %2$s. Gehst Du nicht zu einem Spielplatz mit deinen Kindern :-)?</string>
+    <string name="notify_warm_tips_title">Hey, Feierabend?</string>
+
+    <string name="lbl_exclude_chars">Die folgenden Zeichen sind nicht in der Abfrage erlaubt: / = ( ) : ;</string>
+
+    <string name="showcase_fav">In die Favoritenliste hinzufügen</string>
+    <string name="showcase_near_ring">In die Near-Ringsliste hinzufügen. Du wirst informiert, falls Du nah zu diesem Spielplatz bist.</string>
+    <string name="showcase_navi">Navigiere zu diesem Spielplatz.</string>
+    <string name="showcase_share">Den Spielplatz zu teilen.</string>
+
+    <string name="msg_permission_prompt">Ohne Berechtigung von "Read Phone State", "Write External Storage" und "Lokalisierung" kann die App nicht weiter gehen…</string>
+
+</resources>

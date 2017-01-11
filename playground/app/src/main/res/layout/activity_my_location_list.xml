@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".app.activities.MyLocationListActivity">
+
+    <data class="MyLocationListBinding">
+
+
+    </data>
+
+    <LinearLayout
+        android:id="@id/error_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/grey_500"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/ActionBar_ToolBar" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:scrollbars="none" />
+    </LinearLayout>
+</layout>
