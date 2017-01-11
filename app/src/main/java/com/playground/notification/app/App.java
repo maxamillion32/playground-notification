@@ -43,6 +43,7 @@ import com.crashlytics.android.Crashlytics;
 import com.playground.notification.R;
 import com.playground.notification.app.noactivities.TickerService;
 import com.playground.notification.utils.Prefs;
+import com.tinyurl4j.Api;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -118,7 +119,7 @@ public final class App extends MultiDexApplication {
 		//in sharing text.
 		String url = Prefs.getInstance().getAppDownloadInfo();
 		if( TextUtils.isEmpty( url ) || !url.contains( "tinyurl" ) ) {
-			com.tinyurl4j.Api.getTinyUrl( getString( R.string.lbl_store_url, getPackageName() ), new Callback<com.tinyurl4j.data.Response>() {
+			Api.getTinyUrl( getString( R.string.lbl_store_url, getPackageName() ), new Callback<com.tinyurl4j.data.Response>() {
 				@Override
 				public void success( com.tinyurl4j.data.Response response, retrofit.client.Response response2 ) {
 					Prefs.getInstance().setAppDownloadInfo(

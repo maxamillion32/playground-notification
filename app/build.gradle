@@ -39,6 +39,12 @@ android {
         javaMaxHeapSize "3g"
     }
 
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+     }
+
+
+
     buildTypes {
         debug {
             versionNameSuffix buildNumber
