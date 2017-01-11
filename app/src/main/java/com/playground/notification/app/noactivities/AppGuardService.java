@@ -1,14 +1,14 @@
 package com.playground.notification.app.noactivities;
 
 
-import java.util.Calendar;
-
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import com.playground.notification.utils.Prefs;
+
+import java.util.Calendar;
 
 public final class AppGuardService extends IntentService {
 	private static final String TAG = "AppGuardService";

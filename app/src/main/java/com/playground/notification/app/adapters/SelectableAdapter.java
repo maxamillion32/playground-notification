@@ -1,10 +1,10 @@
 package com.playground.notification.app.adapters;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An abstract {@link RecyclerView.Adapter} that supports action-mode.

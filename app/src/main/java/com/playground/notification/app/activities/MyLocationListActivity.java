@@ -1,8 +1,5 @@
 package com.playground.notification.app.activities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +27,9 @@ import com.playground.notification.databinding.MyLocationListBinding;
 import com.playground.notification.ds.sync.MyLocation;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.utils.Prefs;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A list of all my-locations.

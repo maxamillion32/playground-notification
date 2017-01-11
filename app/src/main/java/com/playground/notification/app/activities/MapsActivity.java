@@ -1,9 +1,5 @@
 package com.playground.notification.app.activities;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.ProgressDialog;
@@ -70,7 +66,6 @@ import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -115,7 +110,10 @@ import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.sync.SyncManager;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.views.TouchableMapFragment;
-import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -123,7 +121,6 @@ import retrofit.client.Response;
 
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 public class MapsActivity extends AppActivity implements LocationListener {
 	public static final String EXTRAS_GROUND = MapsActivity.class.getName() + ".EXTRAS.ground";

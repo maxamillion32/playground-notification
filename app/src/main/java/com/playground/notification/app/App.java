@@ -31,9 +31,6 @@
 
 package com.playground.notification.app;
 
-import java.io.IOException;
-import java.util.Properties;
-
 import android.content.Intent;
 import android.location.Location;
 import android.support.multidex.MultiDexApplication;
@@ -46,6 +43,9 @@ import com.crashlytics.android.Crashlytics;
 import com.playground.notification.R;
 import com.playground.notification.app.noactivities.TickerService;
 import com.playground.notification.utils.Prefs;
+
+import java.io.IOException;
+import java.util.Properties;
 
 import cn.bmob.v3.Bmob;
 import io.fabric.sdk.android.Fabric;

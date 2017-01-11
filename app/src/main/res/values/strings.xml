@@ -198,4 +198,11 @@
     <string name="showcase_share">Share this playground to your friends.</string>
 
     <string name="msg_permission_prompt">Without "Read Phone State", "Write External Storage" and "Location permission" the App can\'t work…</string>
+
+
+    <string name="rationale_permissions">@string/msg_permission_prompt</string>
+    <string name="app_settings_dialog_rationale_ask_again">This app may not work correctly without the requested permissions. Open the app settings screen to modify app permissions.</string>
+    <string name="app_settings_dialog_title_settings_dialog">Permissions Required</string>
+    <string name="app_settings_dialog_setting">Settings</string>
+    <string name="app_settings_dialog_cancel">Close app</string>
 </resources>

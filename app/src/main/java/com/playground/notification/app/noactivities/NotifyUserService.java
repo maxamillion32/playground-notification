@@ -1,8 +1,5 @@
 package com.playground.notification.app.noactivities;
 
-import java.util.List;
-import java.util.Locale;
-
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -29,6 +26,9 @@ import com.playground.notification.ds.weather.Weather;
 import com.playground.notification.ds.weather.WeatherDetail;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.utils.Utils;
+
+import java.util.List;
+import java.util.Locale;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;

@@ -138,4 +138,9 @@
     <string name="showcase_share">分享这个地方给您的朋友们。</string>
 
     <string name="msg_permission_prompt">没有－读取电话状态，写入存储，位置－的权限，应用无法运行…</string>
+
+    <string name="app_settings_dialog_rationale_ask_again">This app may not work correctly without the requested permissions. Open the app settings screen to modify app permissions.</string>
+    <string name="app_settings_dialog_title_settings_dialog">Permissions Required</string>
+    <string name="app_settings_dialog_setting">Settings</string>
+    <string name="app_settings_dialog_cancel">Close app</string>
 </resources>

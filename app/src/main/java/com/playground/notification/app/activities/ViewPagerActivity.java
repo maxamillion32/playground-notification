@@ -1,8 +1,5 @@
 package com.playground.notification.app.activities;
 
-import java.io.Serializable;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -16,6 +13,9 @@ import com.playground.notification.R;
 import com.playground.notification.app.adapters.SyncPlaygroundsPagerAdapter;
 import com.playground.notification.databinding.ViewPagerBinding;
 import com.playground.notification.ds.sync.SyncPlayground;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * A viewpager showing all sync-grounds, it might be list of favorite or near-rings.

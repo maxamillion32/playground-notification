@@ -1,7 +1,5 @@
 package com.playground.notification.app.adapters;
 
-import java.util.List;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -10,6 +8,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.playground.notification.app.App;
 import com.playground.notification.app.fragments.PlaygroundDetailFragment;
 import com.playground.notification.ds.sync.SyncPlayground;
+
+import java.util.List;
 
 /**
  * Adapter for viewpager that shows sync-grounds.
