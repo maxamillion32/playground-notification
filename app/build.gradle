@@ -10,7 +10,6 @@ buildscript {
 def buildNumber = 'bld' + (System.env.BUILD_NUMBER ?: 'SNAPSHOT')
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
-apply plugin: 'android-apt'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -117,8 +116,6 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.5.1@aar') {
         transitive = true;
     }
-    compile 'com.github.hotchemi:permissionsdispatcher:1.2.1@aar'
-    apt 'com.github.hotchemi:permissionsdispatcher-processor:1.2.1'
 }
 
 // Rename final apks
