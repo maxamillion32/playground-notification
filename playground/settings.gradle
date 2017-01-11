@@ -1,4 +1,0 @@
-include ':app', ':ChoppingBootstrap', ':volley_cz'
-project(':ChoppingBootstrap').projectDir = new File('submodules/ChoppingBootstrap')
-project(':volley_cz').projectDir = new File('submodules/ChoppingBootstrap/submodules/volley_cz')
-
