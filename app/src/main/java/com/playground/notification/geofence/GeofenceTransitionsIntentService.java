@@ -1,9 +1,5 @@
 package com.playground.notification.geofence;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.List;
-
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,11 +9,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.support.v4.app.NotificationCompat.BigPictureStyle;
 import android.support.v4.app.NotificationCompat.BigTextStyle;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.app.NotificationCompat;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.maps.model.LatLng;
@@ -28,8 +26,11 @@ import com.playground.notification.ds.sync.NearRing;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.utils.Utils;
-import com.squareup.picasso.Picasso;
 import com.tinyurl4j.data.Response;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -127,29 +128,41 @@ public final class GeofenceTransitionsIntentService extends IntentService {
 		}
 		PendingIntent contentIntent = PendingIntent.getActivity( this, (int) System.currentTimeMillis(), i, PendingIntent.FLAG_ONE_SHOT );
 
-		Picasso picasso = Picasso.with( this );
 		try {
-			notify( getString( R.string.lbl_notify_title ), getString( R.string.lbl_notify_content ), url, contentIntent, picasso );
+			notify( getString( R.string.lbl_notify_title ), getString( R.string.lbl_notify_content ), url, contentIntent  );
 		} catch( NullPointerException|IOException|OutOfMemoryError e ) {
 			fallbackNotify( getString( R.string.lbl_notify_title ), getString( R.string.lbl_notify_content ), contentIntent );
 		}
 	}
 
 
-	private void notify( String title, String desc, String image, PendingIntent contentIntent, Picasso picasso ) throws IOException,
-																														OutOfMemoryError {
-		Bitmap bitmap = picasso.load( image ).get();
-		mNotifyBuilder = new NotificationCompat.Builder( this ).setWhen( System.currentTimeMillis() ).setSmallIcon( R.drawable.ic_geofence_notify )
-				.setTicker( title ).setContentTitle( title ).setContentText( desc ).setStyle( new BigPictureStyle().bigPicture( bitmap )
-																									  .setBigContentTitle( title )
-																									  .setSummaryText( desc ) ).addAction(
-						R.drawable.ic_share_notification, getString( R.string.action_share ), mSharePi ).setAutoCancel( true ).setLargeIcon(
-						BitmapFactory.decodeResource( getResources(), R.drawable.ic_geofence_notify ) );
-		mNotifyBuilder.setContentIntent( contentIntent );
+	private void notify(final String title, final String desc, String image, final PendingIntent contentIntent) throws IOException, OutOfMemoryError {
+		Glide.with(this)
+		     .load(image)
+		     .asBitmap()
+		     .into(new SimpleTarget<Bitmap>() {
+			     @Override
+			     public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+				     mNotifyBuilder = new NotificationCompat.Builder(GeofenceTransitionsIntentService.this).setWhen(System.currentTimeMillis())
+				                                                                                           .setSmallIcon(R.drawable.ic_geofence_notify)
+				                                                                                           .setTicker(title)
+				                                                                                           .setContentTitle(title)
+				                                                                                           .setContentText(desc)
+				                                                                                           .setStyle(new android.support.v4.app.NotificationCompat.BigPictureStyle().bigPicture(bitmap)
+				                                                                                                                                                                    .setBigContentTitle(
+						                                                                                                                                                                    title)
+				                                                                                                                                                                    .setSummaryText(desc))
+				                                                                                           .addAction(R.drawable.ic_share_notification, getString(R.string.action_share), mSharePi)
+				                                                                                           .setAutoCancel(true)
+				                                                                                           .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_geofence_notify));
+				     mNotifyBuilder.setContentIntent(contentIntent);
 
-		Utils.vibrateSound( this, mNotifyBuilder );
+				     Utils.vibrateSound(GeofenceTransitionsIntentService.this, mNotifyBuilder);
 
-		mNotificationManager.notify( (int) System.currentTimeMillis(), mNotifyBuilder.build() );
+				     mNotificationManager.notify((int) System.currentTimeMillis(), mNotifyBuilder.build());
+			     }
+		     });
+
 	}
 
 	private void fallbackNotify( String title, String desc, PendingIntent contentIntent ) {

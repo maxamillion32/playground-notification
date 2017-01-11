@@ -1,7 +1,5 @@
 package com.playground.notification.app.adapters;
 
-import java.util.List;
-
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
@@ -16,6 +14,9 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.playground.notification.BR;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
@@ -24,8 +25,8 @@ import com.playground.notification.bus.SelectItemEvent;
 import com.playground.notification.bus.StartActionModeEvent;
 import com.playground.notification.ds.sync.MyLocation;
 import com.playground.notification.utils.Prefs;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
+
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -101,7 +102,7 @@ public final class MyLocationListAdapter extends SelectableAdapter<MyLocationLis
 		final String url = prefs.getGoogleApiHost() + "maps/api/staticmap?center=" + latlng +
 						   "&zoom=16&size=" + prefs.getMyLocationPreviewSize() + "&markers=color:red%7Clabel:S%7C" + latlng + "&key=" +
 						   App.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
-		Picasso.with( App.Instance ).load( url ).transform( new Transformation() {
+		Glide.with(App.Instance ).load(url ).transform(new BitmapTransformation(App.Instance) {
 			public Bitmap getResizedBitmap( Bitmap bm, float newWidth, float newHeight ) {
 				int   width       = bm.getWidth();
 				int   height      = bm.getHeight();
@@ -116,18 +117,18 @@ public final class MyLocationListAdapter extends SelectableAdapter<MyLocationLis
 			}
 
 			@Override
-			public Bitmap transform( Bitmap source ) {
+			protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
 				float  x      = mScreenWidth / ( mColCount + 0.f );
-				float  y      = x * ( source.getHeight() / ( source.getWidth() + 0.f ) );
-				Bitmap result = getResizedBitmap( source, x, y );
-				if( result != source ) {
-					source.recycle();
+				float  y      = x * ( toTransform.getHeight() / ( toTransform.getWidth() + 0.f ) );
+				Bitmap result = getResizedBitmap( toTransform, x, y );
+				if( result != toTransform ) {
+					toTransform.recycle();
 				}
-				return result;
+				return toTransform;
 			}
 
 			@Override
-			public String key() {
+			public String getId() {
 				return url.hashCode() + "";
 			}
 		} ).into( holder.mImageView );

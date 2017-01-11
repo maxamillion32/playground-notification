@@ -78,30 +78,45 @@ android {
     }
 }
 
+
+ext {
+    appCompatVersion = "25.1.0"
+    multidexVersion = "1.0.1"
+    mapsUtilsVersion = "0.4+"
+    easyPermissions="0.2.0"
+    playService = "10.0.1"
+    imageLoad = "3.7.0"
+    retrofit = "1.9.0"
+    okhttp = "2.0.0"
+    okio = "1.4.0"
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':ChoppingBootstrap')
     compile project(':volley_cz')
-    compile 'com.android.support:design:25.1.0'
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:cardview-v7:25.1.0'
-    compile 'com.android.support:preference-v7:25.1.0'
-    compile 'com.google.android.gms:play-services:10.0.1'
-    compile 'com.android.support:recyclerview-v7:25.1.0'
+
+    compile "com.android.support:multidex:${multidexVersion}"
+    compile "com.android.support:design:${appCompatVersion}"
+    compile "com.android.support:cardview-v7:${appCompatVersion}"
+    compile "com.android.support:preference-v7:${appCompatVersion}"
+    compile "com.android.support:recyclerview-v7:${appCompatVersion}"
+    compile "com.google.android.gms:play-services:${playService}"
+    compile "com.google.maps.android:android-maps-utils:${mapsUtilsVersion}"
+    compile "pub.devrel:easypermissions:${easyPermissions}"
+
+    compile "com.github.bumptech.glide:glide:${imageLoad}"
+    compile "com.squareup.okhttp:okhttp-urlconnection:${okhttp}"
+    compile "com.squareup.retrofit:retrofit:${retrofit}"
+    compile "com.squareup.okhttp:okhttp:${okhttp}"
+    compile "com.squareup.okio:okio:${okio}"
 
     compile 'de.hdodenhof:circleimageview:1.3.0'
     compile 'com.pnikosis:materialish-progress:1.5'
-    compile 'com.squareup.retrofit:retrofit:1.9.0'
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
-    compile 'com.squareup.okhttp:okhttp:2.0.0'
-    compile 'com.squareup.okio:okio:1.4.0'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-
     compile 'cn.bmob.android:bmob-sdk:3.4.3'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.1@aar') {
         transitive = true;
     }
-
     compile 'com.github.hotchemi:permissionsdispatcher:1.2.1@aar'
     apt 'com.github.hotchemi:permissionsdispatcher-processor:1.2.1'
 }

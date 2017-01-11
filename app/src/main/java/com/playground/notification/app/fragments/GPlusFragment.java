@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.chopping.application.BasicPrefs;
 import com.chopping.bus.CloseDrawerEvent;
 import com.chopping.fragments.BaseFragment;
@@ -25,7 +26,6 @@ import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.utils.Prefs;
-import com.squareup.picasso.Picasso;
 
 import de.greenrobot.event.EventBus;
 
@@ -114,9 +114,8 @@ public final class GPlusFragment extends BaseFragment {
 	@Override
 	public void onResume() {
 		Prefs   prefs   = Prefs.getInstance();
-		Picasso picasso = Picasso.with( App.Instance );
 		if( !TextUtils.isEmpty( prefs.getGoogleThumbUrl() ) ) {
-			picasso.load( Utils.uriStr2URI( prefs.getGoogleThumbUrl() ).toASCIIString() ).into( mPhotoIv );
+			Glide.with(App.Instance ).load(Utils.uriStr2URI(prefs.getGoogleThumbUrl() ).toASCIIString() ).into(mPhotoIv );
 		}
 		mNameTv.setText( getString( R.string.lbl_hello, prefs.getGoogleDisplayName() ) );
 		super.onResume();

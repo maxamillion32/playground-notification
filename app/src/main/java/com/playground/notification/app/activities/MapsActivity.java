@@ -43,6 +43,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 
+import com.bumptech.glide.Glide;
 import com.chopping.bus.CloseDrawerEvent;
 import com.chopping.utils.Utils;
 import com.google.android.gms.ads.AdListener;
@@ -68,6 +69,7 @@ import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -121,6 +123,7 @@ import retrofit.client.Response;
 
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 public class MapsActivity extends AppActivity implements LocationListener {
 	public static final String EXTRAS_GROUND = MapsActivity.class.getName() + ".EXTRAS.ground";
@@ -621,7 +624,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 											}
 											String url = !TextUtils.isEmpty( weatherDetail.getIcon() ) ? prefs.getWeatherIconUrl(
 													weatherDetail.getIcon() )                          : prefs.getWeatherIconUrl( "50d" );
-											Picasso.with( App.Instance ).load( url ).into( mBinding.boardIconIv );
+											Glide.with(App.Instance ).load(url ).into(mBinding.boardIconIv );
 
 											ViewPropertyAnimator animator = ViewPropertyAnimator.animate( mBinding.boardVg );
 											float x = ViewHelper.getX( mBinding.boardVg );
@@ -670,83 +673,101 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	 * Initialize all map infrastructures, location request etc.
 	 */
 	private void initGoogle() {
-		setUpMapIfNeeded();
-		if( mMap != null ) {
-			mapSettings();
-		}
-
-		//Location request.
-		if( mLocationRequest == null ) {
-			mLocationRequest = LocationRequest.create();
-			mLocationRequest.setInterval( AlarmManager.INTERVAL_HALF_HOUR );
-			mLocationRequest.setFastestInterval( AlarmManager.INTERVAL_FIFTEEN_MINUTES );
-			int ty = 0;
-			switch( Prefs.getInstance().getBatteryLifeType() ) {
-				case "0":
-					ty = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
-					break;
-				case "1":
-					ty = LocationRequest.PRIORITY_HIGH_ACCURACY;
-					break;
-				case "2":
-					ty = LocationRequest.PRIORITY_LOW_POWER;
-					break;
-				case "3":
-					ty = LocationRequest.PRIORITY_NO_POWER;
-					break;
-			}
-			mLocationRequest.setPriority( ty );
-		}
-
-		if( mGoogleApiClient == null ) {
-			mGoogleApiClient = new GoogleApiClient.Builder( App.Instance ).addApi( LocationServices.API ).addConnectionCallbacks(
-					new ConnectionCallbacks() {
-						@Override
-						public void onConnected( Bundle bundle ) {
-							startLocationUpdate();
-						}
-
-						@Override
-						public void onConnectionSuspended( int i ) {
-							Utils.showShortToast( App.Instance, "onConnectionSuspended" );
-
-						}
-					} ).addOnConnectionFailedListener( new OnConnectionFailedListener() {
+		if( mMap == null ) {
+			// Try to obtain the map from the SupportMapFragment.
+			mMapFragment = (TouchableMapFragment) getSupportFragmentManager().findFragmentById( R.id.map );
+			mMapFragment.getMapAsync(new OnMapReadyCallback() {
 				@Override
-				public void onConnectionFailed( ConnectionResult connectionResult ) {
-					Utils.showShortToast( App.Instance, "onConnectionFailed: " + connectionResult.getErrorCode() );
-				}
-			} ).build();
+				public void onMapReady(GoogleMap googleMap) {
+					mMap = googleMap;
+					// Check if we were successful in obtaining the map.
+					if( mMap != null ) {
+						setUpMap();
+					}
 
-			mGoogleApiClient.connect();
+
+					if( mMap != null ) {
+						mapSettings();
+					}
+
+					//Location request.
+					if( mLocationRequest == null ) {
+						mLocationRequest = LocationRequest.create();
+						mLocationRequest.setInterval( AlarmManager.INTERVAL_HALF_HOUR );
+						mLocationRequest.setFastestInterval( AlarmManager.INTERVAL_FIFTEEN_MINUTES );
+						int ty = 0;
+						switch( Prefs.getInstance().getBatteryLifeType() ) {
+							case "0":
+								ty = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
+								break;
+							case "1":
+								ty = LocationRequest.PRIORITY_HIGH_ACCURACY;
+								break;
+							case "2":
+								ty = LocationRequest.PRIORITY_LOW_POWER;
+								break;
+							case "3":
+								ty = LocationRequest.PRIORITY_NO_POWER;
+								break;
+						}
+						mLocationRequest.setPriority( ty );
+					}
+
+					if( mGoogleApiClient == null ) {
+						mGoogleApiClient = new GoogleApiClient.Builder( App.Instance ).addApi( LocationServices.API ).addConnectionCallbacks(
+								new ConnectionCallbacks() {
+									@Override
+									public void onConnected( Bundle bundle ) {
+										startLocationUpdate();
+									}
+
+									@Override
+									public void onConnectionSuspended( int i ) {
+										Utils.showShortToast( App.Instance, "onConnectionSuspended" );
+
+									}
+								} ).addOnConnectionFailedListener( new OnConnectionFailedListener() {
+							@Override
+							public void onConnectionFailed( ConnectionResult connectionResult ) {
+								Utils.showShortToast( App.Instance, "onConnectionFailed: " + connectionResult.getErrorCode() );
+							}
+						} ).build();
+
+						mGoogleApiClient.connect();
+					}
+
+					//Setting turn/off location service of system.
+					LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest( mLocationRequest );
+					builder.setAlwaysShow( true );
+					builder.setNeedBle( true );
+					PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings( mGoogleApiClient, builder.build() );
+					result.setResultCallback( new ResultCallback<LocationSettingsResult>() {
+						@Override
+						public void onResult( LocationSettingsResult result ) {
+							final Status status = result.getStatus();
+							//				final LocationSettingsStates states = result.getLocationSettingsStates();
+							switch( status.getStatusCode() ) {
+								case LocationSettingsStatusCodes.SUCCESS:
+									break;
+								case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+									try {
+										status.startResolutionForResult( MapsActivity.this, REQ );
+									} catch( SendIntentException e ) {
+										exitAppDialog();
+									}
+									break;
+								case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+									exitAppDialog();
+									break;
+							}
+						}
+					} );
+				}
+			});
 		}
 
-		//Setting turn/off location service of system.
-		LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest( mLocationRequest );
-		builder.setAlwaysShow( true );
-		builder.setNeedBle( true );
-		PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings( mGoogleApiClient, builder.build() );
-		result.setResultCallback( new ResultCallback<LocationSettingsResult>() {
-			@Override
-			public void onResult( LocationSettingsResult result ) {
-				final Status status = result.getStatus();
-				//				final LocationSettingsStates states = result.getLocationSettingsStates();
-				switch( status.getStatusCode() ) {
-					case LocationSettingsStatusCodes.SUCCESS:
-						break;
-					case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-						try {
-							status.startResolutionForResult( MapsActivity.this, REQ );
-						} catch( SendIntentException e ) {
-							exitAppDialog();
-						}
-						break;
-					case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-						exitAppDialog();
-						break;
-				}
-			}
-		} );
+
+
 	}
 
 	/**
@@ -853,7 +874,20 @@ public class MapsActivity extends AppActivity implements LocationListener {
 			mDrawerToggle.syncState();
 		}
 
-		setUpMapIfNeeded();
+		if( mMap == null ) {
+			// Try to obtain the map from the SupportMapFragment.
+			mMapFragment = (TouchableMapFragment) getSupportFragmentManager().findFragmentById( R.id.map );
+			mMapFragment.getMapAsync(new OnMapReadyCallback() {
+				@Override
+				public void onMapReady(GoogleMap googleMap) {
+					mMap = googleMap;
+					// Check if we were successful in obtaining the map.
+					if( mMap != null ) {
+						setUpMap();
+					}
+				}
+			});
+		}
 
 		mVisible = true;
 	}
@@ -864,28 +898,6 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		super.onPause();
 	}
 
-	/**
-	 * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly installed) and the map has not already been
-	 * instantiated.. This will ensure that we only ever call {@link #setUpMap()} once when {@link #mMap} is not null.
-	 * <p/>
-	 * If it isn't installed {@link SupportMapFragment} (and {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
-	 * install/update the Google Play services APK on their device.
-	 * <p/>
-	 * A user can return to this FragmentActivity after following the prompt and correctly installing/updating/enabling the Google Play services.
-	 * Since the FragmentActivity may not have been completely destroyed during this process (it is likely that it would only be stopped or paused),
-	 * {@link #onCreate(Bundle)} may not be called again so we should call this method in {@link #onResume()} to guarantee that it will be called.
-	 */
-	private void setUpMapIfNeeded() {
-		// Do a null check to confirm that we have not already instantiated the map.
-		if( mMap == null ) {
-			// Try to obtain the map from the SupportMapFragment.
-			mMap = ( mMapFragment = (TouchableMapFragment) getSupportFragmentManager().findFragmentById( R.id.map ) ).getMap();
-			// Check if we were successful in obtaining the map.
-			if( mMap != null ) {
-				setUpMap();
-			}
-		}
-	}
 
 	/**
 	 * This is where we can add markers or lines, add listeners or move the camera. In this case, we just add a marker near Africa.

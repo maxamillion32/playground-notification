@@ -1,9 +1,5 @@
 package com.playground.notification.app.fragments;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -14,6 +10,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.model.LatLng;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
@@ -35,11 +32,14 @@ import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.utils.Utils;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Locale;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobQuery.CachePolicy;
@@ -332,7 +332,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 			String url = prefs.getGoogleApiHost() + "maps/api/staticmap?center=" + latlng +
 						 "&zoom=16&size=" + prefs.getDetailPreviewSize() + "&markers=color:red%7Clabel:S%7C" + latlng + "&key=" +
 						 App.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
-			Picasso.with( App.Instance ).load( url ).into( mBinding.locationPreviewIv );
+			Glide.with(App.Instance ).load(url ).into(mBinding.locationPreviewIv );
 			if( getArguments().getBoolean( EXTRAS_CLICKABLE ) ) {
 				mBinding.locationPreviewIv.setOnClickListener( new OnClickListener() {
 					@Override

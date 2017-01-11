@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import com.bumptech.glide.Glide;
 import com.chopping.utils.Utils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
@@ -30,7 +31,6 @@ import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.databinding.ActivityConnectGoogleBinding;
 import com.playground.notification.utils.Prefs;
-import com.squareup.picasso.Picasso;
 
 /**
  * Login on Google.
@@ -101,9 +101,8 @@ public final class ConnectGoogleActivity extends AppActivity {
 									prefs.setGoogleId( person.getId() );
 									prefs.setGoogleDisplayName( person.getDisplayName() );
 
-									Picasso picasso = Picasso.with( App.Instance );
 									if( person.getImage() != null && person.getImage().hasUrl() ) {
-										picasso.load( Utils.uriStr2URI( person.getImage().getUrl() ).toASCIIString() ).into( mBinding.thumbIv );
+										Glide.with(App.Instance).load( Utils.uriStr2URI( person.getImage().getUrl() ).toASCIIString() ).into( mBinding.thumbIv );
 										prefs.setGoogleThumbUrl( person.getImage().getUrl() );
 									}
 									ViewPropertyAnimator.animate( mBinding.thumbIv ).cancel();
