@@ -3,9 +3,9 @@ package com.playground.notification.app.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender.SendIntentException;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewCompat;
@@ -16,16 +16,13 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.bumptech.glide.Glide;
-import com.chopping.utils.Utils;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.plus.People.LoadPeopleResult;
-import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.Plus.PlusOptions;
-import com.google.android.gms.plus.model.people.Person;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
@@ -45,7 +42,7 @@ public final class ConnectGoogleActivity extends AppActivity {
 	/**
 	 * Request-id of this  {@link Activity}.
 	 */
-	public static final  int REQ    = 0x91;
+	public static final int REQ = 0x91;
 	/**
 	 * Data-binding.
 	 */
@@ -53,151 +50,126 @@ public final class ConnectGoogleActivity extends AppActivity {
 	/**
 	 * The Google-API.
 	 */
-	private GoogleApiClient              mGoogleApiClient;
-	/**
-	 * Connection-status.
-	 */
-	private ConnectionResult             mConnectionResult;
-	/**
-	 * Login-error.
-	 */
-	private static int REQUEST_CODE_RESOLVE_ERR = 0x98;
+	private GoogleApiClient mGoogleApiClient;
 
 	private boolean mVisible;
+
 	/**
 	 * Show single instance of {@link ConnectGoogleActivity}
 	 *
-	 * @param cxt
-	 * 		{@link Context}.
+	 * @param cxt {@link Context}.
 	 */
-	public static void showInstance( Activity cxt ) {
-		Intent intent = new Intent( cxt, ConnectGoogleActivity.class );
-		intent.setFlags( Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP );
-		ActivityCompat.startActivityForResult( cxt, intent, REQ, null );
+	public static void showInstance(Activity cxt) {
+		Intent intent = new Intent(cxt, ConnectGoogleActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		ActivityCompat.startActivityForResult(cxt, intent, REQ, null);
 	}
 
 	@Override
-	protected void onCreate( Bundle savedInstanceState ) {
-		super.onCreate( savedInstanceState );
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		mVisible = false;
-		mBinding = DataBindingUtil.setContentView( this, LAYOUT );
-		setUpErrorHandling( (ViewGroup) findViewById( R.id.error_content ) );
-		mBinding.googleLoginBtn.setSize( SignInButton.SIZE_WIDE );
-		mBinding.helloTv.setText( getString( R.string.lbl_welcome, getString( R.string.application_name ) ) );
-		ViewCompat.setElevation( mBinding.sloganVg, getResources().getDimension( R.dimen.common_elevation ) );
-		mGoogleApiClient = new GoogleApiClient.Builder( App.Instance, new GoogleApiClient.ConnectionCallbacks() {
+		mBinding = DataBindingUtil.setContentView(this, LAYOUT);
+		setUpErrorHandling((ViewGroup) findViewById(R.id.error_content));
+		mBinding.googleLoginBtn.setSize(SignInButton.SIZE_WIDE);
+		mBinding.helloTv.setText(getString(R.string.lbl_welcome, getString(R.string.application_name)));
+		ViewCompat.setElevation(mBinding.sloganVg, getResources().getDimension(R.dimen.common_elevation));
+		GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
+		                                                                                              .build();
+		mGoogleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this /* FragmentActivity */, new GoogleApiClient.OnConnectionFailedListener() {
 			@Override
-			public void onConnected( Bundle bundle ) {
-				//				String account = Plus.AccountApi.getAccountName(mGoogleApiClient);
-				//				LL.d("G-Account:" + account);
-				Plus.PeopleApi.loadVisible( mGoogleApiClient, null ).setResultCallback( new ResultCallback<LoadPeopleResult>() {
-					@Override
-					public void onResult( LoadPeopleResult loadPeopleResult ) {
-						if( !mVisible ) {
-							if( loadPeopleResult.getStatus().getStatusCode() == CommonStatusCodes.SUCCESS ) {
-								Prefs  prefs  = Prefs.getInstance();
-								Person person = Plus.PeopleApi.getCurrentPerson( mGoogleApiClient );
-								if( person != null ) {
-									prefs.setGoogleId( person.getId() );
-									prefs.setGoogleDisplayName( person.getDisplayName() );
-
-									if( person.getImage() != null && person.getImage().hasUrl() ) {
-										Glide.with(App.Instance).load( Utils.uriStr2URI( person.getImage().getUrl() ).toASCIIString() ).into( mBinding.thumbIv );
-										prefs.setGoogleThumbUrl( person.getImage().getUrl() );
-									}
-									ViewPropertyAnimator.animate( mBinding.thumbIv ).cancel();
-									ViewPropertyAnimator.animate( mBinding.thumbIv ).alpha( 1 ).setDuration( 500 ).start();
-
-
-									mBinding.helloTv.setText( getString( R.string.lbl_hello, person.getDisplayName() ) );
-									mBinding.loginPb.setVisibility( View.GONE );
-									mBinding.closeBtn.setVisibility( View.VISIBLE );
-									Animation shake = AnimationUtils.loadAnimation( App.Instance, R.anim.shake );
-									mBinding.closeBtn.startAnimation( shake );
-								}
-							} else {
-								com.chopping.utils.Utils.showShortToast( App.Instance, "no person, status: " + loadPeopleResult.getStatus() );
-							}
-						}
-					}
-				} );
+			public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+				Snackbar.make(mBinding.loginContentLl, R.string.meta_load_error, Snackbar.LENGTH_LONG)
+				        .setAction(R.string.btn_close_app, new OnClickListener() {
+					        @Override
+					        public void onClick(View v) {
+						        ActivityCompat.finishAffinity(ConnectGoogleActivity.this);
+					        }
+				        })
+				        .show();
 			}
+		}).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
 
-			@Override
-			public void onConnectionSuspended( int i ) {
 
-			}
-		}, new GoogleApiClient.OnConnectionFailedListener() {
+		mBinding.googleLoginBtn.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onConnectionFailed( ConnectionResult connectionResult ) {
-				if( connectionResult.hasResolution() ) {
-					try {
-						connectionResult.startResolutionForResult( ConnectGoogleActivity.this, REQUEST_CODE_RESOLVE_ERR );
-					} catch( SendIntentException e ) {
-						mGoogleApiClient.connect();
-					}
-				} else {
-					Snackbar.make( mBinding.loginContentLl, R.string.meta_load_error, Snackbar.LENGTH_LONG ).setAction(
-							R.string.btn_close_app, new OnClickListener() {
-								@Override
-								public void onClick( View v ) {
-									ActivityCompat.finishAffinity( ConnectGoogleActivity.this );
-								}
-							} ).show();
-				}
-			}
-		} ).addApi( Plus.API, PlusOptions.builder().build() ).addScope( Plus.SCOPE_PLUS_LOGIN ).build();
-
-		mBinding.googleLoginBtn.setOnClickListener( new OnClickListener() {
-			@Override
-			public void onClick( View v ) {
-				mBinding.googleLoginBtn.setVisibility( View.GONE );
-				mBinding.loginPb.setVisibility( View.VISIBLE );
-				mBinding.helloTv.setText( R.string.lbl_connect_google );
-				ViewPropertyAnimator.animate( mBinding.thumbIv ).cancel();
-				ViewPropertyAnimator.animate( mBinding.thumbIv ).alpha( 0.3f ).setDuration( 500 ).start();
+			public void onClick(View v) {
+				mBinding.googleLoginBtn.setVisibility(View.GONE);
+				mBinding.loginPb.setVisibility(View.VISIBLE);
+				mBinding.helloTv.setText(R.string.lbl_connect_google);
+				ViewPropertyAnimator.animate(mBinding.thumbIv)
+				                    .cancel();
+				ViewPropertyAnimator.animate(mBinding.thumbIv)
+				                    .alpha(0.3f)
+				                    .setDuration(500)
+				                    .start();
 				loginGPlus();
 			}
-		} );
+		});
 
 
-		mBinding.closeBtn.setOnClickListener( new OnClickListener() {
+		mBinding.closeBtn.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick( View v ) {
-				setResult( RESULT_OK );
-				ActivityCompat.finishAfterTransition( ConnectGoogleActivity.this );
+			public void onClick(View v) {
+				setResult(RESULT_OK);
+				ActivityCompat.finishAfterTransition(ConnectGoogleActivity.this);
 			}
-		} );
+		});
 	}
 
 
 	@Override
-	protected void onActivityResult( int requestCode, int responseCode, Intent intent ) {
-		if( requestCode == REQUEST_CODE_RESOLVE_ERR && responseCode == RESULT_OK ) {
-			mConnectionResult = null;
-			mGoogleApiClient.connect();
-		} else if( requestCode == REQUEST_CODE_RESOLVE_ERR && responseCode == RESULT_CANCELED ) {
-			mConnectionResult = null;
-			mBinding.helloTv.setText( getString( R.string.lbl_welcome, getString( R.string.application_name ) ) );
-			mBinding.loginPb.setVisibility( View.GONE );
-			ViewPropertyAnimator.animate( mBinding.thumbIv ).cancel();
-			ViewPropertyAnimator.animate( mBinding.thumbIv ).alpha( 1 ).setDuration( 500 ).start();
-			mBinding.googleLoginBtn.setVisibility( View.VISIBLE );
+	protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
+		if (requestCode == REQ) {
+			GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
+			handleSignInResult(result);
 		}
 	}
 
-	@Override
-	protected void onStop() {
-		if( mGoogleApiClient != null && mGoogleApiClient.isConnected() ) {
-			mGoogleApiClient.disconnect();
-		}
-		super.onStop();
-	}
+	private void handleSignInResult(GoogleSignInResult result) {
+		if (result.isSuccess()) {
+			// Signed in successfully, show authenticated UI.
+			GoogleSignInAccount acct = result.getSignInAccount();
+			if (!mVisible) {
+				Prefs prefs = Prefs.getInstance();
+				if (acct != null) {
+					prefs.setGoogleId(acct.getId());
+					prefs.setGoogleDisplayName(acct.getDisplayName());
 
-	@Override
-	public void onBackPressed() {
-		setResult( RESULT_CANCELED );
-		super.onBackPressed();
+					if (acct.getPhotoUrl() != null) {
+						Glide.with(App.Instance)
+						     .load(acct.getPhotoUrl())
+						     .into(mBinding.thumbIv);
+						prefs.setGoogleThumbUrl(acct.getPhotoUrl()
+						                            .toString());
+					}
+					ViewPropertyAnimator.animate(mBinding.thumbIv)
+					                    .cancel();
+					ViewPropertyAnimator.animate(mBinding.thumbIv)
+					                    .alpha(1)
+					                    .setDuration(500)
+					                    .start();
+
+
+					mBinding.helloTv.setText(getString(R.string.lbl_hello, acct.getDisplayName()));
+					mBinding.loginPb.setVisibility(View.GONE);
+					mBinding.closeBtn.setVisibility(View.VISIBLE);
+					Animation shake = AnimationUtils.loadAnimation(App.Instance, R.anim.shake);
+					mBinding.closeBtn.startAnimation(shake);
+				}
+			}
+
+		} else {
+			mBinding.helloTv.setText(getString(R.string.lbl_welcome, getString(R.string.application_name)));
+			mBinding.loginPb.setVisibility(View.GONE);
+			ViewPropertyAnimator.animate(mBinding.thumbIv)
+			                    .cancel();
+			ViewPropertyAnimator.animate(mBinding.thumbIv)
+			                    .alpha(1)
+			                    .setDuration(500)
+			                    .start();
+			mBinding.googleLoginBtn.setVisibility(View.VISIBLE);
+		}
 	}
 
 
@@ -205,16 +177,8 @@ public final class ConnectGoogleActivity extends AppActivity {
 	 * Login Google+
 	 */
 	private void loginGPlus() {
-		if( mConnectionResult == null ) {
-			mGoogleApiClient.connect();
-		} else {
-			try {
-				mConnectionResult.startResolutionForResult( this, REQUEST_CODE_RESOLVE_ERR );
-			} catch( SendIntentException e ) {
-				mConnectionResult = null;
-				mGoogleApiClient.connect();
-			}
-		}
+		Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+		startActivityForResult(signInIntent, REQ);
 	}
 
 	@Override
