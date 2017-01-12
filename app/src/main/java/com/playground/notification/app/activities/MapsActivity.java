@@ -52,7 +52,6 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -64,7 +63,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
@@ -89,6 +87,12 @@ import com.playground.notification.app.fragments.MyLocationFragment;
 import com.playground.notification.app.fragments.PlaygroundDetailFragment;
 import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
+import com.playground.notification.bus.FavoriteListLoadingErrorEvent;
+import com.playground.notification.bus.FavoriteListLoadingSuccessEvent;
+import com.playground.notification.bus.MyLocationLoadingErrorEvent;
+import com.playground.notification.bus.MyLocationLoadingSuccessEvent;
+import com.playground.notification.bus.NearRingListLoadingErrorEvent;
+import com.playground.notification.bus.NearRingListLoadingSuccessEvent;
 import com.playground.notification.databinding.ActivityMapsBinding;
 import com.playground.notification.ds.google.Geobound;
 import com.playground.notification.ds.google.Geocode;
@@ -225,6 +229,65 @@ public final class MapsActivity extends AppActivity implements LocationListener 
 		ConnectGoogleActivity.showInstance(this);
 	}
 
+
+	/**
+	 * Handler for {@link FavoriteListLoadingErrorEvent}.
+	 *
+	 * @param e Event {@link FavoriteListLoadingErrorEvent}.
+	 */
+	public void onEvent(FavoriteListLoadingErrorEvent e) {
+		FavoriteManager.getInstance()
+		               .init();
+	}
+
+	/**
+	 * Handler for {@link NearRingListLoadingErrorEvent}.
+	 *
+	 * @param e Event {@link NearRingListLoadingErrorEvent}.
+	 */
+	public void onEvent(NearRingListLoadingErrorEvent e) {
+		NearRingManager.getInstance()
+		               .init();
+	}
+
+	/**
+	 * Handler for {@link MyLocationLoadingErrorEvent}.
+	 *
+	 * @param e Event {@link MyLocationLoadingErrorEvent}.
+	 */
+	public void onEvent(MyLocationLoadingErrorEvent e) {
+		MyLocationManager.getInstance()
+		               .init();
+	}
+
+
+
+	/**
+	 * Handler for {@link FavoriteListLoadingSuccessEvent}.
+	 *
+	 * @param e Event {@link FavoriteListLoadingSuccessEvent}.
+	 */
+	public void onEvent(FavoriteListLoadingSuccessEvent e) {
+		updateDrawerMenuItem(R.id.action_favorite, R.string.action_favorite, FavoriteManager.getInstance());
+	}
+
+	/**
+	 * Handler for {@link NearRingListLoadingSuccessEvent}.
+	 *
+	 * @param e Event {@link NearRingListLoadingSuccessEvent}.
+	 */
+	public void onEvent(NearRingListLoadingSuccessEvent e) {
+		updateDrawerMenuItem(R.id.action_near_ring, R.string.action_near_ring, NearRingManager.getInstance());
+	}
+
+	/**
+	 * Handler for {@link MyLocationLoadingSuccessEvent}.
+	 *
+	 * @param e Event {@link MyLocationLoadingSuccessEvent}.
+	 */
+	public void onEvent(MyLocationLoadingSuccessEvent e) {
+		updateDrawerMenuItem(R.id.action_my_location_list, R.string.action_my_location_list, MyLocationManager.getInstance());
+	}
 
 	//------------------------------------------------
 

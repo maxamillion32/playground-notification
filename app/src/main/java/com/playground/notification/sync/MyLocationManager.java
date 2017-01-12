@@ -1,20 +1,23 @@
 package com.playground.notification.sync;
 
-import java.util.List;
-
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
 import com.playground.notification.R;
 import com.playground.notification.app.App;
+import com.playground.notification.bus.MyLocationLoadingErrorEvent;
+import com.playground.notification.bus.MyLocationLoadingSuccessEvent;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.MyLocation;
 import com.playground.notification.ds.sync.NearRing;
 import com.playground.notification.utils.Prefs;
 
+import java.util.List;
+
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobQuery.CachePolicy;
 import cn.bmob.v3.listener.FindListener;
+import de.greenrobot.event.EventBus;
 
 /**
  * Manger for all my own locations.
@@ -47,7 +50,7 @@ public final class MyLocationManager extends SyncManager<MyLocation> {
 	public synchronized void init() {
 		//Load from backend.
 		BmobQuery<MyLocation> q = new BmobQuery<>();
-		q.setCachePolicy( CachePolicy.NETWORK_ELSE_CACHE );
+		q.setCachePolicy( CachePolicy.NETWORK_ONLY );
 		q.addWhereEqualTo( "mUID", Prefs.getInstance().getGoogleId() );
 		q.findObjects( App.Instance, new FindListener<MyLocation>() {
 			@Override
@@ -57,11 +60,13 @@ public final class MyLocationManager extends SyncManager<MyLocation> {
 				}
 				getCachedList().addAll( list );
 				setInit();
+				EventBus.getDefault().post(new MyLocationLoadingSuccessEvent() );
 			}
 
 			@Override
 			public void onError( int i, String s ) {
 				setInit();
+				EventBus.getDefault().post(new MyLocationLoadingErrorEvent() );
 			}
 		} );
 	}

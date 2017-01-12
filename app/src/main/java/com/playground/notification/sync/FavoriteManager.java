@@ -1,17 +1,18 @@
 package com.playground.notification.sync;
 
-import java.util.List;
-
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.bus.FavoriteListLoadingErrorEvent;
+import com.playground.notification.bus.FavoriteListLoadingSuccessEvent;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Favorite;
 import com.playground.notification.ds.sync.SyncPlayground;
 import com.playground.notification.utils.Prefs;
+
+import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobQuery.CachePolicy;
@@ -49,7 +50,7 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 	public synchronized void init() {
 		//Load from backend.
 		BmobQuery<Favorite> q = new BmobQuery<>();
-		q.setCachePolicy( CachePolicy.NETWORK_ELSE_CACHE );
+		q.setCachePolicy( CachePolicy.NETWORK_ONLY );
 		q.addWhereEqualTo( "mUID", Prefs.getInstance().getGoogleId() );
 		q.findObjects( App.Instance, new FindListener<Favorite>() {
 			@Override
@@ -59,6 +60,7 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 				}
 				getCachedList().addAll( list );
 				setInit();
+				EventBus.getDefault().post( new FavoriteListLoadingSuccessEvent() );
 			}
 
 			@Override

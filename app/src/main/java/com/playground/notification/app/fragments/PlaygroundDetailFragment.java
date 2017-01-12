@@ -11,6 +11,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.chopping.application.LL;
 import com.google.android.gms.maps.model.LatLng;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
@@ -81,6 +82,9 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 	 * 		Event {@link com.playground.notification.bus.ShowLocationRatingEvent}.
 	 */
 	public void onEvent( ShowLocationRatingEvent e ) {
+		if (!getUserVisibleHint()) {
+			return;
+		}
 		AppActivity activity = (AppActivity) getActivity();
 		if( activity != null ) {
 			activity.showDialogFragment( RatingDialogFragment.newInstance( App.Instance, e.getPlayground(), mBinding.getRating() ), "rating" );
@@ -132,10 +136,12 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 						updateRating.update( App.Instance, rating.getObjectId(), new UpdateListener() {
 							@Override
 							public void onSuccess() {
+								LL.d("Rating success");
 							}
 
 							@Override
 							public void onFailure( int code, String msg ) {
+								LL.d("Rating failed");
 							}
 						} );
 					}
@@ -327,6 +333,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 			} );
 
 
+			//Preview
 			String latlng  = playground.getLatitude() + "," + playground.getLongitude();
 			String maptype = prefs.getMapType().equals( "0" ) ? "roadmap" : "hybrid";
 			String url = prefs.getGoogleApiHost() + "maps/api/staticmap?center=" + latlng +
