@@ -629,6 +629,7 @@ public final class MapActivity extends AppActivity implements LocationListener {
 	 * Ready to use application.
 	 */
 	private void initUseApp() {
+		LL.d("initUseApp");
 		//User that have used this application and done clear(logout), should go back to login-page.
 		Prefs prefs = Prefs.getInstance();
 		if (prefs.isEULAOnceConfirmed() && TextUtils.isEmpty(prefs.getGoogleId())) {
@@ -642,14 +643,15 @@ public final class MapActivity extends AppActivity implements LocationListener {
 	 * Callback for available using of application.
 	 */
 	private void onYouCanUseApp() {
-		initGoogle();
-		populateGrounds();
 		FavoriteManager.getInstance()
 		               .init();
 		NearRingManager.getInstance()
 		               .init();
 		MyLocationManager.getInstance()
 		                 .init();
+		LL.d("onYouCanUseApp");
+		initGoogle();
+		populateGrounds();
 		askWeatherBoard(App.Instance.getCurrentLocation());
 	}
 
@@ -1231,6 +1233,7 @@ public final class MapActivity extends AppActivity implements LocationListener {
 	}
 
 	private void cfgFinished() {
+		LL.d("cfgFinished");
 		if (mCfgLoadDlg != null && mCfgLoadDlg.isShowing()) {
 			mCfgLoadDlg.dismiss();
 		}

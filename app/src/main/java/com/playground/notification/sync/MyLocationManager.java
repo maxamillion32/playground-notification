@@ -3,6 +3,7 @@ package com.playground.notification.sync;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
+import com.chopping.application.LL;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.bus.MyLocationLoadingErrorEvent;
@@ -48,6 +49,7 @@ public final class MyLocationManager extends SyncManager<MyLocation> {
 	 * Init the manager.
 	 */
 	public synchronized void init() {
+		LL.d("Start getting list of myLocation");
 		//Load from backend.
 		BmobQuery<MyLocation> q = new BmobQuery<>();
 		q.setCachePolicy( CachePolicy.NETWORK_ONLY );
@@ -61,12 +63,14 @@ public final class MyLocationManager extends SyncManager<MyLocation> {
 				getCachedList().addAll( list );
 				setInit();
 				EventBus.getDefault().post(new MyLocationLoadingSuccessEvent() );
+				LL.d("Get list of myLocation");
 			}
 
 			@Override
 			public void onError( int i, String s ) {
 				setInit();
 				EventBus.getDefault().post(new MyLocationLoadingErrorEvent() );
+				LL.d("Cant get list of myLocation");
 			}
 		} );
 	}

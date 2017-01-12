@@ -3,6 +3,7 @@ package com.playground.notification.sync;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
+import com.chopping.application.LL;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.bus.NearRingListLoadingErrorEvent;
@@ -48,6 +49,7 @@ public final class NearRingManager extends SyncManager<NearRing> {
 	 * Init the manager.
 	 */
 	public synchronized void init() {
+		LL.d("Start getting list of near-ring");
 		//Load from backend.
 		BmobQuery<NearRing> q = new BmobQuery<>();
 		q.setCachePolicy( CachePolicy.NETWORK_ONLY );
@@ -61,6 +63,7 @@ public final class NearRingManager extends SyncManager<NearRing> {
 				getCachedList().addAll( list );
 				setInit();
 				EventBus.getDefault().post( new NearRingListLoadingSuccessEvent() );
+				LL.d("Get list of near-ring");
 				//Don't build geofence when App brings to front.
 				//				App.Instance.stopService(new Intent(App.Instance, GeofenceManagerService.class));
 				//				App.Instance.startService(new Intent(App.Instance, GeofenceManagerService.class));
@@ -70,6 +73,7 @@ public final class NearRingManager extends SyncManager<NearRing> {
 			public void onError( int i, String s ) {
 				setInit();
 				EventBus.getDefault().post( new NearRingListLoadingErrorEvent() );
+				LL.d("Cant get list of near-ring");
 			}
 		} );
 	}

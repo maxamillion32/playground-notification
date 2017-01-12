@@ -3,6 +3,7 @@ package com.playground.notification.sync;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
+import com.chopping.application.LL;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.bus.FavoriteListLoadingErrorEvent;
@@ -48,6 +49,7 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 	 * Init the manager.
 	 */
 	public synchronized void init() {
+		LL.d("Start getting list of favorite");
 		//Load from backend.
 		BmobQuery<Favorite> q = new BmobQuery<>();
 		q.setCachePolicy( CachePolicy.NETWORK_ONLY );
@@ -61,12 +63,14 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 				getCachedList().addAll( list );
 				setInit();
 				EventBus.getDefault().post( new FavoriteListLoadingSuccessEvent() );
+				LL.d("Get list of favorite");
 			}
 
 			@Override
 			public void onError( int i, String s ) {
 				setInit();
 				EventBus.getDefault().post( new FavoriteListLoadingErrorEvent() );
+				LL.d("Cant get list of favorite");
 			}
 		} );
 	}
