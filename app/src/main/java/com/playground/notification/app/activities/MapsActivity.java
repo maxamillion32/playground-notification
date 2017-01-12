@@ -26,7 +26,6 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,6 +39,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 
 import com.bumptech.glide.Glide;
+import com.chopping.application.LL;
 import com.chopping.bus.CloseDrawerEvent;
 import com.chopping.utils.Utils;
 import com.google.android.gms.ads.AdListener;
@@ -52,6 +52,7 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -61,14 +62,13 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -109,7 +109,6 @@ import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.sync.SyncManager;
 import com.playground.notification.utils.Prefs;
-import com.playground.notification.views.TouchableMapFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,8 +120,9 @@ import retrofit.client.Response;
 
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
+import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 
-public class MapsActivity extends AppActivity implements LocationListener {
+public final class MapsActivity extends AppActivity implements LocationListener {
 	public static final String EXTRAS_GROUND = MapsActivity.class.getName() + ".EXTRAS.ground";
 
 	private static final int REQ = 0x98;
@@ -137,7 +137,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	private static final int MENU = R.menu.menu_main;
 
 	private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-	private TouchableMapFragment mMapFragment;
+	private SupportMapFragment mMapFragment;
 	/**
 	 * {@code true}: force to load markers, ignore the touch&move effect of map. Default is {@code true}, because as initializing the map, the markers
 	 * should be loaded.
@@ -697,104 +697,102 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	/**
 	 * Initialize all map infrastructures, location request etc.
 	 */
-	private void initGoogle() {
-		if (mMap == null) {
-			// Try to obtain the map from the SupportMapFragment.
-			mMapFragment = (TouchableMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-			mMapFragment.getMapAsync(new OnMapReadyCallback() {
-				@Override
-				public void onMapReady(GoogleMap googleMap) {
-					mMap = googleMap;
-					// Check if we were successful in obtaining the map.
-					if (mMap != null) {
-						setUpMap();
-					}
-
-
-					if (mMap != null) {
-						mapSettings();
-					}
-
-					//Location request.
-					if (mLocationRequest == null) {
-						mLocationRequest = LocationRequest.create();
-						mLocationRequest.setInterval(AlarmManager.INTERVAL_HALF_HOUR);
-						mLocationRequest.setFastestInterval(AlarmManager.INTERVAL_FIFTEEN_MINUTES);
-						int ty = 0;
-						switch (Prefs.getInstance()
-						             .getBatteryLifeType()) {
-							case "0":
-								ty = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
-								break;
-							case "1":
-								ty = LocationRequest.PRIORITY_HIGH_ACCURACY;
-								break;
-							case "2":
-								ty = LocationRequest.PRIORITY_LOW_POWER;
-								break;
-							case "3":
-								ty = LocationRequest.PRIORITY_NO_POWER;
-								break;
-						}
-						mLocationRequest.setPriority(ty);
-					}
-
-					if (mGoogleApiClient == null) {
-						mGoogleApiClient = new GoogleApiClient.Builder(App.Instance).addApi(LocationServices.API)
-						                                                            .addConnectionCallbacks(new ConnectionCallbacks() {
-							                                                            @Override
-							                                                            public void onConnected(Bundle bundle) {
-								                                                            startLocationUpdate();
-							                                                            }
-
-							                                                            @Override
-							                                                            public void onConnectionSuspended(int i) {
-								                                                            Utils.showShortToast(App.Instance, "onConnectionSuspended");
-
-							                                                            }
-						                                                            })
-						                                                            .addOnConnectionFailedListener(new OnConnectionFailedListener() {
-							                                                            @Override
-							                                                            public void onConnectionFailed(ConnectionResult connectionResult) {
-								                                                            Utils.showShortToast(App.Instance, "onConnectionFailed: " + connectionResult.getErrorCode());
-							                                                            }
-						                                                            })
-						                                                            .build();
-
-						mGoogleApiClient.connect();
-					}
-
-					//Setting turn/off location service of system.
-					LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
-					builder.setAlwaysShow(true);
-					builder.setNeedBle(true);
-					PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
-					result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-						@Override
-						public void onResult(LocationSettingsResult result) {
-							final Status status = result.getStatus();
-							//				final LocationSettingsStates states = result.getLocationSettingsStates();
-							switch (status.getStatusCode()) {
-								case LocationSettingsStatusCodes.SUCCESS:
-									break;
-								case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-									try {
-										status.startResolutionForResult(MapsActivity.this, REQ);
-									} catch (SendIntentException e) {
-										exitAppDialog();
-									}
-									break;
-								case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-									exitAppDialog();
-									break;
-							}
-						}
-					});
+	private synchronized void initGoogle() {
+		// Try to obtain the map from the SupportMapFragment.
+		mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+		mMapFragment.getMapAsync(new OnMapReadyCallback() {
+			@Override
+			public void onMapReady(GoogleMap googleMap) {
+				mMap = googleMap;
+				// Check if we were successful in obtaining the map.
+				if (mMap != null) {
+					setUpMap();
 				}
-			});
-		}
 
 
+				if (mMap != null) {
+					mapSettings();
+				}
+
+				//Location request.
+				if (mLocationRequest == null) {
+					mLocationRequest = LocationRequest.create();
+					mLocationRequest.setInterval(AlarmManager.INTERVAL_HALF_HOUR);
+					mLocationRequest.setFastestInterval(AlarmManager.INTERVAL_FIFTEEN_MINUTES);
+					int ty = 0;
+					switch (Prefs.getInstance()
+					             .getBatteryLifeType()) {
+						case "0":
+							ty = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
+							break;
+						case "1":
+							ty = LocationRequest.PRIORITY_HIGH_ACCURACY;
+							break;
+						case "2":
+							ty = LocationRequest.PRIORITY_LOW_POWER;
+							break;
+						case "3":
+							ty = LocationRequest.PRIORITY_NO_POWER;
+							break;
+					}
+					mLocationRequest.setPriority(ty);
+				}
+
+				if (mGoogleApiClient == null) {
+					mGoogleApiClient = new GoogleApiClient.Builder(App.Instance).addApi(LocationServices.API)
+					                                                            .addConnectionCallbacks(new ConnectionCallbacks() {
+						                                                            @Override
+						                                                            public void onConnected(Bundle bundle) {
+							                                                            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+							                                                            App.Instance.setCurrentLocation(location);
+							                                                            startLocationUpdate();
+						                                                            }
+
+						                                                            @Override
+						                                                            public void onConnectionSuspended(int i) {
+							                                                            Utils.showShortToast(App.Instance, "onConnectionSuspended");
+
+						                                                            }
+					                                                            })
+					                                                            .addOnConnectionFailedListener(new OnConnectionFailedListener() {
+						                                                            @Override
+						                                                            public void onConnectionFailed(ConnectionResult connectionResult) {
+							                                                            Utils.showShortToast(App.Instance, "onConnectionFailed: " + connectionResult.getErrorCode());
+						                                                            }
+					                                                            })
+					                                                            .build();
+
+					mGoogleApiClient.connect();
+				}
+
+				//Setting turn/off location service of system.
+				LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
+				builder.setAlwaysShow(true);
+				builder.setNeedBle(true);
+				PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+				result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+					@Override
+					public void onResult(LocationSettingsResult result) {
+						final Status status = result.getStatus();
+						//				final LocationSettingsStates states = result.getLocationSettingsStates();
+						switch (status.getStatusCode()) {
+							case LocationSettingsStatusCodes.SUCCESS:
+								break;
+							case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+								try {
+									status.startResolutionForResult(MapsActivity.this, REQ);
+								} catch (SendIntentException e) {
+									exitAppDialog();
+								}
+								break;
+							case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+								exitAppDialog();
+								break;
+						}
+					}
+				});
+			}
+		});
 	}
 
 	/**
@@ -802,7 +800,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	 */
 	private void startLocationUpdate() {
 		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-			LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+			FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 		}
 	}
 
@@ -810,7 +808,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	@Override
 	public void onLocationChanged(Location location) {
 		App.Instance.setCurrentLocation(location);
-		Log.d("pg:location", "method: onLocationChanged -> mCurrentLocation changed");
+		LL.d("method: onLocationChanged -> mCurrentLocation changed");
 		movedToUpdatedLocation(location);
 	}
 
@@ -819,7 +817,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	 */
 	protected void stopLocationUpdates() {
 		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-			LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+			FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 		}
 	}
 
@@ -910,20 +908,6 @@ public class MapsActivity extends AppActivity implements LocationListener {
 			mDrawerToggle.syncState();
 		}
 
-		if (mMap == null) {
-			// Try to obtain the map from the SupportMapFragment.
-			mMapFragment = (TouchableMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-			mMapFragment.getMapAsync(new OnMapReadyCallback() {
-				@Override
-				public void onMapReady(GoogleMap googleMap) {
-					mMap = googleMap;
-					// Check if we were successful in obtaining the map.
-					if (mMap != null) {
-						setUpMap();
-					}
-				}
-			});
-		}
 
 		mVisible = true;
 	}
@@ -962,17 +946,11 @@ public class MapsActivity extends AppActivity implements LocationListener {
 				return false;
 			}
 		});
-		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
+		mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
 			@Override
-			public void onCameraChange(CameraPosition cameraPosition) {
+			public void onCameraIdle() {
+				mForcedToLoad = true;
 				populateGrounds();
-			}
-		});
-		mMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener() {
-			@Override
-			public void onMyLocationChange(Location location) {
-				App.Instance.setCurrentLocation(location);
-				Log.d("pg:location", "method: onMyLocationChange -> mCurrentLocation changed");
 			}
 		});
 	}
@@ -993,7 +971,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 	 * Draw grounds on map.
 	 */
 	private void populateGrounds() {
-		if (mForcedToLoad || mMapFragment.isTouchAndMove()) {
+		if (mForcedToLoad) {
 			mForcedToLoad = false;
 			mBinding.loadPinPb.setVisibility(View.VISIBLE);
 
@@ -1220,7 +1198,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		if (mMap != null && mVisible) {
 			CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 16);
 			mMap.moveCamera(update);
-			Log.d("pg:location", "method: movedToUpdatedLocation");
+			LL.d("method: movedToUpdatedLocation");
 		}
 	}
 
@@ -1242,7 +1220,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 			                                                          .getLongitude()));
 			CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, 0);
 			mMap.moveCamera(update);
-			Log.d("pg:location", "method: movedToUpdatedLocation");
+			LL.d("method: movedToUpdatedLocation");
 		}
 	}
 
@@ -1255,7 +1233,7 @@ public class MapsActivity extends AppActivity implements LocationListener {
 		if (mMap != null && mVisible) {
 			CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(geolocation.getLatitude(), geolocation.getLongitude()), 16);
 			mMap.moveCamera(update);
-			Log.d("pg:location", "method: movedToUpdatedLocation");
+			LL.d("method: movedToUpdatedLocation");
 		}
 	}
 
