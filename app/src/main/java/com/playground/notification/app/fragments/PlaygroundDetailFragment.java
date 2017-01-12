@@ -5,6 +5,7 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -57,7 +58,7 @@ import retrofit.client.Response;
  *
  * @author Xinyue Zhao
  */
-public final class PlaygroundDetailFragment extends DialogFragment {
+public final class PlaygroundDetailFragment extends AppCompatDialogFragment {
 	private static final String EXTRAS_GROUND    = PlaygroundDetailFragment.class.getName() + ".EXTRAS.playground";
 	private static final String EXTRAS_LAT       = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lat";
 	private static final String EXTRAS_LNG       = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lng";
@@ -93,7 +94,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 	//------------------------------------------------
 
 	//A dialog to update current rating status of a ground for you.
-	public static class RatingDialogFragment extends DialogFragment {
+	public static final class RatingDialogFragment extends DialogFragment {
 		/**
 		 * Data-binding.
 		 */
@@ -356,7 +357,7 @@ public final class PlaygroundDetailFragment extends DialogFragment {
 	/**
 	 * Event-handler for all radio-buttons on UI.
 	 */
-	public static class EventHandler {
+	public static final class EventHandler {
 		private double                  mLat;
 		private double                  mLng;
 		private Playground              mGround;
