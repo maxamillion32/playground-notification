@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:background="@color/common_white">
 
-        <ScrollView
+        <android.support.v4.widget.NestedScrollView
             android:layout_above="@+id/operating_bar_vg"
             android:layout_alignParentTop="true"
             android:id="@+id/info_vg"
@@ -256,7 +256,7 @@
             </LinearLayout>
 
 
-        </ScrollView>
+        </android.support.v4.widget.NestedScrollView>
 
 
         <com.pnikosis.materialishprogress.ProgressWheel

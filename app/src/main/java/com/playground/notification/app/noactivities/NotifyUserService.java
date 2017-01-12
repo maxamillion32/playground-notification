@@ -21,7 +21,7 @@ import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.api.ApiNotInitializedException;
 import com.playground.notification.app.App;
-import com.playground.notification.app.activities.MapsActivity;
+import com.playground.notification.app.activities.MapActivity;
 import com.playground.notification.ds.weather.Weather;
 import com.playground.notification.ds.weather.WeatherDetail;
 import com.playground.notification.utils.Prefs;
@@ -175,7 +175,7 @@ public class NotifyUserService extends IntentService implements LocationListener
 											String temp = weather.getTemperature() != null                                                           ? getString( units, weather.getTemperature().getValue() ) :
 														  getString( units, 0f );
 
-											Intent i = new Intent( App.Instance, MapsActivity.class );
+											Intent i = new Intent( App.Instance, MapActivity.class );
 											i.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP );
 											String title = mWeekendNotify                                                           ? App.Instance.getString( R.string.notify_weekend_title ) :
 														   App.Instance.getString( R.string.notify_warm_tips_title );

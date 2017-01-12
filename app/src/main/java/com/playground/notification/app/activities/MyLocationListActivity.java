@@ -142,7 +142,7 @@ public final class MyLocationListActivity extends AppActivity {
 	 * 		Event {@link com.playground.notification.bus.OpenPlaygroundEvent}.
 	 */
 	public void onEvent( OpenPlaygroundEvent e ) {
-		MapsActivity.showInstance( this, e.getPlayground() );
+		MapActivity.showInstance(this, e.getPlayground() );
 	}
 	//------------------------------------------------
 

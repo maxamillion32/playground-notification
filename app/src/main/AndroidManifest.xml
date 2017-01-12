@@ -45,7 +45,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".app.activities.MapsActivity"
+            android:name=".app.activities.MapActivity"
             android:label="@string/title_activity_maps"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">

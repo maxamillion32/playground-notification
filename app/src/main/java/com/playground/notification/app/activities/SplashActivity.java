@@ -27,7 +27,7 @@ public final class SplashActivity extends AppCompatActivity implements EasyPermi
 
 
 	private void gotPermissions() {
-		MapsActivity.showInstance(this);
+		MapActivity.showInstance(this);
 		ActivityCompat.finishAfterTransition(this);
 	}
 

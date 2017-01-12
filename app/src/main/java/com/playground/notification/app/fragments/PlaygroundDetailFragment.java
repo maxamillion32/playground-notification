@@ -1,11 +1,16 @@
 package com.playground.notification.app.fragments;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,7 +27,7 @@ import com.playground.notification.api.Api;
 import com.playground.notification.api.ApiNotInitializedException;
 import com.playground.notification.app.App;
 import com.playground.notification.app.activities.AppActivity;
-import com.playground.notification.app.activities.MapsActivity;
+import com.playground.notification.app.activities.MapActivity;
 import com.playground.notification.bus.ShowLocationRatingEvent;
 import com.playground.notification.databinding.PlaygroundDetailBinding;
 import com.playground.notification.databinding.RatingDialogBinding;
@@ -58,7 +63,7 @@ import retrofit.client.Response;
  *
  * @author Xinyue Zhao
  */
-public final class PlaygroundDetailFragment extends AppCompatDialogFragment {
+public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 	private static final String EXTRAS_GROUND    = PlaygroundDetailFragment.class.getName() + ".EXTRAS.playground";
 	private static final String EXTRAS_LAT       = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lat";
 	private static final String EXTRAS_LNG       = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lng";
@@ -188,11 +193,6 @@ public final class PlaygroundDetailFragment extends AppCompatDialogFragment {
 		super.onPause();
 	}
 
-	@Override
-	public void onCreate( Bundle savedInstanceState ) {
-		super.onCreate( savedInstanceState );
-		setStyle( DialogFragment.STYLE_NO_TITLE, R.style.Theme_AppCompat_Light_Dialog );
-	}
 
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
@@ -200,23 +200,42 @@ public final class PlaygroundDetailFragment extends AppCompatDialogFragment {
 	}
 
 	@Override
-	public void onViewCreated( View view, Bundle savedInstanceState ) {
-		super.onViewCreated( view, savedInstanceState );
-		Bundle           args       = getArguments();
-		final Playground playground = (Playground) args.getSerializable( EXTRAS_GROUND );
+	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		initView(view);
+	}
+
+	private BottomSheetBehavior mBehavior;
+
+
+
+	@NonNull
+	@Override
+	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
+		View view = View.inflate(getContext(), LAYOUT, null);
+
+		dialog.setContentView(view);
+		mBehavior = BottomSheetBehavior.from((View) view.getParent());
+		return dialog;
+	}
+
+	private void initView(View view) {
+		Bundle args       = getArguments();
+		final Playground playground = (Playground) args.getSerializable(EXTRAS_GROUND );
 		if( playground != null ) {
 
 			final double lat = args.getDouble( EXTRAS_LAT );
 			final double lng = args.getDouble( EXTRAS_LNG );
 
 			Prefs prefs = Prefs.getInstance();
-			mBinding = DataBindingUtil.bind( view.findViewById( R.id.playground_detail_vg ) );
+			mBinding = DataBindingUtil.bind(view.findViewById(R.id.playground_detail_vg ) );
 			if( !prefs.isShowcaseShown( Prefs.KEY_SHOWCASE_NEAR_RING ) ) {
 				mBinding.showcaseVg.setVisibility( View.VISIBLE );
 				mBinding.closeBtn.setOnClickListener( new OnClickListener() {
 					@Override
 					public void onClick( View v ) {
-						ViewPropertyAnimator animator = ViewPropertyAnimator.animate( mBinding.showcaseVg );
+						ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mBinding.showcaseVg );
 						animator.alpha( 0f ).setDuration( 1000 ).setListener( new AnimatorListenerAdapter() {
 							@Override
 							public void onAnimationEnd( Animator animation ) {
@@ -258,13 +277,13 @@ public final class PlaygroundDetailFragment extends AppCompatDialogFragment {
 
 			}
 			try {
-				Api.getMatrix( lat + "," + lng, playground.getLatitude() + "," + playground.getLongitude(), Locale.getDefault().getLanguage(), method,
-							   App.Instance.getDistanceMatrixKey(), units, new Callback<Matrix>() {
+				Api.getMatrix(lat + "," + lng, playground.getLatitude() + "," + playground.getLongitude(), Locale.getDefault().getLanguage(), method,
+				              App.Instance.getDistanceMatrixKey(), units, new Callback<Matrix>() {
 							@Override
 							public void success( Matrix matrix, Response response ) {
 								mBinding.setMatrix( matrix );
 								mBinding.setMode( method );
-								mBinding.setHandler( new EventHandler( lat, lng, playground, mBinding ) );
+								mBinding.setHandler( new EventHandler(lat, lng, playground, mBinding ) );
 							}
 
 							@Override
@@ -278,17 +297,17 @@ public final class PlaygroundDetailFragment extends AppCompatDialogFragment {
 			}
 
 
-			if( FavoriteManager.getInstance().isCached( playground ) ) {
+			if( FavoriteManager.getInstance().isCached(playground ) ) {
 				mBinding.favIv.setImageResource( R.drawable.ic_favorite );
 			}
-			if( NearRingManager.getInstance().isCached( playground ) ) {
+			if( NearRingManager.getInstance().isCached(playground ) ) {
 				mBinding.ringIv.setImageResource( R.drawable.ic_geo_fence );
 			}
 
 
 			//Have you rated?
 			BmobQuery<Rating> q = new BmobQuery<>();
-			q.setCachePolicy( CachePolicy.NETWORK_ELSE_CACHE );
+			q.setCachePolicy(CachePolicy.NETWORK_ELSE_CACHE );
 			q.addWhereEqualTo( "mUID", Prefs.getInstance().getGoogleId() );
 			q.addWhereEqualTo( "mId", playground.getId() );
 			q.findObjects( App.Instance, new FindListener<Rating>() {
@@ -315,7 +334,7 @@ public final class PlaygroundDetailFragment extends AppCompatDialogFragment {
 					JSONArray ary = (JSONArray) object;
 					if( ary != null ) {//
 						try {
-							JSONObject obj = ary.getJSONObject( 0 );
+							JSONObject obj = ary.getJSONObject(0 );
 							int        avg = obj.getInt( "_avgMValue" );
 							mBinding.locationRb.setRating( avg );
 						} catch( JSONException e ) {
@@ -346,10 +365,21 @@ public final class PlaygroundDetailFragment extends AppCompatDialogFragment {
 					@Override
 					public void onClick( View v ) {
 
-						MapsActivity.showInstance( (Activity) mBinding.locationPreviewIv.getContext(), playground );
+						MapActivity.showInstance((Activity) mBinding.locationPreviewIv.getContext(), playground );
 					}
 				} );
 			}
+
+
+		}
+	}
+
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		if (mBehavior != null) {
+			mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 		}
 	}
 
@@ -460,7 +490,7 @@ public final class PlaygroundDetailFragment extends AppCompatDialogFragment {
 		}
 
 		public void onPreviewClicked( View v ) {
-			MapsActivity.showInstance( (Activity) mBinding.locationPreviewIv.getContext(), mGround );
+			MapActivity.showInstance((Activity) mBinding.locationPreviewIv.getContext(), mGround );
 		}
 	}
 }

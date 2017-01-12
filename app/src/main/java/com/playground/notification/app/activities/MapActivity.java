@@ -13,9 +13,11 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -93,7 +95,7 @@ import com.playground.notification.bus.MyLocationLoadingErrorEvent;
 import com.playground.notification.bus.MyLocationLoadingSuccessEvent;
 import com.playground.notification.bus.NearRingListLoadingErrorEvent;
 import com.playground.notification.bus.NearRingListLoadingSuccessEvent;
-import com.playground.notification.databinding.ActivityMapsBinding;
+import com.playground.notification.databinding.MainBinding;
 import com.playground.notification.ds.google.Geobound;
 import com.playground.notification.ds.google.Geocode;
 import com.playground.notification.ds.google.GeocodeList;
@@ -126,15 +128,16 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 
-public final class MapsActivity extends AppActivity implements LocationListener {
-	public static final String EXTRAS_GROUND = MapsActivity.class.getName() + ".EXTRAS.ground";
+
+public final class MapActivity extends AppActivity implements LocationListener {
+	public static final String EXTRAS_GROUND = MapActivity.class.getName() + ".EXTRAS.ground";
 
 	private static final int REQ = 0x98;
 
 	/**
 	 * Main layout for this component.
 	 */
-	private static final int LAYOUT = R.layout.activity_maps;
+	private static final int LAYOUT = R.layout.activity_map;
 	/**
 	 * View's menu.
 	 */
@@ -158,7 +161,7 @@ public final class MapsActivity extends AppActivity implements LocationListener 
 	/**
 	 * Data-binding.
 	 */
-	private ActivityMapsBinding mBinding;
+	private MainBinding mBinding;
 	/**
 	 * Ask current location.
 	 */
@@ -257,9 +260,8 @@ public final class MapsActivity extends AppActivity implements LocationListener 
 	 */
 	public void onEvent(MyLocationLoadingErrorEvent e) {
 		MyLocationManager.getInstance()
-		               .init();
+		                 .init();
 	}
-
 
 
 	/**
@@ -292,24 +294,24 @@ public final class MapsActivity extends AppActivity implements LocationListener 
 	//------------------------------------------------
 
 	/**
-	 * Show single instance of {@link MapsActivity}
+	 * Show single instance of {@link MapActivity}
 	 *
 	 * @param cxt {@link Activity}.
 	 */
 	public static void showInstance(Activity cxt, Playground ground) {
-		Intent intent = new Intent(cxt, MapsActivity.class);
+		Intent intent = new Intent(cxt, MapActivity.class);
 		intent.putExtra(EXTRAS_GROUND, ground);
 		intent.setFlags(FLAG_ACTIVITY_SINGLE_TOP | FLAG_ACTIVITY_CLEAR_TOP);
 		ActivityCompat.startActivity(cxt, intent, null);
 	}
 
 	/**
-	 * Show single instance of {@link MapsActivity}
+	 * Show single instance of {@link MapActivity}
 	 *
 	 * @param cxt {@link Activity}.
 	 */
 	public static void showInstance(Activity cxt) {
-		Intent intent = new Intent(cxt, MapsActivity.class);
+		Intent intent = new Intent(cxt, MapActivity.class);
 		intent.setFlags(FLAG_ACTIVITY_SINGLE_TOP | FLAG_ACTIVITY_CLEAR_TOP);
 		ActivityCompat.startActivity(cxt, intent, null);
 	}
@@ -490,7 +492,7 @@ public final class MapsActivity extends AppActivity implements LocationListener 
 					public void success(GeocodeList geocodeList, Response response) {
 						final List<Geocode> geocodes = geocodeList.getGeocodeList();
 						if (geocodes != null) {
-							ArrayAdapter<Geocode> adapter = new ArrayAdapter<>(MapsActivity.this, R.layout.search_item, geocodes);
+							ArrayAdapter<Geocode> adapter = new ArrayAdapter<>(MapActivity.this, R.layout.search_item, geocodes);
 							mBinding.geocodeLv.setAdapter(adapter);
 							mBinding.geocodeLv.setOnItemClickListener(new OnItemClickListener() {
 								@Override
@@ -845,7 +847,7 @@ public final class MapsActivity extends AppActivity implements LocationListener 
 								break;
 							case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
 								try {
-									status.startResolutionForResult(MapsActivity.this, REQ);
+									status.startResolutionForResult(MapActivity.this, REQ);
 								} catch (SendIntentException e) {
 									exitAppDialog();
 								}
@@ -906,15 +908,15 @@ public final class MapsActivity extends AppActivity implements LocationListener 
 	 * Force to exit application for no location-service.
 	 */
 	private void exitAppDialog() {
-		mExitAppDlg = new AlertDialog.Builder(MapsActivity.this).setCancelable(false)
-		                                                        .setTitle(R.string.application_name)
-		                                                        .setMessage(R.string.lbl_no_location_service)
-		                                                        .setPositiveButton(R.string.btn_confirm, new DialogInterface.OnClickListener() {
-			                                                        public void onClick(DialogInterface dialog, int whichButton) {
-				                                                        ActivityCompat.finishAfterTransition(MapsActivity.this);
-			                                                        }
-		                                                        })
-		                                                        .create();
+		mExitAppDlg = new AlertDialog.Builder(MapActivity.this).setCancelable(false)
+		                                                       .setTitle(R.string.application_name)
+		                                                       .setMessage(R.string.lbl_no_location_service)
+		                                                       .setPositiveButton(R.string.btn_confirm, new DialogInterface.OnClickListener() {
+			                                                       public void onClick(DialogInterface dialog, int whichButton) {
+				                                                       ActivityCompat.finishAfterTransition(MapActivity.this);
+			                                                       }
+		                                                       })
+		                                                       .create();
 		mExitAppDlg.show();
 	}
 
@@ -1348,34 +1350,34 @@ public final class MapsActivity extends AppActivity implements LocationListener 
 							FavoriteManager favoriteManager = FavoriteManager.getInstance();
 							if (favoriteManager.getCachedList()
 							                   .size() > 0) {
-								ViewPagerActivity.showInstance(MapsActivity.this, lat, lng, favoriteManager.getCachedList(), getString(R.string.lbl_favorite_list));
+								ViewPagerActivity.showInstance(MapActivity.this, lat, lng, favoriteManager.getCachedList(), getString(R.string.lbl_favorite_list));
 							}
 							break;
 						case R.id.action_near_ring:
 							NearRingManager nearRingManager = NearRingManager.getInstance();
 							if (nearRingManager.getCachedList()
 							                   .size() > 0) {
-								ViewPagerActivity.showInstance(MapsActivity.this, lat, lng, nearRingManager.getCachedList(), getString(R.string.lbl_near_ring_list));
+								ViewPagerActivity.showInstance(MapActivity.this, lat, lng, nearRingManager.getCachedList(), getString(R.string.lbl_near_ring_list));
 							}
 							break;
 						case R.id.action_my_location_list:
 							MyLocationManager myLocationManager = MyLocationManager.getInstance();
 							if (myLocationManager.getCachedList()
 							                     .size() > 0) {
-								MyLocationListActivity.showInstance(MapsActivity.this);
+								MyLocationListActivity.showInstance(MapActivity.this);
 							}
 							break;
 						case R.id.action_settings:
-							SettingsActivity.showInstance(MapsActivity.this);
+							SettingsActivity.showInstance(MapActivity.this);
 							break;
 						case R.id.action_more_apps:
 							mBinding.drawerLayout.openDrawer(Gravity.RIGHT);
 							break;
 						case R.id.action_radar:
-							com.playground.notification.utils.Utils.openExternalBrowser(MapsActivity.this, "http://" + getString(R.string.support_spielplatz_radar));
+							com.playground.notification.utils.Utils.openExternalBrowser(MapActivity.this, "http://" + getString(R.string.support_spielplatz_radar));
 							break;
 						case R.id.action_weather:
-							com.playground.notification.utils.Utils.openExternalBrowser(MapsActivity.this, "http://" + getString(R.string.support_openweathermap));
+							com.playground.notification.utils.Utils.openExternalBrowser(MapActivity.this, "http://" + getString(R.string.support_openweathermap));
 							break;
 					}
 				}

@@ -21,7 +21,7 @@ import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.maps.model.LatLng;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
-import com.playground.notification.app.activities.MapsActivity;
+import com.playground.notification.app.activities.MapActivity;
 import com.playground.notification.ds.sync.NearRing;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.utils.Prefs;
@@ -122,8 +122,8 @@ public final class GeofenceTransitionsIntentService extends IntentService {
 			i = Utils.getMapWeb(
 					new LatLng( location.getLatitude(), location.getLongitude() ), new LatLng( ring.getLatitude(), ring.getLongitude() ) );
 		} else {
-			i = new Intent( this, MapsActivity.class );
-			i.putExtra( MapsActivity.EXTRAS_GROUND, (Serializable) ring );
+			i = new Intent( this, MapActivity.class );
+			i.putExtra(MapActivity.EXTRAS_GROUND, (Serializable) ring );
 			i.setFlags( Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP );
 		}
 		PendingIntent contentIntent = PendingIntent.getActivity( this, (int) System.currentTimeMillis(), i, PendingIntent.FLAG_ONE_SHOT );

@@ -13,7 +13,7 @@ import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.content.ContextCompat;
 
 import com.playground.notification.R;
-import com.playground.notification.app.activities.MapsActivity;
+import com.playground.notification.app.activities.MapActivity;
 
 
 public final class NotifyUtils {
@@ -42,7 +42,7 @@ public final class NotifyUtils {
 	}
 
 	public static PendingIntent getAppHome( Context cxt ) {
-		Intent intent = new Intent( cxt, MapsActivity.class );
+		Intent intent = new Intent( cxt, MapActivity.class );
 		intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP );
 		return PendingIntent.getActivity( cxt, com.chopping.utils.Utils.randInt( 1, 9999 ), intent, PendingIntent.FLAG_UPDATE_CURRENT );
 	}

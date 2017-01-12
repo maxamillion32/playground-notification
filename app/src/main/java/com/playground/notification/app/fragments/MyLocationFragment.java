@@ -16,7 +16,7 @@ import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.api.ApiNotInitializedException;
 import com.playground.notification.app.App;
-import com.playground.notification.app.activities.MapsActivity;
+import com.playground.notification.app.activities.MapActivity;
 import com.playground.notification.databinding.MyLocationBinding;
 import com.playground.notification.ds.google.Matrix;
 import com.playground.notification.ds.grounds.Playground;
@@ -172,7 +172,7 @@ public final class MyLocationFragment extends DialogFragment {
 					@Override
 					public void onClick( View v ) {
 
-						MapsActivity.showInstance( (Activity) mBinding.locationPreviewIv.getContext(), playground );
+						MapActivity.showInstance((Activity) mBinding.locationPreviewIv.getContext(), playground );
 					}
 				} );
 			}
