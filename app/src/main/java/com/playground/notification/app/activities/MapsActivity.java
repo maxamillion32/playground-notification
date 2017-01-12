@@ -943,7 +943,8 @@ public final class MapsActivity extends AppActivity implements LocationListener 
 			@Override
 			public boolean onMyLocationButtonClick() {
 				mForcedToLoad = true;
-				return false;
+				startLocationUpdate();
+				return true;
 			}
 		});
 		mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
