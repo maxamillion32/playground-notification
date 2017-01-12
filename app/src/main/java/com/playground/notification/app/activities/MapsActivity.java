@@ -585,7 +585,6 @@ public final class MapsActivity extends AppActivity implements LocationListener 
 		               .init();
 		MyLocationManager.getInstance()
 		                 .init();
-		initDrawerContent();
 		askWeatherBoard(App.Instance.getCurrentLocation());
 	}
 
@@ -704,6 +703,9 @@ public final class MapsActivity extends AppActivity implements LocationListener 
 			@Override
 			public void onMapReady(GoogleMap googleMap) {
 				mMap = googleMap;
+
+				initDrawerContent();
+
 				// Check if we were successful in obtaining the map.
 				if (mMap != null) {
 					setUpMap();
