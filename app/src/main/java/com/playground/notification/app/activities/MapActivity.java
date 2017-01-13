@@ -763,7 +763,7 @@ public final class MapActivity extends AppActivity implements LocationListener {
 	/**
 	 * Initialize all map infrastructures, location request etc.
 	 */
-	private synchronized void initGoogle() {
+	private   void initGoogle() {
 		// Try to obtain the map from the SupportMapFragment.
 		mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 		mMapFragment.getMapAsync(new OnMapReadyCallback() {
