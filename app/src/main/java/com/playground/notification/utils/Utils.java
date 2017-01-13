@@ -3,6 +3,8 @@ package com.playground.notification.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
@@ -121,5 +123,18 @@ public final class Utils {
 			val = true;
 		}
 		return val;
+	}
+
+	public static Bitmap getResizedBitmap(Bitmap bm, float newWidth, float newHeight ) {
+		int   width       = bm.getWidth();
+		int   height      = bm.getHeight();
+		float scaleWidth  = newWidth / width;
+		float scaleHeight = newHeight / height;
+		// CREATE A MATRIX FOR THE MANIPULATION
+		Matrix matrix = new Matrix();
+		// RESIZE THE BITMAP
+		matrix.postScale( scaleWidth, scaleHeight );
+		// "RECREATE" THE NEW BITMAP
+		return Bitmap.createBitmap( bm, 0, 0, width, height, matrix, false );
 	}
 }
