@@ -1,16 +1,16 @@
 package com.playground.notification.geofence;
 
-import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.os.AsyncTask;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat.BigTextStyle;
-import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
@@ -40,16 +40,24 @@ import retrofit.RetrofitError;
  *
  * @author Xinyue Zhao
  */
-public final class GeofenceTransitionsIntentService extends IntentService {
+public final class GeofenceTransitionsIntentService extends Service {
 	private NotificationManager                               mNotificationManager;
 	private android.support.v4.app.NotificationCompat.Builder mNotifyBuilder;
 	private PendingIntent                                     mSharePi;
 
-	public GeofenceTransitionsIntentService() {
-		super( "GeofenceTransitionsIntentService" );
+
+	@Nullable
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
 	}
 
 	@Override
+	public int onStartCommand(Intent intent, int flags,   int startId) {
+		onHandleIntent(intent);
+		return super.onStartCommand(intent, flags, startId);
+	}
+
 	protected void onHandleIntent( Intent intent ) {
 		mNotificationManager = (NotificationManager) this.getSystemService( Context.NOTIFICATION_SERVICE );
 		GeofencingEvent geofencingEvent    = GeofencingEvent.fromIntent( intent );
@@ -74,13 +82,7 @@ public final class GeofenceTransitionsIntentService extends IntentService {
 								mSharePi = PendingIntent.getActivity( GeofenceTransitionsIntentService.this, (int) System.currentTimeMillis(),
 																	  Utils.getShareInformation( subject, content ), PendingIntent.FLAG_UPDATE_CURRENT
 								);
-								AsyncTaskCompat.executeParallel( new AsyncTask<Void, Void, Void>() {
-									@Override
-									protected Void doInBackground( Void... params ) {
-										notifyNearRing( ring );
-										return null;
-									}
-								} );
+								notifyNearRing( ring );
 							}
 
 							@Override
@@ -93,13 +95,7 @@ public final class GeofenceTransitionsIntentService extends IntentService {
 								mSharePi = PendingIntent.getActivity( GeofenceTransitionsIntentService.this, (int) System.currentTimeMillis(),
 																	  Utils.getShareInformation( subject, content ), PendingIntent.FLAG_UPDATE_CURRENT
 								);
-								AsyncTaskCompat.executeParallel( new AsyncTask<Void, Void, Void>() {
-									@Override
-									protected Void doInBackground( Void... params ) {
-										notifyNearRing( ring );
-										return null;
-									}
-								} );
+								notifyNearRing( ring );
 							}
 						} );
 					}
