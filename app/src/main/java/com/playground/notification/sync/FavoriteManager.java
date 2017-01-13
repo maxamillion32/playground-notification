@@ -48,7 +48,7 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 	/**
 	 * Init the manager.
 	 */
-	public synchronized void init() {
+	public   void init() {
 		LL.d("Start getting list of favorite");
 		//Load from backend.
 		BmobQuery<Favorite> q = new BmobQuery<>();

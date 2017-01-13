@@ -40,7 +40,7 @@ public class TickerService extends Service {
 		if( !mReg ) {
 			Notification notification = NotifyUtils.buildNotifyWithoutBigImage( this, ONGOING_NOTIFICATION_ID, getString( R.string.application_name ),
 																				getString( R.string.lbl_notify_content ), R.drawable.ic_balloon,
-																				NotifyUtils.getAppHome( this ), true
+																				NotifyUtils.getAppHome( this ), false
 			);
 			startForeground( ONGOING_NOTIFICATION_ID, notification );
 			registerReceiver( mTickerReceiver, mTickerFilter );

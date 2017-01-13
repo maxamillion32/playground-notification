@@ -1041,7 +1041,7 @@ public final class MapActivity extends AppActivity implements LocationListener {
 	 * Draw grounds on map.
 	 */
 	private void populateGrounds() {
-		if (mForcedToLoad) {
+		if (mForcedToLoad && mMap != null) {
 			mForcedToLoad = false;
 			mBinding.loadPinPb.setVisibility(View.VISIBLE);
 

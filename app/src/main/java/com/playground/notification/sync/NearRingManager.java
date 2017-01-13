@@ -48,7 +48,7 @@ public final class NearRingManager extends SyncManager<NearRing> {
 	/**
 	 * Init the manager.
 	 */
-	public synchronized void init() {
+	public   void init() {
 		LL.d("Start getting list of near-ring");
 		//Load from backend.
 		BmobQuery<NearRing> q = new BmobQuery<>();
