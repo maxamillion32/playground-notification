@@ -409,26 +409,7 @@ public final class MapActivity extends AppActivity implements LocationListener {
 			if (intent.getSerializableExtra(EXTRAS_GROUND) != null) {
 				Playground playground = (Playground) intent.getSerializableExtra(EXTRAS_GROUND);
 				LatLng to = new LatLng(playground.getLatitude(), playground.getLongitude());
-				CameraUpdate update = CameraUpdateFactory.newLatLngZoom(to, 16);
-				if (playground instanceof MyLocation) {
-					MarkerOptions options = new MarkerOptions().position(to);
-					options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_saved_ground));
-					mMap.addMarker(options);
-				} else if (playground instanceof Favorite) {
-					MarkerOptions options = new MarkerOptions().position(to);
-					options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorited));
-					mMap.addMarker(options);
-				} else if (playground instanceof NearRing) {
-					mMap.addCircle(new CircleOptions().center(new LatLng(playground.getLatitude(), playground.getLongitude()))
-					                                  .radius(Prefs.getInstance()
-					                                               .getAlarmArea())
-					                                  .strokeWidth(1)
-					                                  .strokeColor(Color.BLUE)
-					                                  .fillColor(getResources().getColor(R.color.common_blue_50)));
-					MarkerOptions options = new MarkerOptions().position(to);
-					mMap.addMarker(options);
-				}
-				mMap.moveCamera(update);
+				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(to, 18));
 			}
 		} else {
 			mKeyword = intent.getStringExtra(SearchManager.QUERY);
