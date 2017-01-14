@@ -1,15 +1,18 @@
 package com.playground.notification.ds.grounds;
 
 
-import java.io.Serializable;
-
 import android.text.TextUtils;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
+import com.google.maps.android.clustering.ClusterItem;
+
+import java.io.Serializable;
 
 import cn.bmob.v3.BmobObject;
 
-public class Playground extends BmobObject implements Serializable {
+public class Playground extends BmobObject implements Serializable,
+                                                      ClusterItem {
 	@SerializedName("id")
 	private String mId;
 	@SerializedName("lat")
@@ -53,4 +56,10 @@ public class Playground extends BmobObject implements Serializable {
 			return false;
 		}
 	}
+
+	@Override
+	public LatLng getPosition() {
+		return new LatLng(mLatitude, mLongitude);
+	}
+
 }

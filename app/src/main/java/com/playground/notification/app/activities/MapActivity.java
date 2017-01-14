@@ -20,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -74,6 +75,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.MarkerManager;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.view.ViewHelper;
@@ -110,6 +112,7 @@ import com.playground.notification.ds.sync.NearRing;
 import com.playground.notification.ds.weather.Weather;
 import com.playground.notification.ds.weather.WeatherDetail;
 import com.playground.notification.geofence.GeofenceManagerService;
+import com.playground.notification.map.PlaygroundClusterManager;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
@@ -117,6 +120,7 @@ import com.playground.notification.sync.SyncManager;
 import com.playground.notification.utils.Prefs;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -170,10 +174,6 @@ public final class MapActivity extends AppActivity implements LocationListener {
 	 * Connect to google-api.
 	 */
 	private GoogleApiClient mGoogleApiClient;
-	/**
-	 * Current shown markers.
-	 */
-	private ArrayMap<Marker, Playground> mMarkerList = new ArrayMap<>();
 	/**
 	 * {@code true} if the map is forground.
 	 */
@@ -895,7 +895,6 @@ public final class MapActivity extends AppActivity implements LocationListener {
 		stopLocationUpdates();
 		if (mMap != null) {
 			mMap.clear();
-			mMarkerList.clear();
 			mMap = null;
 		}
 		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
@@ -1066,64 +1065,24 @@ public final class MapActivity extends AppActivity implements LocationListener {
 					@Override
 					public void success(Playgrounds playgrounds, Response response) {
 						mBinding.loadPinPb.setVisibility(View.GONE);
-						Location location = App.Instance.getCurrentLocation();
-						if (location == null) {
+						if (App.Instance.getCurrentLocation() == null) {
 							Snackbar.make(mBinding.drawerLayout, R.string.lbl_no_current_location, Snackbar.LENGTH_LONG)
 							        .show();
 							return;
 						}
-						mMarkerList.clear();
 						if (mMap != null) {
 							mMap.clear();
-							final LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-							List<Playground> grounds = playgrounds.getPlaygroundList();
-							for (final Playground ground : grounds) {
-								LatLng to = new LatLng(ground.getLatitude(), ground.getLongitude());
-								//Draw different markers, for fav , for normal ground, for grounds in near-rings.
-								MarkerOptions options = new MarkerOptions().position(to);
-								FavoriteManager favMgr = FavoriteManager.getInstance();
-								if (favMgr.isInit() && favMgr.isCached(ground)) {
-									options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorited));
-								} else {
-									com.playground.notification.utils.Utils.changeMarkerIcon(options, currentLatLng, to);
-								}
-								NearRingManager nearRingMgr = NearRingManager.getInstance();
-								if (nearRingMgr.isInit() && nearRingMgr.isCached(ground)) {
-									mMap.addCircle(new CircleOptions().center(new LatLng(ground.getLatitude(), ground.getLongitude()))
-									                                  .radius(Prefs.getInstance()
-									                                               .getAlarmArea())
-									                                  .strokeWidth(1)
-									                                  .strokeColor(Color.BLUE)
-									                                  .fillColor(getResources().getColor(R.color.common_blue_50)));
-								}
-								mMarkerList.put(mMap.addMarker(options), ground);
+							List<Playground> availablePlaygroundList = new ArrayList<>();
+							availablePlaygroundList.addAll(playgrounds.getPlaygroundList());
+							if(FavoriteManager.getInstance().isInit()) {
+								availablePlaygroundList.addAll(FavoriteManager.getInstance().getCachedList());
 							}
-
-							MyLocationManager myLocMgr = MyLocationManager.getInstance();
-							if (myLocMgr.isInit()) {
-								for (MyLocation myLoc : myLocMgr.getCachedList()) {
-									LatLng to = new LatLng(myLoc.getLatitude(), myLoc.getLongitude());
-									MarkerOptions options = new MarkerOptions().position(to);
-									options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_saved_ground));
-									mMarkerList.put(mMap.addMarker(options), myLoc);
-								}
+							if(MyLocationManager.getInstance().isInit()) {
+								availablePlaygroundList.addAll(MyLocationManager.getInstance().getCachedList());
 							}
-
-							mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
-								@Override
-								public boolean onMarkerClick(Marker marker) {
-									for (Marker m : mMarkerList.keySet()) {
-										if (m.equals(marker)) {
-											showDialogFragment(PlaygroundDetailFragment.newInstance(App.Instance, currentLatLng.latitude, currentLatLng.longitude, mMarkerList.get(m), false), null);
-											break;
-										}
-									}
-									return true;
-								}
-							});
+							PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, availablePlaygroundList);
 						}
 					}
-
 					@Override
 					public void failure(RetrofitError error) {
 						mBinding.loadPinPb.setVisibility(View.GONE);
