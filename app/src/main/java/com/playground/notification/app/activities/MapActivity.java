@@ -1074,9 +1074,6 @@ public final class MapActivity extends AppActivity implements LocationListener {
 							mMap.clear();
 							List<Playground> availablePlaygroundList = new ArrayList<>();
 							availablePlaygroundList.addAll(playgrounds.getPlaygroundList());
-							if(FavoriteManager.getInstance().isInit()) {
-								availablePlaygroundList.addAll(FavoriteManager.getInstance().getCachedList());
-							}
 							if(MyLocationManager.getInstance().isInit()) {
 								availablePlaygroundList.addAll(MyLocationManager.getInstance().getCachedList());
 							}

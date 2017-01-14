@@ -33,11 +33,10 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.ds.grounds.Playground;
-import com.playground.notification.ds.sync.Favorite;
 import com.playground.notification.ds.sync.MyLocation;
+import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.utils.Prefs;
-import com.playground.notification.utils.Utils;
 
 
 /**
@@ -66,12 +65,15 @@ final class PlaygroundClusterRenderer extends DefaultClusterRenderer<Playground>
 		//Draw different markers, for fav , for normal ground, for grounds in near-rings.
 		options.position(to);
 
-		if (playground instanceof Favorite) {
-			options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorited));
-		} else if (playground instanceof MyLocation) {
+		if (playground instanceof MyLocation) {
 			options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_saved_ground));
 		} else {
-			Utils.changeMarkerIcon(options, currentLatLng, to);
+			FavoriteManager favMgr = FavoriteManager.getInstance();
+			if (favMgr.isInit() && favMgr.isCached(playground)) {
+				options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorited));
+			} else {
+				com.playground.notification.utils.Utils.changeMarkerIcon(options, currentLatLng, to);
+			}
 		}
 
 		//Geofence-ring.
