@@ -124,10 +124,11 @@
     <string name="showcase_navi">Navigiere zu diesem Spielplatz.</string>
     <string name="showcase_share">Den Spielplatz zu teilen.</string>
 
-    <string name="msg_permission_prompt">Ohne Berechtigung von "Read Phone State", "Write External Storage" und "Lokalisierung" kann die App nicht weiter gehen…</string>
-    <string name="app_settings_dialog_rationale_ask_again">This app may not work correctly without the requested permissions. Open the app settings screen to modify app permissions.</string>
-    <string name="app_settings_dialog_title_settings_dialog">Permissions Required</string>
-    <string name="app_settings_dialog_setting">Settings</string>
-    <string name="app_settings_dialog_cancel">Close app</string>
+    <string name="rationale_permissions_phone_state_storage">Ohne "Read Phone State", "Write External Storage" funktioniert die App nicht…</string>
+    <string name="rationale_permissions_location">Ohne Berechtigung von Location funktioniert die App…</string>
+    <string name="app_settings_dialog_rationale_ask_again">Die App nötigen einige wichtige Berechtigungen, bitte einstellen.</string>
+    <string name="app_settings_dialog_title_settings_dialog">Berechtigung</string>
+    <string name="app_settings_dialog_setting">Eingstellng</string>
+    <string name="app_settings_dialog_cancel">App schließen</string>
 
 </resources>

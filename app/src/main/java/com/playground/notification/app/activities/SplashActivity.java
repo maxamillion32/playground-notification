@@ -55,7 +55,7 @@ public final class SplashActivity extends AppCompatActivity implements EasyPermi
 		} else {
 			// Ask for one permission
 			EasyPermissions.requestPermissions(this,
-			                                   getString(R.string.rationale_permissions),
+			                                   getString(R.string.rationale_permissions_phone_state_storage),
 			                                   RC_PERMISSIONS,
 			                                   permission.READ_PHONE_STATE,
 			                                   permission.WRITE_EXTERNAL_STORAGE,

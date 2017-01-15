@@ -139,8 +139,10 @@
 
     <string name="msg_permission_prompt">没有－读取电话状态，写入存储，位置－的权限，应用无法运行…</string>
 
-    <string name="app_settings_dialog_rationale_ask_again">This app may not work correctly without the requested permissions. Open the app settings screen to modify app permissions.</string>
-    <string name="app_settings_dialog_title_settings_dialog">Permissions Required</string>
-    <string name="app_settings_dialog_setting">Settings</string>
-    <string name="app_settings_dialog_cancel">Close app</string>
+    <string name="rationale_permissions_phone_state_storage">此应用需要访问设备状态，外部存储的权限…</string>
+    <string name="rationale_permissions_location">此应用需要访问位置的权限…</string>
+    <string name="app_settings_dialog_rationale_ask_again">此应用需要一些重要的权限，请直接设置。</string>
+    <string name="app_settings_dialog_title_settings_dialog">权限</string>
+    <string name="app_settings_dialog_setting">设置</string>
+    <string name="app_settings_dialog_cancel">关闭应用</string>
 </resources>
