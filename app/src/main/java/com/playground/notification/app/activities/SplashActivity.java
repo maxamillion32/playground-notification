@@ -43,7 +43,7 @@ public final class SplashActivity extends AppCompatActivity implements EasyPermi
 
 	@SuppressLint("InlinedApi")
 	private boolean hasPermissions() {
-		return EasyPermissions.hasPermissions(this, permission.READ_PHONE_STATE, permission.WRITE_EXTERNAL_STORAGE, permission.ACCESS_COARSE_LOCATION, permission.ACCESS_FINE_LOCATION);
+		return EasyPermissions.hasPermissions(this, permission.READ_PHONE_STATE, permission.WRITE_EXTERNAL_STORAGE);
 	}
 
 
@@ -54,13 +54,7 @@ public final class SplashActivity extends AppCompatActivity implements EasyPermi
 			gotPermissions();
 		} else {
 			// Ask for one permission
-			EasyPermissions.requestPermissions(this,
-			                                   getString(R.string.rationale_permissions_phone_state_storage),
-			                                   RC_PERMISSIONS,
-			                                   permission.READ_PHONE_STATE,
-			                                   permission.WRITE_EXTERNAL_STORAGE,
-			                                   permission.ACCESS_COARSE_LOCATION,
-			                                   permission.ACCESS_FINE_LOCATION);
+			EasyPermissions.requestPermissions(this, getString(R.string.rationale_permissions_phone_state_storage), RC_PERMISSIONS, permission.READ_PHONE_STATE, permission.WRITE_EXTERNAL_STORAGE);
 		}
 	}
 

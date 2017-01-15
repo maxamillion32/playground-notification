@@ -1,5 +1,7 @@
 package com.playground.notification.app.activities;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.ProgressDialog;
@@ -8,19 +10,16 @@ import android.app.SearchableInfo;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
-import android.support.design.widget.BottomSheetBehavior;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.util.ArrayMap;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -36,6 +35,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -64,18 +65,12 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.MarkerManager;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.view.ViewHelper;
@@ -88,7 +83,6 @@ import com.playground.notification.app.SearchSuggestionProvider;
 import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.AppListImpFragment;
 import com.playground.notification.app.fragments.MyLocationFragment;
-import com.playground.notification.app.fragments.PlaygroundDetailFragment;
 import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
 import com.playground.notification.bus.FavoriteListLoadingErrorEvent;
@@ -106,9 +100,6 @@ import com.playground.notification.ds.google.Geometry;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.grounds.Playgrounds;
 import com.playground.notification.ds.grounds.Request;
-import com.playground.notification.ds.sync.Favorite;
-import com.playground.notification.ds.sync.MyLocation;
-import com.playground.notification.ds.sync.NearRing;
 import com.playground.notification.ds.weather.Weather;
 import com.playground.notification.ds.weather.WeatherDetail;
 import com.playground.notification.geofence.GeofenceManagerService;
@@ -120,10 +111,12 @@ import com.playground.notification.sync.SyncManager;
 import com.playground.notification.utils.Prefs;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -131,9 +124,11 @@ import retrofit.client.Response;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
+import static pub.devrel.easypermissions.AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE;
 
 
-public final class MapActivity extends AppActivity implements LocationListener {
+public final class MapActivity extends AppActivity implements LocationListener,
+                                                              EasyPermissions.PermissionCallbacks {
 	public static final String EXTRAS_GROUND = MapActivity.class.getName() + ".EXTRAS.ground";
 
 	private static final int REQ = 0x98;
@@ -319,6 +314,9 @@ public final class MapActivity extends AppActivity implements LocationListener {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
+			case DEFAULT_SETTINGS_REQ_CODE:
+				permissionsDeniedOpenSetting();
+				break;
 			case ConnectGoogleActivity.REQ:
 				if (resultCode == RESULT_OK) {
 				} else {
@@ -631,10 +629,75 @@ public final class MapActivity extends AppActivity implements LocationListener {
 		MyLocationManager.getInstance()
 		                 .init();
 		LL.d("onYouCanUseApp");
-		initGoogle();
-		populateGrounds();
+		requirePermissions();
 		askWeatherBoard(App.Instance.getCurrentLocation());
 	}
+
+	private static final int RC_PERMISSIONS = 124;
+
+
+	private void gotPermissions() {
+		initGoogle();
+		populateGrounds();
+	}
+
+	@SuppressLint("InlinedApi")
+	private boolean hasPermissions() {
+		return EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION);
+	}
+
+
+	@SuppressLint("InlinedApi")
+	@AfterPermissionGranted(RC_PERMISSIONS)
+	private void requirePermissions() {
+		if (hasPermissions()) {
+			gotPermissions();
+		} else {
+			// Ask for one permission
+			EasyPermissions.requestPermissions(this,
+			                                   getString(R.string.rationale_permissions_location),
+			                                   RC_PERMISSIONS,
+			                                   Manifest.permission.ACCESS_FINE_LOCATION,
+			                                   Manifest.permission.ACCESS_COARSE_LOCATION);
+		}
+	}
+
+
+	@Override
+	public void onPermissionsGranted(int requestCode, List<String> perms) {
+		gotPermissions();
+	}
+
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+	}
+
+
+	@Override
+	public void onPermissionsDenied(int requestCode, List<String> perms) {
+		permissionsDeniedOpenSetting();
+	}
+
+
+	private void permissionsDeniedOpenSetting() {
+		if (!hasPermissions()) {
+			new AppSettingsDialog.Builder(this, getString(R.string.app_settings_dialog_rationale_ask_again)).setTitle(getString(R.string.app_settings_dialog_title_settings_dialog))
+			                                                                                                .setPositiveButton(getString(R.string.app_settings_dialog_setting))
+			                                                                                                .setNegativeButton(getString(R.string.app_settings_dialog_cancel),
+			                                                                                                                   new DialogInterface.OnClickListener() {
+				                                                                                                                   @Override
+				                                                                                                                   public void onClick(DialogInterface dialogInterface, int i) {
+					                                                                                                                   ActivityCompat.finishAffinity(MapActivity.this);
+				                                                                                                                   }
+			                                                                                                                   })
+			                                                                                                .build()
+			                                                                                                .show();
+		}
+	}
+
 
 	/**
 	 * Get weather status.
@@ -744,7 +807,7 @@ public final class MapActivity extends AppActivity implements LocationListener {
 	/**
 	 * Initialize all map infrastructures, location request etc.
 	 */
-	private   void initGoogle() {
+	private void initGoogle() {
 		// Try to obtain the map from the SupportMapFragment.
 		mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 		mMapFragment.getMapAsync(new OnMapReadyCallback() {
@@ -1055,12 +1118,15 @@ public final class MapActivity extends AppActivity implements LocationListener {
 							mMap.clear();
 							List<Playground> availablePlaygroundList = new ArrayList<>();
 							availablePlaygroundList.addAll(playgrounds.getPlaygroundList());
-							if(MyLocationManager.getInstance().isInit()) {
-								availablePlaygroundList.addAll(MyLocationManager.getInstance().getCachedList());
+							if (MyLocationManager.getInstance()
+							                     .isInit()) {
+								availablePlaygroundList.addAll(MyLocationManager.getInstance()
+								                                                .getCachedList());
 							}
 							PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, availablePlaygroundList);
 						}
 					}
+
 					@Override
 					public void failure(RetrofitError error) {
 						mBinding.loadPinPb.setVisibility(View.GONE);
