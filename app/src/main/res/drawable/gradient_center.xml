@@ -6,7 +6,7 @@
         android:centerY="50%"
         android:startColor="@color/common_transparent"
         android:centerColor="@color/common_transparent"
-        android:endColor="@color/primary_color_50"
+        android:endColor="@color/primary_dark_color"
         android:gradientRadius="500"/>
 
 
