@@ -43,8 +43,10 @@ public final class PlaygroundClusterManager extends ClusterManager<Playground> i
 		mHost = new WeakReference<>(host);
 	}
 
-	public static void showAvailablePlaygrounds(@NonNull FragmentActivity host, @NonNull GoogleMap googleMap, List<Playground> exposes) {
-		new PlaygroundClusterManager(host, googleMap).addItems(exposes);
+	public static PlaygroundClusterManager showAvailablePlaygrounds(@NonNull FragmentActivity host, @NonNull GoogleMap googleMap, List<Playground> exposes) {
+		PlaygroundClusterManager ret = new PlaygroundClusterManager(host, googleMap);
+		ret.addItems(exposes);
+		return  ret;
 	}
 
 

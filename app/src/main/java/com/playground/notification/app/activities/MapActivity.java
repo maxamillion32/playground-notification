@@ -124,6 +124,7 @@ import retrofit.client.Response;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
+import static com.playground.notification.map.PlaygroundClusterManager.showAvailablePlaygrounds;
 import static pub.devrel.easypermissions.AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE;
 
 
@@ -941,6 +942,10 @@ public final class MapActivity extends AppActivity implements LocationListener,
 			mMap.clear();
 			mMap = null;
 		}
+		if(mPlaygroundClusterManager != null) {
+			mPlaygroundClusterManager.clearItems();
+			mPlaygroundClusterManager = null;
+		}
 		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
 			mGoogleApiClient.disconnect();
 		}
@@ -1081,6 +1086,11 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	}
 
 	/**
+	 * Manager for all "pin"s on map.
+	 */
+	private PlaygroundClusterManager mPlaygroundClusterManager;
+
+	/**
 	 * Draw grounds on map.
 	 */
 	private void populateGrounds() {
@@ -1123,7 +1133,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 								availablePlaygroundList.addAll(MyLocationManager.getInstance()
 								                                                .getCachedList());
 							}
-							PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, availablePlaygroundList);
+							mPlaygroundClusterManager = PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, availablePlaygroundList);
 						}
 					}
 
