@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".app.fragments.PlaygroundDetailFragment">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".app.fragments.PlaygroundDetailFragment">
 
     <data class="PlaygroundDetailBinding">
 
-        <import type="android.view.View" />
+        <import type="android.view.View"/>
 
-        <import type="com.playground.notification.ds.google.Row" />
+        <import type="com.playground.notification.ds.google.Row"/>
 
-        <import type="com.playground.notification.ds.sync.Rating" />
-
-
-        <import type="com.playground.notification.ds.google.Matrix" />
+        <import type="com.playground.notification.ds.sync.Rating"/>
 
 
-        <import type="com.playground.notification.ds.google.Element" />
+        <import type="com.playground.notification.ds.google.Matrix"/>
 
-        <import type="com.playground.notification.app.fragments.PlaygroundDetailFragment.EventHandler" />
+
+        <import type="com.playground.notification.ds.google.Element"/>
+
+        <import type="com.playground.notification.app.fragments.PlaygroundDetailFragment.EventHandler"/>
 
 
         <variable
             name="matrix"
-            type="Matrix" />
+            type="Matrix"/>
 
         <variable
             name="handler"
-            type="EventHandler" />
+            type="EventHandler"/>
 
         <variable
             name="mode"
-            type="String" />
+            type="String"/>
 
         <variable
             name="rating"
-            type="Rating" />
+            type="Rating"/>
 
         <variable
             name="ratedValue"
-            type="float" />
+            type="float"/>
 
     </data>
 
@@ -50,11 +50,11 @@
         android:background="@color/common_white">
 
         <android.support.v4.widget.NestedScrollView
-            android:layout_above="@+id/operating_bar_vg"
-            android:layout_alignParentTop="true"
             android:id="@+id/info_vg"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/operating_bar_vg"
+            android:layout_alignParentTop="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -77,14 +77,14 @@
                     android:minLines="3"
                     android:text="@{matrix.destination.get(0)}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}" />
+                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
 
                 <ImageView
                     android:id="@+id/location_preview_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}" />
+                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
 
                 <LinearLayout
                     android:id="@+id/travel_vg"
@@ -108,7 +108,7 @@
                             android:button="@drawable/ic_walking"
                             android:onClick="@{handler.onModeSelected}"
                             android:tag="walking"
-                            android:text="@{@string/lbl_walking}" />
+                            android:text="@{@string/lbl_walking}"/>
 
                         <CheckBox
                             android:layout_width="wrap_content"
@@ -117,7 +117,7 @@
                             android:checked="true"
                             android:clickable="false"
                             android:theme="@style/CheckboxTheme"
-                            android:visibility='@{mode.equals("walking") ? View.VISIBLE : View.INVISIBLE}' />
+                            android:visibility='@{mode.equals("walking") ? View.VISIBLE : View.INVISIBLE}'/>
                     </FrameLayout>
 
                     <FrameLayout
@@ -132,7 +132,7 @@
                             android:button="@drawable/ic_driving"
                             android:onClick="@{handler.onModeSelected}"
                             android:tag="driving"
-                            android:text="@{@string/lbl_driving}" />
+                            android:text="@{@string/lbl_driving}"/>
 
                         <CheckBox
                             android:layout_width="wrap_content"
@@ -141,7 +141,7 @@
                             android:checked="true"
                             android:clickable="false"
                             android:theme="@style/CheckboxTheme"
-                            android:visibility='@{mode.equals("driving") ? View.VISIBLE : View.INVISIBLE}' />
+                            android:visibility='@{mode.equals("driving") ? View.VISIBLE : View.INVISIBLE}'/>
                     </FrameLayout>
 
                     <FrameLayout
@@ -156,7 +156,7 @@
                             android:button="@drawable/ic_bicycling"
                             android:onClick="@{handler.onModeSelected}"
                             android:tag="bicycling"
-                            android:text="@{@string/lbl_bicycling}" />
+                            android:text="@{@string/lbl_bicycling}"/>
 
                         <CheckBox
                             android:layout_width="wrap_content"
@@ -165,7 +165,7 @@
                             android:checked="true"
                             android:clickable="false"
                             android:theme="@style/CheckboxTheme"
-                            android:visibility='@{mode.equals("bicycling") ? View.VISIBLE : View.INVISIBLE}' />
+                            android:visibility='@{mode.equals("bicycling") ? View.VISIBLE : View.INVISIBLE}'/>
                     </FrameLayout>
 
                     <FrameLayout
@@ -179,7 +179,7 @@
                             android:button="@drawable/ic_transit"
                             android:onClick="@{handler.onModeSelected}"
                             android:tag="transit"
-                            android:text="@{@string/lbl_transit}" />
+                            android:text="@{@string/lbl_transit}"/>
 
                         <CheckBox
                             android:layout_width="wrap_content"
@@ -188,7 +188,7 @@
                             android:checked="true"
                             android:clickable="false"
                             android:theme="@style/CheckboxTheme"
-                            android:visibility='@{mode.equals("transit") ? View.VISIBLE : View.INVISIBLE}' />
+                            android:visibility='@{mode.equals("transit") ? View.VISIBLE : View.INVISIBLE}'/>
                     </FrameLayout>
                 </LinearLayout>
 
@@ -207,14 +207,14 @@
                         android:layout_marginRight="@dimen/common_padding"
                         android:text="@{matrix.rows.get(0).elements.get(0).duration.text}"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}" />
+                        android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=","
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}" />
+                        android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
 
                     <TextView
                         android:id="@+id/distance_tv"
@@ -223,7 +223,7 @@
                         android:layout_marginBottom="@dimen/common_padding"
                         android:text="@{matrix.rows.get(0).elements.get(0).distance.text}"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}" />
+                        android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -242,14 +242,14 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginBottom="@dimen/common_padding"
                         android:layout_marginTop="@dimen/common_padding"
-                        android:rating="@{ratedValue}" />
+                        android:rating="@{ratedValue}"/>
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:background="@color/common_transparent"
-                        android:src="@{rating == null ? @drawable/ic_wanna_rating : @drawable/ic_rated}" />
+                        android:src="@{rating == null ? @drawable/ic_wanna_rating : @drawable/ic_rated}"/>
                 </LinearLayout>
 
 
@@ -268,7 +268,7 @@
             android:visibility="gone"
             app:matProg_barColor="@color/primary_dark_color"
             app:matProg_fillRadius="true"
-            app:matProg_progressIndeterminate="true" />
+            app:matProg_progressIndeterminate="true"/>
 
 
         <com.pnikosis.materialishprogress.ProgressWheel
@@ -279,7 +279,7 @@
             android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"
             app:matProg_barColor="@color/primary_dark_color"
             app:matProg_fillRadius="true"
-            app:matProg_progressIndeterminate="true" />
+            app:matProg_progressIndeterminate="true"/>
 
         <LinearLayout
             android:id="@+id/operating_bar_vg"
@@ -312,7 +312,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:background="@color/common_transparent"
-                    android:src="@drawable/ic_favorite_outline" />
+                    android:src="@drawable/ic_favorite_outline"/>
             </com.playground.notification.views.MaterialRippleLayout>
 
             <com.playground.notification.views.MaterialRippleLayout
@@ -336,7 +336,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:background="@color/common_transparent"
-                    android:src="@drawable/ic_geo_fence_no_check" />
+                    android:src="@drawable/ic_geo_fence_no_check"/>
             </com.playground.notification.views.MaterialRippleLayout>
 
 
@@ -362,7 +362,7 @@
                     android:layout_gravity="center"
                     android:background="@color/common_transparent"
                     android:contentDescription="@string/lbl_go"
-                    android:src="@drawable/ic_navigation" />
+                    android:src="@drawable/ic_navigation"/>
             </com.playground.notification.views.MaterialRippleLayout>
 
 
@@ -388,7 +388,7 @@
                     android:layout_gravity="center"
                     android:background="@color/common_transparent"
                     android:contentDescription="@string/lbl_go"
-                    android:src="@drawable/ic_share_ground" />
+                    android:src="@drawable/ic_share_ground"/>
             </com.playground.notification.views.MaterialRippleLayout>
 
         </LinearLayout>
@@ -396,8 +396,9 @@
         <FrameLayout
             android:id="@+id/showcase_vg"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:visibility="gone"
-            android:background="@drawable/gradient_line"  >
+            android:layout_height="match_parent"
+            android:background="@drawable/gradient_line"
+            android:visibility="gone">
 
             <ImageButton
                 android:id="@+id/close_btn"
@@ -405,7 +406,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|end"
                 android:background="@color/common_transparent"
-                android:src="@drawable/ic_close" />
+                android:src="@drawable/ic_close"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -425,7 +426,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:background="@color/common_transparent"
-                        android:src="@drawable/ic_favorite_outline" />
+                        android:src="@drawable/ic_favorite_outline"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -434,7 +435,7 @@
                         android:text="@string/showcase_fav"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/common_black"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -447,7 +448,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:background="@color/common_transparent"
-                        android:src="@drawable/ic_geo_fence_no_check" />
+                        android:src="@drawable/ic_geo_fence_no_check"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -456,7 +457,7 @@
                         android:text="@string/showcase_near_ring"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/common_black"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -470,7 +471,7 @@
                         android:layout_gravity="center_vertical"
                         android:background="@color/common_transparent"
                         android:contentDescription="@string/lbl_go"
-                        android:src="@drawable/ic_navigation" />
+                        android:src="@drawable/ic_navigation"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -479,7 +480,7 @@
                         android:text="@string/showcase_navi"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/common_black"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -493,7 +494,7 @@
                         android:layout_gravity="center_vertical"
                         android:background="@color/common_transparent"
                         android:contentDescription="@string/lbl_go"
-                        android:src="@drawable/ic_share_ground" />
+                        android:src="@drawable/ic_share_ground"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -502,7 +503,7 @@
                         android:text="@string/showcase_share"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/common_black"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -537,7 +538,7 @@
                     android:paddingBottom="5dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    android:paddingTop="5dp" />
+                    android:paddingTop="5dp"/>
 
 
                 <FrameLayout
@@ -568,6 +569,14 @@
                 </FrameLayout>
 
             </LinearLayout>
+
+
+            <ImageView
+                android:id="@+id/swipe_up_iv"
+                app:srcCompat="@drawable/ic_swipe_up"
+                android:layout_gravity="center"
+                android:layout_width="100dp"
+                android:layout_height="100dp"/>
         </FrameLayout>
     </RelativeLayout>
 </layout>
