@@ -44,9 +44,7 @@
         <item name="android:colorAccent">@color/primary_dark_color</item>
     </style>
 
-    <style name="PagerTheme" parent="Theme.AppCompat.Light.Dialog" >
-        <item name="android:windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
+    <style name="PagerTheme" parent="Theme.AppCompat.Light.NoActionBar" >
         <item name="android:windowTitleStyle">@style/DialogTitleTextStyle</item>
     </style>
 
