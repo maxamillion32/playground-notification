@@ -1,8 +1,10 @@
 package com.playground.notification.utils;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.chopping.application.BasicPrefs;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Store app and device information.
@@ -65,6 +67,11 @@ public final class Prefs extends BasicPrefs {
 	 * The weather-API host.
 	 */
 	private static final String KEY_WEATHER_API_HOST       = "weather_api";
+	/**
+	 * API for streetview.
+	 */
+	private static final String KEY_STREET_VIEW             = "street_view";
+
 
 	private static final String ADS = "ads";
 
@@ -343,5 +350,18 @@ public final class Prefs extends BasicPrefs {
 	 */
 	public boolean isShowcaseShown( String name ) {
 		return getBoolean( name, false );
+	}
+
+	/**
+	 * Get API to show streetview image.
+	 *
+	 * @param width  Image width.
+	 * @param height Image height.
+	 * @param location  Position to show on streetview.
+	 * @return A valid url to API.
+	 */
+	public String getApiStreetView(int width, int height, @NonNull  LatLng location) {
+		String src = getString(KEY_STREET_VIEW, "http://maps.googleapis.com/maps/api/streetview?size=%dx%d&location=%f,%f");
+		return String.format(src, width, height, location.latitude, location.longitude);
 	}
 }

@@ -113,7 +113,6 @@
                         <ImageButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@color/common_transparent"
                             app:srcCompat="@drawable/ic_streetview"/>
                     </com.playground.notification.views.MaterialRippleLayout>
                 </FrameLayout>
