@@ -11,6 +11,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.content.res.AppCompatResources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -257,6 +258,10 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 				@Override
 				public void onClick(View view) {
 					mShowMap = !mShowMap;
+					mBinding.viewSwitchIbtn.setImageDrawable(AppCompatResources.getDrawable(App.Instance,
+					                                                                        mShowMap ?
+					                                                                        R.drawable.ic_streetview :
+					                                                                        R.drawable.ic_map));
 					setPreview();
 				}
 			});

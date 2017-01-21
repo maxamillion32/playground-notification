@@ -99,18 +99,17 @@
                     </com.playground.notification.views.MaterialRippleLayout>
 
                     <com.playground.notification.views.MaterialRippleLayout
-                        android:id="@+id/view_switch_ibtn"
                         style="@style/MaterialRippleLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom|end|right"
                         android:layout_marginBottom="10dp"
                         android:layout_marginEnd="10dp"
-                        android:layout_marginRight="10dp"
-                        android:padding="10dp">
+                        android:layout_marginRight="10dp" >
 
 
                         <ImageButton
+                            android:id="@+id/view_switch_ibtn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             app:srcCompat="@drawable/ic_streetview"/>
