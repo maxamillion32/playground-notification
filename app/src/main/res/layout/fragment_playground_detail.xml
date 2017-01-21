@@ -79,12 +79,44 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
                     android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
 
-                <ImageView
-                    android:id="@+id/location_preview_iv"
+                <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
+                    android:layout_gravity="center_horizontal">
+
+
+                    <com.playground.notification.views.MaterialRippleLayout
+                        style="@style/MaterialRippleLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal">
+
+                        <ImageView
+                            android:id="@+id/location_preview_iv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
+                    </com.playground.notification.views.MaterialRippleLayout>
+
+                    <com.playground.notification.views.MaterialRippleLayout
+                        android:id="@+id/view_switch_ibtn"
+                        style="@style/MaterialRippleLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end|right"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginRight="10dp"
+                        android:padding="10dp">
+
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/common_transparent"
+                            app:srcCompat="@drawable/ic_streetview"/>
+                    </com.playground.notification.views.MaterialRippleLayout>
+                </FrameLayout>
 
                 <LinearLayout
                     android:id="@+id/travel_vg"
@@ -299,7 +331,6 @@
                 android:layout_gravity="center_vertical|end"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
-                android:background="@color/common_transparent"
                 android:onClick="@{handler.onSaveFavClicked}"
                 android:paddingBottom="5dp"
                 android:paddingLeft="5dp"
@@ -323,7 +354,6 @@
                 android:layout_gravity="center_vertical|end"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
-                android:background="@color/common_transparent"
                 android:onClick="@{handler.onSaveNearRingClicked}"
                 android:paddingBottom="5dp"
                 android:paddingLeft="5dp"
@@ -348,7 +378,6 @@
                 android:layout_gravity="center_vertical|end"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
-                android:background="@color/common_transparent"
                 android:onClick="@{handler.onGoClicked}"
                 android:paddingBottom="5dp"
                 android:paddingLeft="5dp"
@@ -374,7 +403,6 @@
                 android:layout_gravity="center_vertical|end"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
-                android:background="@color/common_transparent"
                 android:onClick="@{handler.onShareGround}"
                 android:paddingBottom="5dp"
                 android:paddingLeft="5dp"
@@ -573,10 +601,10 @@
 
             <ImageView
                 android:id="@+id/swipe_up_iv"
-                app:srcCompat="@drawable/ic_swipe_up"
-                android:layout_gravity="center"
                 android:layout_width="100dp"
-                android:layout_height="100dp"/>
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_swipe_up"/>
         </FrameLayout>
     </RelativeLayout>
 </layout>
