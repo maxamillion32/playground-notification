@@ -264,6 +264,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 				@Override
 				public void onClick(View view) {
 					view.setVisibility(View.INVISIBLE);
+					mBinding.loadingImgPb.setVisibility(View.VISIBLE);
 					mShowMap = !mShowMap;
 					mBinding.viewSwitchIbtn.setImageDrawable(AppCompatResources.getDrawable(App.Instance,
 					                                                                        mShowMap ?
@@ -412,12 +413,14 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 				     @Override
 				     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
 					     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
+					     mBinding.loadingImgPb.setVisibility(View.GONE);
 					     return false;
 				     }
 
 				     @Override
 				     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
 					     mBinding.viewSwitchIbtn.setVisibility(View.INVISIBLE);
+					     mBinding.loadingImgPb.setVisibility(View.GONE);
 					     return false;
 				     }
 			     })
@@ -433,6 +436,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 				     @Override
 				     public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
 					     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
+					     mBinding.loadingImgPb.setVisibility(View.GONE);
 					     boolean streetViewAvail = streetViewBitmapHasRealContent(resource);
 					     if (!streetViewAvail) {
 						     com.chopping.utils.Utils.showLongToast(getContext(), R.string.streetview_not_available);
@@ -443,6 +447,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 				     @Override
 				     public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
 					     mBinding.viewSwitchIbtn.setVisibility(View.INVISIBLE);
+					     mBinding.loadingImgPb.setVisibility(View.GONE);
 					     return false;
 				     }
 			     })

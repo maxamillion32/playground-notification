@@ -115,6 +115,15 @@
                             android:visibility="invisible"
                             app:srcCompat="@drawable/ic_streetview"/>
                     </com.playground.notification.views.MaterialRippleLayout>
+
+                    <com.pnikosis.materialishprogress.ProgressWheel
+                        android:id="@+id/loading_img_pb"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        app:matProg_barColor="@color/primary_dark_color"
+                        app:matProg_fillRadius="true"
+                        app:matProg_progressIndeterminate="true"/>
                 </FrameLayout>
 
                 <LinearLayout
