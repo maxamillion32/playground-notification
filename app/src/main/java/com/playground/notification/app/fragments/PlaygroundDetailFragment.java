@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.chopping.application.LL;
@@ -262,6 +263,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 			mBinding.viewSwitchIbtn.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View view) {
+					view.setVisibility(View.INVISIBLE);
 					mShowMap = !mShowMap;
 					mBinding.viewSwitchIbtn.setImageDrawable(AppCompatResources.getDrawable(App.Instance,
 					                                                                        mShowMap ?
@@ -406,27 +408,45 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 					.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
 			Glide.with(App.Instance)
 			     .load(url)
+			     .listener(new RequestListener<String, GlideDrawable>() {
+				     @Override
+				     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+					     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
+					     return false;
+				     }
+
+				     @Override
+				     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+					     mBinding.viewSwitchIbtn.setVisibility(View.INVISIBLE);
+					     return false;
+				     }
+			     })
 			     .into(mBinding.locationPreviewIv);
 
 		} else {
 			url = prefs.getApiStreetView(700, 350, new LatLng(playground.getLatitude(), playground.getLongitude()));
 			Glide.with(App.Instance)
-			     .load(url).asBitmap().listener(new RequestListener<String, Bitmap>() {
+			     .load(url)
+			     .asBitmap()
+			     .listener(new RequestListener<String, Bitmap>() {
 
-				@Override
-				public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-					boolean streetViewAvail = streetViewBitmapHasRealContent(resource);
-					if (!streetViewAvail) {
-						com.chopping.utils.Utils.showLongToast(getContext(), R.string.streetview_not_available);
-					}
-					return false;
-				}
+				     @Override
+				     public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+					     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
+					     boolean streetViewAvail = streetViewBitmapHasRealContent(resource);
+					     if (!streetViewAvail) {
+						     com.chopping.utils.Utils.showLongToast(getContext(), R.string.streetview_not_available);
+					     }
+					     return false;
+				     }
 
-				@Override
-				public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
-					return false;
-				}
-			}).into(mBinding.locationPreviewIv);
+				     @Override
+				     public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+					     mBinding.viewSwitchIbtn.setVisibility(View.INVISIBLE);
+					     return false;
+				     }
+			     })
+			     .into(mBinding.locationPreviewIv);
 		}
 
 		if (getArguments().getBoolean(EXTRAS_CLICKABLE)) {
