@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -125,16 +125,23 @@ public final class Utils {
 		return val;
 	}
 
-	public static Bitmap getResizedBitmap(Bitmap bm, float newWidth, float newHeight ) {
-		int   width       = bm.getWidth();
-		int   height      = bm.getHeight();
-		float scaleWidth  = newWidth / width;
-		float scaleHeight = newHeight / height;
-		// CREATE A MATRIX FOR THE MANIPULATION
-		Matrix matrix = new Matrix();
-		// RESIZE THE BITMAP
-		matrix.postScale( scaleWidth, scaleHeight );
-		// "RECREATE" THE NEW BITMAP
-		return Bitmap.createBitmap( bm, 0, 0, width, height, matrix, false );
+	public static boolean streetViewBitmapHasRealContent(@NonNull  Bitmap bitmap) {
+		if (bitmap == null || bitmap.isRecycled()) {
+			return false;
+		}
+
+		int color = bitmap.getPixel(0, 0);
+		for (int i = 0;
+				i < bitmap.getWidth();
+				i++) {
+
+			int compareColor = bitmap.getPixel(i, 0);
+			if (compareColor != color) {
+				return true;
+			}
+
+		}
+		return false;
+
 	}
 }

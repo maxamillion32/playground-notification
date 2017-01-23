@@ -40,9 +40,7 @@ import com.playground.notification.utils.Prefs;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.attr.screenSize;
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
-import static com.playground.notification.utils.Utils.getResizedBitmap;
 
 /**
  * A list of all my-locations.

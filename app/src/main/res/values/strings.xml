@@ -204,4 +204,6 @@
     <string name="app_settings_dialog_title_settings_dialog">Permissions Required</string>
     <string name="app_settings_dialog_setting">Settings</string>
     <string name="app_settings_dialog_cancel">Close app</string>
+
+    <string name="streetview_not_available">Cannot show content of streetview.</string>
 </resources>

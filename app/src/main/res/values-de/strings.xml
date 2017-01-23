@@ -131,4 +131,6 @@
     <string name="app_settings_dialog_setting">Eingstellng</string>
     <string name="app_settings_dialog_cancel">App schließen</string>
 
+    <string name="streetview_not_available">Streetview ist nicht verfügbar.</string>
+
 </resources>

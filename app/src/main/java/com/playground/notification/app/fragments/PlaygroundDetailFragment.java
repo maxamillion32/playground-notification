@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +19,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.chopping.application.LL;
 import com.google.android.gms.maps.model.LatLng;
 import com.nineoldandroids.animation.Animator;
@@ -58,6 +61,8 @@ import de.greenrobot.event.EventBus;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+
+import static com.playground.notification.utils.Utils.streetViewBitmapHasRealContent;
 
 /**
  * Show details of a playground, address, rating.
@@ -399,13 +404,31 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 			                 "hybrid";
 			url = prefs.getGoogleApiHost() + "maps/api/staticmap?center=" + latlng + "&zoom=16&size=" + prefs.getDetailPreviewSize() + "&markers=color:red%7Clabel:S%7C" + latlng + "&key=" + App
 					.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
+			Glide.with(App.Instance)
+			     .load(url)
+			     .into(mBinding.locationPreviewIv);
 
 		} else {
 			url = prefs.getApiStreetView(700, 350, new LatLng(playground.getLatitude(), playground.getLongitude()));
+			Glide.with(App.Instance)
+			     .load(url).asBitmap().listener(new RequestListener<String, Bitmap>() {
+
+				@Override
+				public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+					boolean streetViewAvail = streetViewBitmapHasRealContent(resource);
+					if (!streetViewAvail) {
+						com.chopping.utils.Utils.showLongToast(getContext(), R.string.streetview_not_available);
+					}
+					return false;
+				}
+
+				@Override
+				public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+					return false;
+				}
+			}).into(mBinding.locationPreviewIv);
 		}
-		Glide.with(App.Instance)
-		     .load(url)
-		     .into(mBinding.locationPreviewIv);
+
 		if (getArguments().getBoolean(EXTRAS_CLICKABLE)) {
 			mBinding.locationPreviewIv.setOnClickListener(new OnClickListener() {
 				@Override
