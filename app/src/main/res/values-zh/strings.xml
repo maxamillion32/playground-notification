@@ -137,7 +137,6 @@
     <string name="showcase_navi">导航到这个地方。</string>
     <string name="showcase_share">分享这个地方给您的朋友们。</string>
 
-    <string name="msg_permission_prompt">没有－读取电话状态，写入存储，位置－的权限，应用无法运行…</string>
 
     <string name="rationale_permissions_phone_state_storage">此应用需要访问设备状态，外部存储的权限…</string>
     <string name="rationale_permissions_location">此应用需要访问位置的权限…</string>
