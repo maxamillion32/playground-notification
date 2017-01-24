@@ -9,10 +9,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.content.res.AppCompatResources;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.playground.notification.R;
@@ -26,7 +26,7 @@ import com.playground.notification.databinding.StreetViewBinding;
  *
  * @author Xinyue Zhao
  */
-public final class StreetViewActivity extends AppCompatActivity {
+public final class StreetViewActivity extends AppActivity {
 
 	private static final String EXTRAS_TITLE = StreetViewActivity.class.getName() + ".EXTRAS.";
 	private static final String EXTRAS_LOCATION = StreetViewActivity.class.getName() + ".EXTRAS.location";
@@ -55,6 +55,8 @@ public final class StreetViewActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		StreetViewBinding binding = DataBindingUtil.setContentView(this, LAYOUT);
+		//Init application basic elements.
+		setUpErrorHandling((ViewGroup) findViewById(R.id.error_content));
 		setSupportActionBar(binding.toolbar);
 		handleIntent(getIntent());
 	}

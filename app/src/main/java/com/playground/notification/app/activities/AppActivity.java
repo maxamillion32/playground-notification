@@ -26,7 +26,7 @@ import com.playground.notification.utils.Prefs;
  *
  * @author Xinyue Zhao
  */
-public class AppActivity extends BaseActivity {
+public abstract class AppActivity extends BaseActivity {
 	/**
 	 * Height of App-bar.
 	 */
