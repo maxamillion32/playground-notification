@@ -446,6 +446,9 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 						     mBinding.locationPreviewIv.setOnClickListener(new OnClickListener() {
 							     @Override
 							     public void onClick(View view) {
+								     if (mShowMap) {
+									     return;
+								     }
 								     Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
 								     if (playground == null) {
 									     return;
@@ -481,8 +484,10 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 			mBinding.locationPreviewIv.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-					MapActivity.showInstance((Activity) mBinding.locationPreviewIv.getContext(), playground);
+					if(mShowMap) {
+						Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+						MapActivity.showInstance((Activity) mBinding.locationPreviewIv.getContext(), playground);
+					}
 				}
 			});
 		}
