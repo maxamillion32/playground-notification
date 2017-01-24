@@ -75,7 +75,7 @@ public final class StreetViewActivity extends AppCompatActivity {
 
 		final ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
-			actionBar.setHomeAsUpIndicator(AppCompatResources.getDrawable(App.Instance, R.drawable.ic_close_light));
+			actionBar.setHomeAsUpIndicator(AppCompatResources.getDrawable(App.Instance, R.drawable.ic_action_close));
 			actionBar.setDisplayHomeAsUpEnabled(true);
 			actionBar.setTitle(title);
 		}
