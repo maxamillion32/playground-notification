@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.content.res.AppCompatResources;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -30,6 +31,11 @@ public final class StreetViewActivity extends AppCompatActivity {
 	private static final String EXTRAS_TITLE = StreetViewActivity.class.getName() + ".EXTRAS.";
 	private static final String EXTRAS_LOCATION = StreetViewActivity.class.getName() + ".EXTRAS.location";
 	private static final int LAYOUT = R.layout.activity_street_view;
+
+	/**
+	 * View's menu.
+	 */
+	private static final int MENU = R.menu.menu_streetview;
 
 	/**
 	 * Show single instance of {@link}
@@ -64,6 +70,18 @@ public final class StreetViewActivity extends AppCompatActivity {
 	private void handleIntent(Intent intent) {
 		String title = intent.getStringExtra(EXTRAS_TITLE);
 		LatLng location = intent.getParcelableExtra(EXTRAS_LOCATION);
+
+		showLocationStreetView(location);
+
+		final ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setHomeAsUpIndicator(AppCompatResources.getDrawable(App.Instance, R.drawable.ic_close_light));
+			actionBar.setDisplayHomeAsUpEnabled(true);
+			actionBar.setTitle(title);
+		}
+	}
+
+	private void showLocationStreetView(LatLng location) {
 		Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.street_view_fragment_container);
 		StreetViewFragment dialogFragment;
 		if (fragment == null) {
@@ -75,19 +93,24 @@ public final class StreetViewActivity extends AppCompatActivity {
 			dialogFragment = (StreetViewFragment) fragment;
 			dialogFragment.setStreetView(location);
 		}
-		final ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			actionBar.setHomeAsUpIndicator(AppCompatResources.getDrawable(App.Instance, R.drawable.ic_close_light));
-			actionBar.setDisplayHomeAsUpEnabled(true);
-			actionBar.setTitle(title);
-		}
 	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(MENU, menu);
+		return true;
+	}
+
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
 				ActivityCompat.finishAfterTransition(this);
+				break;
+			case R.id.action_my_location:
+				LatLng location = getIntent().getParcelableExtra(EXTRAS_LOCATION);
+				showLocationStreetView(location);
 				break;
 		}
 		return super.onOptionsItemSelected(item);

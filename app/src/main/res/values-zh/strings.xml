@@ -13,6 +13,7 @@
     <string name="action_data_support">数据来源</string>
     <string name="action_delete_all">删除所有</string>
     <string name="action_my_location_list">自己找到的地方(%1$d)</string>
+    <string name="action_my_location">我的位置</string>
 
     <string name="btn_confirm">确认</string>
     <string name="btn_yes">是</string>

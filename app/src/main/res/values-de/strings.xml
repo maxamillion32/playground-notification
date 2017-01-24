@@ -12,6 +12,7 @@
     <string name="action_data_support">Datenquelle</string>
     <string name="action_delete_all">Alle entfernen</string>
     <string name="action_my_location_list">Meine Lokalisationen(%1$d)</string>
+    <string name="action_my_location">Mein Ort</string>
 
     <string name="btn_confirm">Sicher</string>
     <string name="btn_yes">Ja</string>
