@@ -34,6 +34,7 @@ import com.playground.notification.app.App;
 import com.playground.notification.app.activities.AppActivity;
 import com.playground.notification.app.activities.MapActivity;
 import com.playground.notification.bus.ShowLocationRatingEvent;
+import com.playground.notification.bus.ShowStreetViewEvent;
 import com.playground.notification.databinding.PlaygroundDetailBinding;
 import com.playground.notification.databinding.RatingDialogBinding;
 import com.playground.notification.ds.google.Matrix;
@@ -440,6 +441,27 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 					     boolean streetViewAvail = streetViewBitmapHasRealContent(resource);
 					     if (!streetViewAvail) {
 						     com.chopping.utils.Utils.showLongToast(getContext(), R.string.streetview_not_available);
+						     mBinding.locationPreviewIv.setOnClickListener(null);
+					     } else {
+						     mBinding.locationPreviewIv.setOnClickListener(new OnClickListener() {
+							     @Override
+							     public void onClick(View view) {
+								     Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+								     if (playground == null) {
+									     return;
+								     }
+								     final Matrix matrix = mBinding.getMatrix();
+								     if (playground.getPosition() != null &&
+										     matrix != null &&
+										     matrix.getDestination() != null &&
+										     matrix.getDestination().size() > 0 &&
+										     matrix.getDestination().get(0) != null) {
+									     EventBus.getDefault()
+									             .post(new ShowStreetViewEvent(matrix.getDestination()
+									                                                 .get(0), playground.getPosition()));
+								     }
+							     }
+						     });
 					     }
 					     return false;
 				     }
@@ -448,6 +470,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 				     public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
 					     mBinding.viewSwitchIbtn.setVisibility(View.INVISIBLE);
 					     mBinding.loadingImgPb.setVisibility(View.GONE);
+					     mBinding.locationPreviewIv.setOnClickListener(null);
 					     return false;
 				     }
 			     })

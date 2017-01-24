@@ -10,7 +10,6 @@ import android.app.SearchableInfo;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
-import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
 import android.os.Bundle;
@@ -35,8 +34,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -91,6 +88,7 @@ import com.playground.notification.bus.MyLocationLoadingErrorEvent;
 import com.playground.notification.bus.MyLocationLoadingSuccessEvent;
 import com.playground.notification.bus.NearRingListLoadingErrorEvent;
 import com.playground.notification.bus.NearRingListLoadingSuccessEvent;
+import com.playground.notification.bus.ShowStreetViewEvent;
 import com.playground.notification.databinding.MainBinding;
 import com.playground.notification.ds.google.Geobound;
 import com.playground.notification.ds.google.Geocode;
@@ -124,7 +122,6 @@ import retrofit.client.Response;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
-import static com.playground.notification.map.PlaygroundClusterManager.showAvailablePlaygrounds;
 import static pub.devrel.easypermissions.AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE;
 
 
@@ -287,6 +284,15 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		updateDrawerMenuItem(R.id.action_my_location_list, R.string.action_my_location_list, MyLocationManager.getInstance());
 	}
 
+
+	/**
+	 * Handler for {@link ShowStreetViewEvent}.
+	 *
+	 * @param e Event {@link ShowStreetViewEvent}.
+	 */
+	public void onEvent(ShowStreetViewEvent e) {
+		StreetViewActivity.showInstance(this, e.getTitle(), e.getLocation());
+	}
 	//------------------------------------------------
 
 	/**

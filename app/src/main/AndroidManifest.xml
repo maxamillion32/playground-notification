@@ -83,6 +83,11 @@
             android:screenOrientation="portrait" />
 
 
+        <activity
+            android:name=".app.activities.StreetViewActivity"
+            android:screenOrientation="landscape" />
+
+
         <!--Include the AdActivity configChanges and theme. --><activity
         android:name="com.google.android.gms.ads.AdActivity"
         android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
