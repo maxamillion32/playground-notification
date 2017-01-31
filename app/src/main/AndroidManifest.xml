@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-    package="com.playground.notification"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.playground.notification">
 
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION"/>
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:name=".app.App"
@@ -26,22 +26,24 @@
         tools:replace="android:label">
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+            android:value="@integer/google_play_services_version"/>
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="@string/google_maps_key"/>
 
         <provider
             android:name=".app.SearchSuggestionProvider"
             android:authorities="@string/suggestion_auth"
-            android:exported="false" />
+            android:exported="false"/>
+
         <activity
-            android:name=".app.activities.SplashActivity"  android:screenOrientation="portrait"
+            android:name=".app.activities.SplashActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
@@ -52,56 +54,60 @@
 
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value=".activities.MapsActivity" />
+                android:value=".activities.MapsActivity"/>
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
+                <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
+                android:resource="@xml/searchable"/>
         </activity>
 
         <activity
             android:name=".app.activities.ConnectGoogleActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.FirstPage" />
+            android:theme="@style/AppTheme.FirstPage"/>
 
         <activity
             android:name=".app.activities.ViewPagerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/PagerTheme" />
+            android:theme="@style/PagerTheme"/>
 
         <activity
             android:name=".app.activities.SettingsActivity"
             android:label="@string/action_settings"
             android:screenOrientation="portrait"
-            android:theme="@style/SettingsTheme" />
+            android:theme="@style/SettingsTheme"/>
 
         <activity
             android:name=".app.activities.MyLocationListActivity"
             android:label="@string/lbl_my_location_list"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
 
 
         <activity
             android:name=".app.activities.StreetViewActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"/>
 
+        <activity
+            android:name=".app.activities.PlaygroundListActivity"
+            android:screenOrientation="portrait"/>
 
-        <!--Include the AdActivity configChanges and theme. --><activity
-        android:name="com.google.android.gms.ads.AdActivity"
-        android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-        android:screenOrientation="portrait"
-        android:theme="@android:style/Theme.Translucent" />
+        <!--Include the AdActivity configChanges and theme. -->
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent"/>
 
         <service
             android:name=".geofence.GeofenceManagerService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"/>
         <service
             android:name=".geofence.GeofenceTransitionsIntentService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"/>
 
         <!--Event handler for changing system packages.-->
         <receiver
@@ -109,35 +115,36 @@
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_ADDED" />
-                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <action android:name="android.intent.action.PACKAGE_ADDED"/>
+                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
 
-                <data android:scheme="package" />
+                <data android:scheme="package"/>
             </intent-filter>
         </receiver>
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="0bf5835ac1569fe382ff64839c0be3d3ed9396b9" />
+            android:value="0bf5835ac1569fe382ff64839c0be3d3ed9396b9"/>
 
 
         <service
             android:name=".app.noactivities.AppGuardService"
-            android:exported="true"
-            android:enabled="true"  />
+            android:enabled="true"
+            android:exported="true"/>
         <service
             android:name=".app.noactivities.NotifyUserService"
             android:enabled="true"
-            android:exported="false" >
+            android:exported="false">
         </service>
         <service
             android:name=".app.noactivities.TickerService"
             android:enabled="true"
             android:exported="true"/>
+
         <receiver
             android:name=".app.noactivities.BootReceiver"
-            android:enabled="true" >
+            android:enabled="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
     </application>

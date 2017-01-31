@@ -13,6 +13,8 @@
     <string name="action_delete_all">Alle entfernen</string>
     <string name="action_my_location_list">Meine Lokalisationen(%1$d)</string>
     <string name="action_my_location">Mein Ort</string>
+    <string name="action_list_mode">Liste</string>
+    <string name="action_map_mode">Karte</string>
 
     <string name="btn_confirm">Sicher</string>
     <string name="btn_yes">Ja</string>

@@ -1230,7 +1230,9 @@ public final class MapActivity extends AppActivity implements LocationListener,
 			case R.id.action_about:
 				showDialogFragment(AboutDialogFragment.newInstance(this), null);
 				break;
-
+			case R.id.action_list_mode:
+				PlaygroundListActivity.showInstance(this);
+				break;
 		}
 		return super.onOptionsItemSelected(item);
 	}

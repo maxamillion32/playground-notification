@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context=".app.activities.PlaygroundListActivity">
+
+    <item
+        android:id="@+id/action_map_mode"
+        android:icon="@drawable/ic_action_map_mode"
+        android:title="@string/action_map_mode"
+        app:showAsAction="always"/>
+
+</menu>
