@@ -15,6 +15,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -191,6 +192,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * The interstitial ad.
 	 */
 	private InterstitialAd mInterstitialAd;
+	private @Nullable  List<Playground> mAvailablePlaygroundList;
 
 
 	//------------------------------------------------
@@ -1132,15 +1134,15 @@ public final class MapActivity extends AppActivity implements LocationListener,
 						}
 						if (mMap != null) {
 							mMap.clear();
-							List<Playground> availablePlaygroundList = playgrounds.getPlaygroundList() == null ?
+							mAvailablePlaygroundList = playgrounds.getPlaygroundList() == null ?
 							                                           new ArrayList<Playground>() :
 							                                           playgrounds.getPlaygroundList();
 							if (MyLocationManager.getInstance()
 							                     .isInit()) {
-								availablePlaygroundList.addAll(MyLocationManager.getInstance()
-								                                                .getCachedList());
+								mAvailablePlaygroundList.addAll(MyLocationManager.getInstance()
+								                                                 .getCachedList());
 							}
-							mPlaygroundClusterManager = PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, availablePlaygroundList);
+							mPlaygroundClusterManager = PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, mAvailablePlaygroundList);
 						}
 					}
 
@@ -1231,7 +1233,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 				showDialogFragment(AboutDialogFragment.newInstance(this), null);
 				break;
 			case R.id.action_list_mode:
-				PlaygroundListActivity.showInstance(this);
+				PlaygroundListActivity.showInstance(this, mAvailablePlaygroundList);
 				break;
 		}
 		return super.onOptionsItemSelected(item);

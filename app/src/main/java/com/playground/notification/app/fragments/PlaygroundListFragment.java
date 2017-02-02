@@ -5,18 +5,32 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.content.res.AppCompatResources;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.playground.notification.R;
+import com.playground.notification.app.adapters.PlaygroundListAdapter;
 import com.playground.notification.databinding.PlaygroundListBinding;
+import com.playground.notification.ds.grounds.Playground;
+
+import java.io.Serializable;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
+/**
+ * Show list of {@link com.playground.notification.ds.grounds.Playground}s.
+ *
+ * @author Xinyue Zhao
+ */
 public final class PlaygroundListFragment extends Fragment {
-
+	private static final String EXTRAS_PLAYGROUND_LIST = PlaygroundListFragment.class.getName() + ".EXTRAS.playground.list";
 	private static final int LAYOUT = R.layout.fragment_playground_list;
+	private PlaygroundListBinding mBinding;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -32,8 +46,9 @@ public final class PlaygroundListFragment extends Fragment {
 	}
 
 	//------------------------------------------------
-	public static PlaygroundListFragment newInstance(Context cxt) {
+	public static PlaygroundListFragment newInstance(Context cxt, List<Playground> playgroundList) {
 		Bundle args = new Bundle();
+		args.putSerializable(EXTRAS_PLAYGROUND_LIST, (Serializable) playgroundList);
 		return (PlaygroundListFragment) PlaygroundListFragment.instantiate(cxt, PlaygroundListFragment.class.getName(), args);
 	}
 
@@ -41,8 +56,19 @@ public final class PlaygroundListFragment extends Fragment {
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		PlaygroundListBinding binding = DataBindingUtil.inflate(inflater, LAYOUT, container, false);
-		return binding.getRoot();
+		mBinding = DataBindingUtil.inflate(inflater, LAYOUT, container, false);
+		return mBinding.getRoot();
+	}
+
+	@Override
+	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		mBinding.playgroundListRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+		mBinding.playgroundListRv.setAdapter(new PlaygroundListAdapter((List<Playground>) getArguments().getSerializable(EXTRAS_PLAYGROUND_LIST)));
+		final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+		dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.divider_drawable));
+		mBinding.playgroundListRv.addItemDecoration(dividerItemDecoration);
+
 	}
 
 	@Override
