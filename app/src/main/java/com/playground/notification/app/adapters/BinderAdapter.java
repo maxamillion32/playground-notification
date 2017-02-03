@@ -5,6 +5,7 @@ import android.databinding.BindingAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.playground.notification.app.App;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.utils.Prefs;
@@ -20,6 +21,8 @@ public final class BinderAdapter {
 		if (playground == null) {
 			Glide.with(App.Instance)
 			     .load(fallback)
+			     .skipMemoryCache(false)
+			     .diskCacheStrategy(DiskCacheStrategy.ALL)
 			     .into(imageView);
 			return;
 		}
@@ -35,10 +38,14 @@ public final class BinderAdapter {
 					App.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
 			Glide.with(App.Instance)
 			     .load(url)
+			     .skipMemoryCache(false)
+			     .diskCacheStrategy(DiskCacheStrategy.ALL)
 			     .into(imageView);
 		} catch (Exception e) {
 			Glide.with(App.Instance)
 			     .load(fallback)
+			     .skipMemoryCache(false)
+			     .diskCacheStrategy(DiskCacheStrategy.ALL)
 			     .into(imageView);
 		}
 	}
