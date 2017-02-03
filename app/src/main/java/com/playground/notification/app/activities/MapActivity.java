@@ -39,6 +39,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.chopping.application.LL;
@@ -123,6 +124,7 @@ import retrofit.client.Response;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
+import static com.playground.notification.utils.Utils.setBadgeText;
 import static pub.devrel.easypermissions.AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE;
 
 
@@ -192,9 +194,22 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * The interstitial ad.
 	 */
 	private InterstitialAd mInterstitialAd;
-	private @Nullable  List<Playground> mAvailablePlaygroundList;
-
-
+	/**
+	 * Current available {@link Playground}s you can see.
+	 */
+	private @Nullable List<Playground> mAvailablePlaygroundList;
+	/**
+	 * {@link TextView} shows the count of {@link Playground}s.
+	 */
+	private TextView mCountOfPlaygroundListTv;
+	/**
+	 * Manager for all "pin"s on map.
+	 */
+	private PlaygroundClusterManager mPlaygroundClusterManager;
+	/**
+	 * The  {@link MenuItem} that can open list of {@link Playground}s., on itself shows count of current count of {@link Playground}s.
+	 */
+	private MenuItem menuLocationList;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -950,7 +965,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 			mMap.clear();
 			mMap = null;
 		}
-		if(mPlaygroundClusterManager != null) {
+		if (mPlaygroundClusterManager != null) {
 			mPlaygroundClusterManager.clearItems();
 			mPlaygroundClusterManager = null;
 		}
@@ -1093,10 +1108,6 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		                GoogleMap.MAP_TYPE_SATELLITE);
 	}
 
-	/**
-	 * Manager for all "pin"s on map.
-	 */
-	private PlaygroundClusterManager mPlaygroundClusterManager;
 
 	/**
 	 * Draw grounds on map.
@@ -1135,14 +1146,15 @@ public final class MapActivity extends AppActivity implements LocationListener,
 						if (mMap != null) {
 							mMap.clear();
 							mAvailablePlaygroundList = playgrounds.getPlaygroundList() == null ?
-							                                           new ArrayList<Playground>() :
-							                                           playgrounds.getPlaygroundList();
+							                           new ArrayList<Playground>() :
+							                           playgrounds.getPlaygroundList();
 							if (MyLocationManager.getInstance()
 							                     .isInit()) {
 								mAvailablePlaygroundList.addAll(MyLocationManager.getInstance()
 								                                                 .getCachedList());
 							}
 							mPlaygroundClusterManager = PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, mAvailablePlaygroundList);
+							updateBadgeTextOnAppBar();
 						}
 					}
 
@@ -1155,6 +1167,18 @@ public final class MapActivity extends AppActivity implements LocationListener,
 				//Ignore this request.
 				mBinding.loadPinPb.setVisibility(View.GONE);
 			}
+		}
+	}
+
+	/**
+	 * Refresh count of playground on app-bar on menu.
+	 */
+	private void updateBadgeTextOnAppBar() {
+		if (mAvailablePlaygroundList == null || mAvailablePlaygroundList.size() <= 0) {
+			menuLocationList.setVisible(false);
+		} else {
+			menuLocationList.setVisible(true);
+			setBadgeText(mCountOfPlaygroundListTv, mAvailablePlaygroundList.size());
 		}
 	}
 
@@ -1204,8 +1228,28 @@ public final class MapActivity extends AppActivity implements LocationListener,
 			SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
 			mSearchView.setSearchableInfo(info);
 		}
+
+		initBadgeMenuItemsOnAppBar(menu);
 		return true;
 	}
+
+	/**
+	 * Initialize the  {@link MenuItem} that can open list of {@link Playground}s., on itself shows count of current count of {@link Playground}s.
+	 *
+	 * @param menu The  {@link MenuItem} that can open list of {@link Playground}s., on itself shows count of current count of {@link Playground}s.
+	 */
+	private void initBadgeMenuItemsOnAppBar(Menu menu) {
+		menuLocationList = menu.findItem(R.id.action_list_mode);
+		View menuLayoutV = MenuItemCompat.getActionView(menuLocationList);
+		mCountOfPlaygroundListTv = (TextView) menuLayoutV.findViewById(R.id.playgrounds_count_tv);
+		mCountOfPlaygroundListTv.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				PlaygroundListActivity.showInstance(MapActivity.this, mAvailablePlaygroundList);
+			}
+		});
+	}
+
 
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
@@ -1231,9 +1275,6 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		switch (item.getItemId()) {
 			case R.id.action_about:
 				showDialogFragment(AboutDialogFragment.newInstance(this), null);
-				break;
-			case R.id.action_list_mode:
-				PlaygroundListActivity.showInstance(this, mAvailablePlaygroundList);
 				break;
 		}
 		return super.onOptionsItemSelected(item);
