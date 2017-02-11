@@ -28,7 +28,7 @@
             android:rating="@{rating.value}" />
 
 
-        <com.playground.notification.views.MaterialRippleLayout
+        <com.playground.notification.ui.MaterialRippleLayout
             style="@style/MaterialRippleLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,6 +48,6 @@
                 android:text="@string/btn_confirm"
                 android:textAppearance="@style/TextAppearance.AppCompat.Button"
                 android:textColor="@color/primary_dark_color" />
-        </com.playground.notification.views.MaterialRippleLayout>
+        </com.playground.notification.ui.MaterialRippleLayout>
     </LinearLayout>
 </layout>

@@ -49,8 +49,8 @@
         android:layout_height="wrap_content"
         android:background="@color/common_white">
 
-        <android.support.v4.widget.NestedScrollView
-            android:id="@+id/info_vg"
+        <com.playground.notification.ui.ib.appcompat.IBCompatNestedScrollView
+            android:id="@id/ib_compat_nested_scrollview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/operating_bar_vg"
@@ -85,7 +85,7 @@
                     android:layout_gravity="center_horizontal">
 
 
-                    <com.playground.notification.views.MaterialRippleLayout
+                    <com.playground.notification.ui.MaterialRippleLayout
                         style="@style/MaterialRippleLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -96,9 +96,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
-                    </com.playground.notification.views.MaterialRippleLayout>
+                    </com.playground.notification.ui.MaterialRippleLayout>
 
-                    <com.playground.notification.views.MaterialRippleLayout
+                    <com.playground.notification.ui.MaterialRippleLayout
                         style="@style/MaterialRippleLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -114,7 +114,7 @@
                             android:layout_height="wrap_content"
                             android:visibility="invisible"
                             app:srcCompat="@drawable/ic_streetview"/>
-                    </com.playground.notification.views.MaterialRippleLayout>
+                    </com.playground.notification.ui.MaterialRippleLayout>
 
                     <com.pnikosis.materialishprogress.ProgressWheel
                         android:id="@+id/loading_img_pb"
@@ -296,7 +296,7 @@
             </LinearLayout>
 
 
-        </android.support.v4.widget.NestedScrollView>
+        </com.playground.notification.ui.ib.appcompat.IBCompatNestedScrollView>
 
 
         <com.pnikosis.materialishprogress.ProgressWheel
@@ -331,7 +331,7 @@
             android:weightSum="4">
 
 
-            <com.playground.notification.views.MaterialRippleLayout
+            <com.playground.notification.ui.MaterialRippleLayout
                 android:id="@+id/fav_btn"
                 style="@style/MaterialRippleLayout"
                 android:layout_width="0dp"
@@ -352,9 +352,9 @@
                     android:layout_gravity="center"
                     android:background="@color/common_transparent"
                     android:src="@drawable/ic_favorite_outline"/>
-            </com.playground.notification.views.MaterialRippleLayout>
+            </com.playground.notification.ui.MaterialRippleLayout>
 
-            <com.playground.notification.views.MaterialRippleLayout
+            <com.playground.notification.ui.MaterialRippleLayout
                 android:id="@+id/ring_btn"
                 style="@style/MaterialRippleLayout"
                 android:layout_width="0dp"
@@ -375,10 +375,10 @@
                     android:layout_gravity="center"
                     android:background="@color/common_transparent"
                     android:src="@drawable/ic_geo_fence_no_check"/>
-            </com.playground.notification.views.MaterialRippleLayout>
+            </com.playground.notification.ui.MaterialRippleLayout>
 
 
-            <com.playground.notification.views.MaterialRippleLayout
+            <com.playground.notification.ui.MaterialRippleLayout
                 android:id="@+id/go_btn"
                 style="@style/MaterialRippleLayout"
                 android:layout_width="0dp"
@@ -400,10 +400,10 @@
                     android:background="@color/common_transparent"
                     android:contentDescription="@string/lbl_go"
                     android:src="@drawable/ic_navigation"/>
-            </com.playground.notification.views.MaterialRippleLayout>
+            </com.playground.notification.ui.MaterialRippleLayout>
 
 
-            <com.playground.notification.views.MaterialRippleLayout
+            <com.playground.notification.ui.MaterialRippleLayout
                 android:id="@+id/share_ground_btn"
                 style="@style/MaterialRippleLayout"
                 android:layout_width="0dp"
@@ -425,7 +425,7 @@
                     android:background="@color/common_transparent"
                     android:contentDescription="@string/lbl_go"
                     android:src="@drawable/ic_share_ground"/>
-            </com.playground.notification.views.MaterialRippleLayout>
+            </com.playground.notification.ui.MaterialRippleLayout>
 
         </LinearLayout>
 

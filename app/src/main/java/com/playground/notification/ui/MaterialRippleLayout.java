@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.playground.notification.views;
+package com.playground.notification.ui;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -126,7 +126,7 @@ public class MaterialRippleLayout extends FrameLayout {
 		setWillNotDraw( false );
 		gestureDetector = new GestureDetector( context, longClickListener );
 
-		TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.MaterialRippleLayout );
+		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MaterialRippleLayout );
 		rippleColor = a.getColor( R.styleable.MaterialRippleLayout_mrl_rippleColor, DEFAULT_COLOR );
 		rippleDiameter = a.getDimensionPixelSize( R.styleable.MaterialRippleLayout_mrl_rippleDimension,
 												  (int) dpToPx( getResources(), DEFAULT_DIAMETER_DP )

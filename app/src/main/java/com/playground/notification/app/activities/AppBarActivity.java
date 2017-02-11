@@ -69,6 +69,9 @@ public abstract class AppBarActivity extends AppActivity {
 		mBinding.coordinatorLayout.addView(addView);
 	}
 
+	protected AppBarLayoutBinding getBinding() {
+		return mBinding;
+	}
 
 	protected void showShortSnackbar(@StringRes int message, @StringRes int buttonLabel, @NonNull View.OnClickListener clickListener) {
 		Snackbar.make(mBinding.errorContent, message, Snackbar.LENGTH_SHORT)

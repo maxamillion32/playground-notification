@@ -13,7 +13,7 @@
         android:textColor="@color/common_black"
         android:textSize="14sp" />
 
-    <com.playground.notification.views.MaterialRippleLayout
+    <com.playground.notification.ui.MaterialRippleLayout
         android:id="@+id/powered_by_ll"
         style="@style/MaterialRippleLayout"
         android:layout_width="match_parent"
@@ -48,11 +48,11 @@
                 android:background="@color/common_transparent"
                 android:src="@drawable/logo_spielplatz_radar" />
         </LinearLayout>
-    </com.playground.notification.views.MaterialRippleLayout>
+    </com.playground.notification.ui.MaterialRippleLayout>
 
 
 
-    <com.playground.notification.views.MaterialRippleLayout
+    <com.playground.notification.ui.MaterialRippleLayout
         android:id="@+id/weather_by_ll"
         style="@style/MaterialRippleLayout"
         android:layout_width="match_parent"
@@ -87,5 +87,5 @@
                 android:background="@color/common_transparent"
                 android:src="@drawable/ic_openweathermap" />
         </LinearLayout>
-    </com.playground.notification.views.MaterialRippleLayout>
+    </com.playground.notification.ui.MaterialRippleLayout>
 </LinearLayout>

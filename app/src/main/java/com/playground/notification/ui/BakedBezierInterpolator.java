@@ -1,4 +1,4 @@
-package com.playground.notification.views;
+package com.playground.notification.ui;
 
 import android.view.animation.Interpolator;
 
@@ -9,7 +9,9 @@ import android.view.animation.Interpolator;
  * <p/>
  * <a href="https://github.com/kyze8439690/RevealLayout">RevealLayout</a>
  */
-class BakedBezierInterpolator implements Interpolator {
+public final class BakedBezierInterpolator implements Interpolator {
+
+	public static final BakedBezierInterpolator INSTACNCE = new BakedBezierInterpolator();
 
 	/**
 	 * Lookup table values. Generated using a Bezier curve from (0,0) to (1,1) with control points: P0 (0,0) P1 (0.4, 0) P2 (0.2, 1.0) P3 (1.0, 1.0)

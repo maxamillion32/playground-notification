@@ -1,4 +1,4 @@
-package com.playground.notification.views;
+package com.playground.notification.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;

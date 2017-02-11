@@ -4,9 +4,15 @@
 
     <data class="ItemPlaygroundBinding">
 
+        <import type="de.greenrobot.event.EventBus"/>
+
         <variable
             name="playground"
             type="com.playground.notification.ds.grounds.Playground"/>
+
+        <variable
+            name="openPlaygroundEvent"
+            type="com.playground.notification.bus.OpenPlaygroundEvent"/>
     </data>
 
     <android.support.v7.widget.CardView
@@ -21,18 +27,19 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.playground.notification.views.MaterialRippleLayout
+            <com.playground.notification.ui.MaterialRippleLayout
                 style="@style/MaterialRippleLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="@{() -> EventBus.getDefault().post(openPlaygroundEvent)}"
                 android:layout_gravity="center_horizontal">
 
                 <ImageView
                     android:id="@+id/location_preview_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:playground ="@{playground}"/>
-            </com.playground.notification.views.MaterialRippleLayout>
+                    app:playground="@{playground}"/>
+            </com.playground.notification.ui.MaterialRippleLayout>
 
         </LinearLayout>
     </android.support.v7.widget.CardView>

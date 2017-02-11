@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.playground.notification.R;
+import com.playground.notification.bus.OpenPlaygroundEvent;
 import com.playground.notification.databinding.ItemPlaygroundBinding;
 import com.playground.notification.ds.grounds.Playground;
 
@@ -37,6 +38,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 	public void onBindViewHolder(PlaygroundListAdapterViewHolder holder, int position) {
 		Playground playground = mPlaygroundList.get(position);
 		holder.mBinding.setPlayground(playground);
+		holder.mBinding.setOpenPlaygroundEvent(new OpenPlaygroundEvent(playground));
 		holder.mBinding.executePendingBindings();
 	}
 

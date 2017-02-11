@@ -31,7 +31,7 @@
             android:textStyle="bold"/>
 
 
-        <com.playground.notification.views.MaterialRippleLayout
+        <com.playground.notification.ui.MaterialRippleLayout
             android:id="@+id/logout_btn"
             style="@style/MaterialRippleLayout"
             android:layout_width="wrap_content"
@@ -50,6 +50,6 @@
                 android:gravity="center"
                 android:text="@string/lbl_logout_gplus"
                 app:srcCompat="@drawable/ic_logout"/>
-        </com.playground.notification.views.MaterialRippleLayout>
+        </com.playground.notification.ui.MaterialRippleLayout>
     </LinearLayout>
 </layout>

@@ -2,6 +2,7 @@ package com.playground.notification.app.fragments;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,10 +13,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.playground.notification.R;
+import com.playground.notification.app.App;
 import com.playground.notification.app.adapters.PlaygroundListAdapter;
+import com.playground.notification.bus.OpenPlaygroundEvent;
 import com.playground.notification.databinding.PlaygroundListBinding;
 import com.playground.notification.ds.grounds.Playground;
+import com.playground.notification.ui.ib.IBLayoutBase;
 
 import java.io.Serializable;
 import java.util.List;
@@ -37,13 +42,22 @@ public final class PlaygroundListFragment extends Fragment {
 	//------------------------------------------------
 
 	/**
-	 * Handler for {@link Object}.
+	 * Handler for {@link com.playground.notification.bus.OpenPlaygroundEvent}.
 	 *
-	 * @param e Event {@link}.
+	 * @param e Event {@link com.playground.notification.bus.OpenPlaygroundEvent}.
 	 */
-	public void onEvent(Object e) {
+	public void onEvent(OpenPlaygroundEvent e) {
+		Playground playground = e.getPlayground();
+		Location location = App.Instance.getCurrentLocation();
+		LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+//		getChildFragmentManager().beginTransaction()
+//		                         .add(R.id.playground_detail_container, PlaygroundDetailFragment.newInstance(App.Instance, currentLatLng.latitude, currentLatLng.longitude, playground, false))
+//		                         .commit();
 
+		PlaygroundDetailFragment.newInstance(App.Instance, currentLatLng.latitude, currentLatLng.longitude, playground, false)
+		                        .show(getChildFragmentManager(), null);
 	}
+
 
 	//------------------------------------------------
 	public static PlaygroundListFragment newInstance(Context cxt, List<Playground> playgroundList) {
@@ -68,6 +82,22 @@ public final class PlaygroundListFragment extends Fragment {
 		final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
 		dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.divider_drawable));
 		mBinding.playgroundListRv.addItemDecoration(dividerItemDecoration);
+
+		mBinding.playgroundDetailContainerIbLayout.setIBBackground(mBinding.playgroundListRv);
+		mBinding.playgroundDetailContainerIbLayout.setCloseDistance((int) getResources().getDimension(R.dimen.drag_close_distance));
+		mBinding.playgroundDetailContainerIbLayout.setOnDragStateChangeListener(new IBLayoutBase.OnDragStateChangeListener() {
+			@Override
+			public void dragStateChange(IBLayoutBase.DragState state) {
+				switch (state) {
+					case CANCLOSE:
+						//..
+						break;
+					case CANNOTCLOSE:
+						//..
+						break;
+				}
+			}
+		});
 
 	}
 

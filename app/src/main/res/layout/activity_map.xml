@@ -105,7 +105,7 @@
                 app:backgroundTint="@color/primary_dark_color"
                 app:rippleColor="@color/primary_color"/>
 
-            <com.playground.notification.views.RevealLayout
+            <com.playground.notification.ui.RevealLayout
                 android:id="@+id/add_pane_v"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -131,7 +131,7 @@
                         android:textColor="@color/common_white"/>
 
 
-                    <com.playground.notification.views.MaterialRippleLayout
+                    <com.playground.notification.ui.MaterialRippleLayout
                         android:id="@+id/exit_add_btn"
                         style="@style/MaterialRippleLayout"
                         android:layout_width="wrap_content"
@@ -151,11 +151,11 @@
                             android:text="@string/btn_exit"
                             android:textAppearance="@style/TextAppearance.AppCompat.Button"
                             android:textColor="@color/yellow"/>
-                    </com.playground.notification.views.MaterialRippleLayout>
+                    </com.playground.notification.ui.MaterialRippleLayout>
 
 
                 </RelativeLayout>
-            </com.playground.notification.views.RevealLayout>
+            </com.playground.notification.ui.RevealLayout>
 
             <ListView
                 android:id="@+id/geocode_lv"

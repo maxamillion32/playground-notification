@@ -3,9 +3,26 @@
 
     <data class="PlaygroundListBinding"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/playground_list_rv"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+
+        <com.playground.notification.ui.ib.IBBackgroundRecyclerView
+            android:id="@+id/playground_list_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <com.playground.notification.ui.ib.appcompat.IBCompatFrameLayout
+            android:id="@+id/playground_detail_container_ib_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/playground_detail_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </com.playground.notification.ui.ib.appcompat.IBCompatFrameLayout>
+    </FrameLayout>
 
 </layout>
