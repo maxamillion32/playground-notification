@@ -48,6 +48,7 @@ public final class PlaygroundListFragment extends Fragment {
 	 */
 	public void onEvent(OpenPlaygroundEvent e) {
 		if (e.getSelectedV() != null) {
+			mBinding.playgroundListRv.setSelectedPosition(e.getPosition(), e.getPosition());
 			mBinding.playgroundDetailContainerIbLayout.openWithAnim(e.getSelectedV()
 			                                                         .get());
 			Playground playground = e.getPlayground();

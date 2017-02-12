@@ -144,9 +144,11 @@ public final class IBBackgroundRecyclerView extends RecyclerView implements IBBa
 	@Override
 	public void scrollTo(int x, int y) {
 		if (mTerminated) {
+			Log.d(TAG, "mTerminated: " + mTerminated);
 			return;
 		}
 		if (mSelectedOffset == 0) {
+			Log.d(TAG, "mSelectedOffset: " + mSelectedOffset);
 			return;
 		}
 		Log.d(TAG, "mSelectedOffset: " + mSelectedOffset + " height: " + getHeight() + " scrollTo Y: " + y);

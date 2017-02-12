@@ -39,7 +39,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 	public void onBindViewHolder(final PlaygroundListAdapterViewHolder holder, int position) {
 		Playground playground = mPlaygroundList.get(position);
 		holder.mBinding.setPlayground(playground);
-		holder.mBinding.setOpenPlaygroundEvent(new OpenPlaygroundEvent(playground, new WeakReference<>(holder.itemView)));
+		holder.mBinding.setOpenPlaygroundEvent(new OpenPlaygroundEvent(playground, position, new WeakReference<>(holder.itemView)));
 		holder.mBinding.executePendingBindings();
 	}
 
