@@ -226,7 +226,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		EventBus.getDefault().post(new DetailShownEvent());
 		initView(view);
 	}
 
@@ -248,6 +247,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 	}
 
 	private void initView(View view) {
+		EventBus.getDefault().post(new DetailShownEvent());
 		Bundle args = getArguments();
 		final Playground playground = (Playground) args.getSerializable(EXTRAS_GROUND);
 		if (playground != null) {
