@@ -34,6 +34,8 @@ import com.playground.notification.api.ApiNotInitializedException;
 import com.playground.notification.app.App;
 import com.playground.notification.app.activities.AppActivity;
 import com.playground.notification.app.activities.MapActivity;
+import com.playground.notification.bus.DetailClosedEvent;
+import com.playground.notification.bus.DetailShownEvent;
 import com.playground.notification.bus.ShowLocationRatingEvent;
 import com.playground.notification.bus.ShowStreetViewEvent;
 import com.playground.notification.databinding.PlaygroundDetailBinding;
@@ -224,9 +226,15 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		EventBus.getDefault().post(new DetailShownEvent());
 		initView(view);
 	}
 
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		EventBus.getDefault().post(new DetailClosedEvent());
+	}
 
 	@NonNull
 	@Override

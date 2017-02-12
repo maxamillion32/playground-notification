@@ -13,10 +13,15 @@ import android.widget.FrameLayout;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.app.fragments.PlaygroundListFragment;
+import com.playground.notification.bus.BackPressedEvent;
+import com.playground.notification.bus.DetailClosedEvent;
+import com.playground.notification.bus.DetailShownEvent;
 import com.playground.notification.ds.grounds.Playground;
 
 import java.io.Serializable;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * The list-mode of search result.
@@ -30,6 +35,29 @@ public final class PlaygroundListActivity extends AppBarActivity {
 	 * View's menu.
 	 */
 	private static final int MENU = R.menu.menu_list;
+
+	private boolean mItemSelected;
+	//------------------------------------------------
+	//Subscribes, event-handlers
+	//------------------------------------------------
+
+	/**
+	 * Handler for {@link DetailShownEvent}.
+	 * @param e Event {@link DetailShownEvent}.
+	 */
+	public void onEvent(DetailShownEvent e) {
+		mItemSelected = true;
+	}
+
+
+	/**
+	 * Handler for {@link DetailClosedEvent}.
+	 * @param e Event {@link DetailClosedEvent}.
+	 */
+	public void onEvent(DetailClosedEvent e) {
+		mItemSelected = false;
+	}
+	//------------------------------------------------
 
 	/**
 	 * Show single instance of {@link PlaygroundListActivity}
@@ -74,5 +102,15 @@ public final class PlaygroundListActivity extends AppBarActivity {
 				break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onBackPressed() {
+		if(mItemSelected) {
+			EventBus.getDefault()
+			        .post(new BackPressedEvent());
+		} else {
+			super.onBackPressed();
+		}
 	}
 }

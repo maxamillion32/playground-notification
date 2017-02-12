@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.app.adapters.PlaygroundListAdapter;
+import com.playground.notification.bus.BackPressedEvent;
 import com.playground.notification.bus.OpenPlaygroundEvent;
 import com.playground.notification.databinding.PlaygroundListBinding;
 import com.playground.notification.ds.grounds.Playground;
@@ -56,12 +57,22 @@ public final class PlaygroundListFragment extends Fragment {
 			LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 			getChildFragmentManager().beginTransaction()
 			                         .replace(R.id.playground_detail_container, PlaygroundDetailFragment.newInstance(App.Instance, currentLatLng.latitude, currentLatLng.longitude, playground, false))
+			                         .addToBackStack(null)
 			                         .commit();
 		}
 	}
 
-
+	/**
+	 * Handler for {@link BackPressedEvent}.
+	 *
+	 * @param e Event {@link BackPressedEvent}.
+	 */
+	public void onEvent(BackPressedEvent e) {
+		getChildFragmentManager().popBackStack();
+		mBinding.playgroundDetailContainerIbLayout.close();
+	}
 	//------------------------------------------------
+
 	public static PlaygroundListFragment newInstance(Context cxt, List<Playground> playgroundList) {
 		Bundle args = new Bundle();
 		args.putSerializable(EXTRAS_PLAYGROUND_LIST, (Serializable) playgroundList);
