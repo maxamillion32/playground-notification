@@ -21,7 +21,7 @@ import com.nineoldandroids.animation.ObjectAnimator;
  * <p/>
  * <a href="https://github.com/kyze8439690/RevealLayout">RevealLayout</a>
  */
-public class RevealLayout extends FrameLayout {
+public final class RevealLayout extends FrameLayout {
 
 	private Path mClipPath;
 	private float mClipRadius                = 0;

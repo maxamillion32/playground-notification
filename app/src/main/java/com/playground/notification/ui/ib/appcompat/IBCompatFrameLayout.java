@@ -11,7 +11,7 @@ import com.playground.notification.ui.ib.IBLayoutBase;
 /**
  * Created by Xinyue Zhao
  */
-public class IBCompatFrameLayout extends IBLayoutBase<FrameLayout> {
+public final class IBCompatFrameLayout extends IBLayoutBase<FrameLayout> {
 	private static final String TAG = IBCompatFrameLayout.class.getName();
 
 

@@ -47,15 +47,16 @@ public final class PlaygroundListFragment extends Fragment {
 	 * @param e Event {@link com.playground.notification.bus.OpenPlaygroundEvent}.
 	 */
 	public void onEvent(OpenPlaygroundEvent e) {
-		Playground playground = e.getPlayground();
-		Location location = App.Instance.getCurrentLocation();
-		LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-//		getChildFragmentManager().beginTransaction()
-//		                         .add(R.id.playground_detail_container, PlaygroundDetailFragment.newInstance(App.Instance, currentLatLng.latitude, currentLatLng.longitude, playground, false))
-//		                         .commit();
-
-		PlaygroundDetailFragment.newInstance(App.Instance, currentLatLng.latitude, currentLatLng.longitude, playground, false)
-		                        .show(getChildFragmentManager(), null);
+		if (e.getSelectedV() != null) {
+			mBinding.playgroundDetailContainerIbLayout.openWithAnim(e.getSelectedV()
+			                                                         .get());
+			Playground playground = e.getPlayground();
+			Location location = App.Instance.getCurrentLocation();
+			LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+			getChildFragmentManager().beginTransaction()
+			                         .replace(R.id.playground_detail_container, PlaygroundDetailFragment.newInstance(App.Instance, currentLatLng.latitude, currentLatLng.longitude, playground, false))
+			                         .commit();
+		}
 	}
 
 

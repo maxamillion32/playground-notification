@@ -191,6 +191,16 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 		return (PlaygroundDetailFragment) PlaygroundDetailFragment.instantiate(context, PlaygroundDetailFragment.class.getName(), args);
 	}
 
+	private BottomSheetBehavior mBehavior;
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		if (mBehavior != null) {
+			mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+		}
+	}
+
 	@Override
 	public void onResume() {
 		EventBus.getDefault()
@@ -216,8 +226,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 		super.onViewCreated(view, savedInstanceState);
 		initView(view);
 	}
-
-	private BottomSheetBehavior mBehavior;
 
 
 	@NonNull
@@ -493,15 +501,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 					}
 				}
 			});
-		}
-	}
-
-
-	@Override
-	public void onStart() {
-		super.onStart();
-		if (mBehavior != null) {
-			mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 		}
 	}
 

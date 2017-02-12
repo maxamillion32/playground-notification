@@ -38,7 +38,7 @@ public final class BinderAdapter {
 					App.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
 			Glide.with(App.Instance)
 			     .load(url)
-			     .skipMemoryCache(false)
+			     .skipMemoryCache(false).fitCenter()
 			     .diskCacheStrategy(DiskCacheStrategy.ALL)
 			     .into(imageView);
 		} catch (Exception e) {

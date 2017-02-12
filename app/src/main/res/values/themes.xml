@@ -33,7 +33,7 @@
         <item name="actionMenuTextColor">@color/primary_color</item>
         <item name="dropDownListViewStyle">@style/OverflowDropDown</item>
 
-
+        <item name="android:backgroundDimEnabled">false</item>
     </style>
 
 

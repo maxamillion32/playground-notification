@@ -53,7 +53,7 @@ import com.playground.notification.R;
 import static android.view.GestureDetector.SimpleOnGestureListener;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
-public class MaterialRippleLayout extends FrameLayout {
+public final class MaterialRippleLayout extends FrameLayout {
 
 	private static final int     DEFAULT_DURATION        = 350;
 	private static final int     DEFAULT_FADE_DURATION   = 75;

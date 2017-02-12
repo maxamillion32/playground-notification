@@ -11,7 +11,9 @@
         <com.playground.notification.ui.ib.IBBackgroundRecyclerView
             android:id="@+id/playground_list_rv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:overScrollMode="always"
+            android:scrollbars="none"/>
 
         <com.playground.notification.ui.ib.appcompat.IBCompatFrameLayout
             android:id="@+id/playground_detail_container_ib_layout"

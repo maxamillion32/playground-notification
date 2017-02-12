@@ -11,6 +11,7 @@ import com.playground.notification.bus.OpenPlaygroundEvent;
 import com.playground.notification.databinding.ItemPlaygroundBinding;
 import com.playground.notification.ds.grounds.Playground;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 
@@ -35,10 +36,10 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 	}
 
 	@Override
-	public void onBindViewHolder(PlaygroundListAdapterViewHolder holder, int position) {
+	public void onBindViewHolder(final PlaygroundListAdapterViewHolder holder, int position) {
 		Playground playground = mPlaygroundList.get(position);
 		holder.mBinding.setPlayground(playground);
-		holder.mBinding.setOpenPlaygroundEvent(new OpenPlaygroundEvent(playground));
+		holder.mBinding.setOpenPlaygroundEvent(new OpenPlaygroundEvent(playground, new WeakReference<>(holder.itemView)));
 		holder.mBinding.executePendingBindings();
 	}
 

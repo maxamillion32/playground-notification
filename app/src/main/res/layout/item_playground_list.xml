@@ -15,32 +15,20 @@
             type="com.playground.notification.bus.OpenPlaygroundEvent"/>
     </data>
 
+
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:onClick="@{() -> EventBus.getDefault().post(openPlaygroundEvent)}"
         app:cardCornerRadius="1dp"
         app:cardUseCompatPadding="false">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/location_preview_iv"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            app:playground="@{playground}"/>
 
-            <com.playground.notification.ui.MaterialRippleLayout
-                style="@style/MaterialRippleLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="@{() -> EventBus.getDefault().post(openPlaygroundEvent)}"
-                android:layout_gravity="center_horizontal">
-
-                <ImageView
-                    android:id="@+id/location_preview_iv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:playground="@{playground}"/>
-            </com.playground.notification.ui.MaterialRippleLayout>
-
-        </LinearLayout>
     </android.support.v7.widget.CardView>
 </layout>
