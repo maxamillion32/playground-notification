@@ -20,7 +20,6 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -107,7 +106,6 @@ import com.playground.notification.map.PlaygroundClusterManager;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
-import com.playground.notification.sync.SyncManager;
 import com.playground.notification.utils.Prefs;
 
 import java.util.ArrayList;
@@ -276,7 +274,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * @param e Event {@link FavoriteListLoadingSuccessEvent}.
 	 */
 	public void onEvent(FavoriteListLoadingSuccessEvent e) {
-		updateDrawerMenuItem(R.id.action_favorite, R.string.action_favorite, FavoriteManager.getInstance());
+		com.playground.notification.utils.Utils.updateDrawerMenuItem(mBinding.navView, R.id.action_favorite, R.string.action_favorite, FavoriteManager.getInstance());
 	}
 
 	/**
@@ -285,7 +283,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * @param e Event {@link NearRingListLoadingSuccessEvent}.
 	 */
 	public void onEvent(NearRingListLoadingSuccessEvent e) {
-		updateDrawerMenuItem(R.id.action_near_ring, R.string.action_near_ring, NearRingManager.getInstance());
+		com.playground.notification.utils.Utils.updateDrawerMenuItem(mBinding.navView, R.id.action_near_ring, R.string.action_near_ring, NearRingManager.getInstance());
 	}
 
 	/**
@@ -294,7 +292,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * @param e Event {@link MyLocationLoadingSuccessEvent}.
 	 */
 	public void onEvent(MyLocationLoadingSuccessEvent e) {
-		updateDrawerMenuItem(R.id.action_my_location_list, R.string.action_my_location_list, MyLocationManager.getInstance());
+		com.playground.notification.utils.Utils.updateDrawerMenuItem(mBinding.navView, R.id.action_my_location_list, R.string.action_my_location_list, MyLocationManager.getInstance());
 	}
 
 
@@ -1006,31 +1004,14 @@ public final class MapActivity extends AppActivity implements LocationListener,
 			@Override
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
-				updateDrawerMenuItem(R.id.action_favorite, R.string.action_favorite, FavoriteManager.getInstance());
-				updateDrawerMenuItem(R.id.action_near_ring, R.string.action_near_ring, NearRingManager.getInstance());
-				updateDrawerMenuItem(R.id.action_my_location_list, R.string.action_my_location_list, MyLocationManager.getInstance());
+				com.playground.notification.utils.Utils.updateDrawerMenuItem(mBinding.navView, R.id.action_favorite, R.string.action_favorite, FavoriteManager.getInstance());
+				com.playground.notification.utils.Utils.updateDrawerMenuItem(mBinding.navView, R.id.action_near_ring, R.string.action_near_ring, NearRingManager.getInstance());
+				com.playground.notification.utils.Utils.updateDrawerMenuItem(mBinding.navView, R.id.action_my_location_list, R.string.action_my_location_list, MyLocationManager.getInstance());
 			}
 		};
 		mBinding.drawerLayout.addDrawerListener(mDrawerToggle);
 
 
-	}
-
-	/**
-	 * Helper to update menu-titles on drawer.
-	 */
-	private void updateDrawerMenuItem(int itemResId, int itemTitleResId, SyncManager mgr) {
-		if (mgr.isInit()) {
-			mBinding.navView.getMenu()
-			                .findItem(itemResId)
-			                .setTitle(getString(itemTitleResId,
-			                                    mgr.getCachedList()
-			                                       .size()));
-		} else {
-			mBinding.navView.getMenu()
-			                .findItem(itemResId)
-			                .setTitle(getString(itemTitleResId, 0));
-		}
 	}
 
 

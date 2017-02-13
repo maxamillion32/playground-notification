@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.widget.TextView;
 
@@ -14,6 +15,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.playground.notification.R;
+import com.playground.notification.app.App;
+import com.playground.notification.sync.SyncManager;
 
 /**
  * Util-methods of application.
@@ -150,5 +153,22 @@ public final class Utils {
 		String numberText = number >= 100 ? "99+" : (number + "");
 		String text = String.format(" %s ", numberText);
 		textView.setText(text);
+	}
+
+	/**
+	 * Helper to update menu-titles on drawer.
+	 */
+	public static void updateDrawerMenuItem(NavigationView niv, int itemResId, int itemTitleResId, SyncManager mgr) {
+		if (mgr.isInit()) {
+			niv.getMenu()
+			   .findItem(itemResId)
+			   .setTitle(App.Instance.getString(itemTitleResId,
+			                                    mgr.getCachedList()
+			                          .size()));
+		} else {
+			niv.getMenu()
+			   .findItem(itemResId)
+			   .setTitle(App.Instance.getString(itemTitleResId, 0));
+		}
 	}
 }

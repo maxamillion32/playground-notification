@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
@@ -21,6 +20,7 @@ import com.playground.notification.databinding.AppBarLayoutBinding;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
+import com.playground.notification.utils.Utils;
 
 
 public abstract class AppBarActivity extends AppActivity {
@@ -63,9 +63,9 @@ public abstract class AppBarActivity extends AppActivity {
 			@Override
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
-//				updateDrawerMenuItem(R.id.action_favorite, R.string.action_favorite, FavoriteManager.getInstance());
-//				updateDrawerMenuItem(R.id.action_near_ring, R.string.action_near_ring, NearRingManager.getInstance());
-//				updateDrawerMenuItem(R.id.action_my_location_list, R.string.action_my_location_list, MyLocationManager.getInstance());
+				Utils.updateDrawerMenuItem(mBinding.navView, R.id.action_favorite, R.string.action_favorite, FavoriteManager.getInstance());
+				Utils.updateDrawerMenuItem(mBinding.navView, R.id.action_near_ring, R.string.action_near_ring, NearRingManager.getInstance());
+				Utils.updateDrawerMenuItem(mBinding.navView, R.id.action_my_location_list, R.string.action_my_location_list, MyLocationManager.getInstance());
 			}
 		};
 		mBinding.drawerLayout.addDrawerListener(mDrawerToggle);
@@ -146,4 +146,24 @@ public abstract class AppBarActivity extends AppActivity {
 		        .show();
 	}
 
+	@Override
+	protected void onAppConfigIgnored() {
+		super.onAppConfigIgnored();
+		configFinished();
+	}
+
+	@Override
+	protected void onAppConfigLoaded() {
+		super.onAppConfigLoaded();
+		configFinished();
+	}
+
+	private void configFinished() {
+		FavoriteManager.getInstance()
+		               .init();
+		NearRingManager.getInstance()
+		               .init();
+		MyLocationManager.getInstance()
+		                 .init();
+	}
 }
