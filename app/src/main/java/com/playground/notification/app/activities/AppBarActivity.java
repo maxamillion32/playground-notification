@@ -1,21 +1,26 @@
 package com.playground.notification.app.activities;
 
 import android.databinding.DataBindingUtil;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.playground.notification.R;
+import com.playground.notification.app.App;
 import com.playground.notification.databinding.AppBarLayoutBinding;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
@@ -36,6 +41,7 @@ public abstract class AppBarActivity extends AppActivity {
 		mBinding = DataBindingUtil.setContentView(this, LAYOUT);
 		setupMain();
 		initDrawer();
+		initDrawerContent();
 		setupContent(mBinding.appbarContent);
 	}
 
@@ -165,5 +171,57 @@ public abstract class AppBarActivity extends AppActivity {
 		               .init();
 		MyLocationManager.getInstance()
 		                 .init();
+	}
+
+	/**
+	 * Set-up of navi-bar left.
+	 */
+	private void initDrawerContent() {
+		mBinding.navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+			@Override
+			public boolean onNavigationItemSelected(MenuItem menuItem) {
+				mBinding.drawerLayout.closeDrawer(GravityCompat.START);
+
+				Location location = App.Instance.getCurrentLocation();
+				double lat = location.getLatitude();
+				double lng = location.getLongitude();
+				switch (menuItem.getItemId()) {
+					case R.id.action_favorite:
+						FavoriteManager favoriteManager = FavoriteManager.getInstance();
+						if (favoriteManager.getCachedList()
+						                   .size() > 0) {
+							ViewPagerActivity.showInstance(AppBarActivity.this, lat, lng, favoriteManager.getCachedList(), getString(R.string.lbl_favorite_list));
+						}
+						break;
+					case R.id.action_near_ring:
+						NearRingManager nearRingManager = NearRingManager.getInstance();
+						if (nearRingManager.getCachedList()
+						                   .size() > 0) {
+							ViewPagerActivity.showInstance(AppBarActivity.this, lat, lng, nearRingManager.getCachedList(), getString(R.string.lbl_near_ring_list));
+						}
+						break;
+					case R.id.action_my_location_list:
+						MyLocationManager myLocationManager = MyLocationManager.getInstance();
+						if (myLocationManager.getCachedList()
+						                     .size() > 0) {
+							MyLocationListActivity.showInstance(AppBarActivity.this);
+						}
+						break;
+					case R.id.action_settings:
+						SettingsActivity.showInstance(AppBarActivity.this);
+						break;
+					case R.id.action_more_apps:
+						mBinding.drawerLayout.openDrawer(GravityCompat.END);
+						break;
+					case R.id.action_radar:
+						com.playground.notification.utils.Utils.openExternalBrowser(AppBarActivity.this, "http://" + getString(R.string.support_spielplatz_radar));
+						break;
+					case R.id.action_weather:
+						com.playground.notification.utils.Utils.openExternalBrowser(AppBarActivity.this, "http://" + getString(R.string.support_openweathermap));
+						break;
+				}
+				return true;
+			}
+		});
 	}
 }

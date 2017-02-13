@@ -19,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -1419,7 +1420,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 							SettingsActivity.showInstance(MapActivity.this);
 							break;
 						case R.id.action_more_apps:
-							mBinding.drawerLayout.openDrawer(Gravity.RIGHT);
+							mBinding.drawerLayout.openDrawer(GravityCompat.END);
 							break;
 						case R.id.action_radar:
 							com.playground.notification.utils.Utils.openExternalBrowser(MapActivity.this, "http://" + getString(R.string.support_spielplatz_radar));
