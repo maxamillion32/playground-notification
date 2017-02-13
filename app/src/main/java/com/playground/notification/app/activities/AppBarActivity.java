@@ -40,6 +40,14 @@ public abstract class AppBarActivity extends AppActivity {
 	}
 
 	@Override
+	protected void onDestroy() {
+		if (mDrawerToggle != null) {
+			mBinding.drawerLayout.removeDrawerListener(mDrawerToggle);
+		}
+		super.onDestroy();
+	}
+
+	@Override
 	protected void onResume() {
 		super.onResume();
 		if (mDrawerToggle != null) {
@@ -62,7 +70,6 @@ public abstract class AppBarActivity extends AppActivity {
 		};
 		mBinding.drawerLayout.addDrawerListener(mDrawerToggle);
 	}
-
 
 
 	private void setupMain() {

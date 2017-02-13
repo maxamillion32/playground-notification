@@ -155,10 +155,6 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 */
 	private ActionBarDrawerToggle mDrawerToggle;
 	/**
-	 * Navigation drawer.
-	 */
-	private DrawerLayout mDrawerLayout;
-	/**
 	 * Data-binding.
 	 */
 	private MainBinding mBinding;
@@ -220,7 +216,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * @param e Event {@link com.chopping.bus.CloseDrawerEvent}.
 	 */
 	public void onEvent(CloseDrawerEvent e) {
-		mDrawerLayout.closeDrawers();
+		mBinding.drawerLayout.closeDrawers();
 	}
 
 
@@ -972,6 +968,10 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
 			mGoogleApiClient.disconnect();
 		}
+
+		if (mDrawerToggle != null) {
+			mBinding.drawerLayout.removeDrawerListener(mDrawerToggle);
+		}
 		super.onDestroy();
 	}
 
@@ -1002,8 +1002,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		ActionBar actionBar = getSupportActionBar();
 		actionBar.setHomeButtonEnabled(true);
 		actionBar.setDisplayHomeAsUpEnabled(true);
-		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.application_name, R.string.app_name) {
+		mDrawerToggle = new ActionBarDrawerToggle(this, mBinding.drawerLayout, R.string.application_name, R.string.app_name) {
 			@Override
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
@@ -1012,7 +1011,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 				updateDrawerMenuItem(R.id.action_my_location_list, R.string.action_my_location_list, MyLocationManager.getInstance());
 			}
 		};
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		mBinding.drawerLayout.addDrawerListener(mDrawerToggle);
 
 
 	}
