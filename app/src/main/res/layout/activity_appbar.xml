@@ -6,14 +6,15 @@
 
     <data class="AppBarLayoutBinding"/>
 
-
-    <FrameLayout
-        android:id="@id/error_content"
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
 
         <android.support.design.widget.CoordinatorLayout
-            android:id="@+id/coordinator_layout"
+            android:id="@id/error_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true">
@@ -29,6 +30,21 @@
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 />
         </android.support.design.widget.CoordinatorLayout>
-    </FrameLayout>
+
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/common_white"
+            android:fitsSystemWindows="true"
+            android:theme="@style/NavDrawerItem"
+            app:headerLayout="@layout/nav_header"
+            app:itemIconTint="@color/primary_accent"
+            app:itemTextColor="@color/primary_accent"
+            app:menu="@menu/drawer_view"/>
+
+    </android.support.v4.widget.DrawerLayout>
 
 </layout>
