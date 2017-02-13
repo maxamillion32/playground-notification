@@ -1,33 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/action_favorite"
-        android:icon="@drawable/ic_favorite"
-        android:title="@string/action_favorite" />
 
-    <item
-        android:id="@+id/action_near_ring"
-        android:icon="@drawable/ic_geo_fence"
-        android:title="@string/action_near_ring" />
 
-    <item
-        android:id="@+id/action_my_location_list"
-        android:icon="@drawable/ic_save"
-        android:title="@string/action_my_location_list" />
+    <item android:title="@string/action_main">
+        <menu>
+            <item
+                android:id="@+id/action_favorite"
+                android:icon="@drawable/ic_favorite"
+                android:title="@string/action_favorite" />
 
-    <item
-        android:id="@+id/action_settings"
-        android:icon="@drawable/ic_settings"
-        android:title="@string/action_settings" />
+            <item
+                android:id="@+id/action_near_ring"
+                android:icon="@drawable/ic_geo_fence"
+                android:title="@string/action_near_ring" />
 
-    <item
-        android:id="@+id/action_more_apps"
-        android:icon="@drawable/ic_more_apps"
-        android:title="@string/action_more_apps" />
+            <item
+                android:id="@+id/action_my_location_list"
+                android:icon="@drawable/ic_save"
+                android:title="@string/action_my_location_list" />
 
-    <item
-        android:id="@+id/action_trends"
-        android:title="@string/action_data_support">
+            <item
+                android:id="@+id/action_settings"
+                android:icon="@drawable/ic_settings"
+                android:title="@string/action_settings" />
+
+            <item
+                android:id="@+id/action_more_apps"
+                android:icon="@drawable/ic_more_apps"
+                android:title="@string/action_more_apps" />
+        </menu>
+    </item>
+    <item android:title="@string/action_data_support">
         <menu>
             <item
                 android:id="@+id/action_radar"
@@ -37,6 +40,8 @@
                 android:title="@string/support_openweathermap" />
         </menu>
     </item>
+
+
 
 
 </menu>
