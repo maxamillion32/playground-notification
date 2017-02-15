@@ -245,6 +245,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/common_padding"
                         android:layout_marginRight="@dimen/common_padding"
+                        android:layout_marginEnd="@dimen/common_padding"
                         android:text="@{matrix.rows.get(0).elements.get(0).duration.text}"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
                         android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
@@ -272,7 +273,7 @@
                     android:layout_height="wrap_content"
                     android:onClick="@{handler.onRatingClicked}"
                     android:orientation="horizontal"
-                    android:visibility="gone">
+                    android:visibility="invisible">
 
                     <RatingBar
                         android:id="@+id/location_rb"
@@ -303,6 +304,7 @@
             android:id="@+id/changing_pb"
             android:layout_width="15dp"
             android:layout_height="15dp"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:visibility="gone"
@@ -600,9 +602,7 @@
                     android:paddingBottom="5dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    android:paddingTop="5dp">
-
-                </FrameLayout>
+                    android:paddingTop="5dp"/>
 
             </LinearLayout>
 
