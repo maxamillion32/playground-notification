@@ -1,38 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.playground.notification.ui.MaterialRippleLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                      xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                     xmlns:tools="http://schemas.android.com/tools"
                                                      style="@style/MaterialRippleLayout"
-                                                     android:layout_width="match_parent"
-                                                     android:layout_height="wrap_content"
-                                                     android:layout_gravity="center_horizontal">
+                                                     android:layout_width="?attr/actionBarSize"
+                                                     android:layout_height="?attr/actionBarSize">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <ImageButton
-            android:id="@+id/list_mode_switch_ibtn"
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|start|left"
+            android:layout_gravity="center"
             android:background="@color/common_transparent"
             app:srcCompat="@drawable/ic_action_list_mode"/>
 
-        <TextView
-            android:id="@+id/playgrounds_count_tv"
+        <View
+            android:id="@+id/badge_v"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right|end"
-            android:layout_marginLeft="5dp"
-            android:layout_marginStart="5dp"
-            android:background="@drawable/circle_ball_indicator"
-            android:gravity="center"
-            android:maxLines="1"
-            android:minLines="1"
-            android:padding="1dp"
-            android:textColor="@color/common_white"
-            android:textSize="10sp"
-            tools:text=" 99+ "/>
+            android:layout_gravity="bottom|end|right"/>
     </FrameLayout>
 </com.playground.notification.ui.MaterialRippleLayout>

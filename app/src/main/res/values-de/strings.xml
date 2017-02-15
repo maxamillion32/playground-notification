@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Spielplätze App</string>
     <string name="application_name">Spielplätze App</string>
+    <string name="title_activity_maps">Spielplätze</string>
 
     <string name="action_search">Suche</string>
     <string name="action_share">Teile</string>

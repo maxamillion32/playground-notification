@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -149,11 +148,7 @@ public final class Utils {
 
 	}
 
-	public static void setBadgeText(@NonNull TextView textView, int number) {
-		String numberText = number >= 100 ? "99+" : (number + "");
-		String text = String.format(" %s ", numberText);
-		textView.setText(text);
-	}
+
 
 	/**
 	 * Helper to update menu-titles on drawer.

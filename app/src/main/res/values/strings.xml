@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Playgrounds App</string>
     <string name="application_name">Playgrounds App</string>
-    <string name="title_activity_maps">@string/application_name</string>
+    <string name="title_activity_maps">Playgrounds</string>
 
     <string name="support_spielplatz_radar">spielplatz-radar.de</string>
     <string name="support_openweathermap">openweathermap.org</string>

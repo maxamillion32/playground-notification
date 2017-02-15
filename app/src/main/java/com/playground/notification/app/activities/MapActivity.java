@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
@@ -39,7 +40,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
+import android.widget.ImageButton;
 
 import com.bumptech.glide.Glide;
 import com.chopping.application.LL;
@@ -108,6 +109,7 @@ import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.utils.Prefs;
+import com.readystatesoftware.viewbadger.BadgeView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +125,6 @@ import retrofit.client.Response;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
-import static com.playground.notification.utils.Utils.setBadgeText;
 import static pub.devrel.easypermissions.AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE;
 
 
@@ -194,10 +195,6 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 */
 	private @Nullable List<Playground> mAvailablePlaygroundList;
 	/**
-	 * {@link TextView} shows the count of {@link Playground}s.
-	 */
-	private TextView mCountOfPlaygroundListTv;
-	/**
 	 * Manager for all "pin"s on map.
 	 */
 	private PlaygroundClusterManager mPlaygroundClusterManager;
@@ -205,6 +202,11 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * The  {@link MenuItem} that can open list of {@link Playground}s., on itself shows count of current count of {@link Playground}s.
 	 */
 	private MenuItem menuLocationList;
+	/**
+	 * {@link #mBadgeView} shows count of current {@link Playground}s.
+	 */
+	private BadgeView mBadgeView;
+
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -1155,12 +1157,16 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * Refresh count of playground on app-bar on menu.
 	 */
 	private void updateBadgeTextOnAppBar() {
-		if (mAvailablePlaygroundList == null || mAvailablePlaygroundList.size() <= 0) {
-			menuLocationList.setVisible(false);
-		} else {
-			menuLocationList.setVisible(true);
-			setBadgeText(mCountOfPlaygroundListTv, mAvailablePlaygroundList.size());
+		if (menuLocationList == null ) {
+			return;
 		}
+
+		if (mAvailablePlaygroundList == null || mAvailablePlaygroundList.size() <= 0) {
+			mBadgeView.hide(true);
+			return;
+		}
+		mBadgeView.show(true);
+		mBadgeView.setText(String.valueOf(mAvailablePlaygroundList.size()));
 	}
 
 
@@ -1222,8 +1228,11 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	private void initBadgeMenuItemsOnAppBar(Menu menu) {
 		menuLocationList = menu.findItem(R.id.action_list_mode);
 		View menuLayoutV = MenuItemCompat.getActionView(menuLocationList);
-		mCountOfPlaygroundListTv = (TextView) menuLayoutV.findViewById(R.id.playgrounds_count_tv);
-		mCountOfPlaygroundListTv.setOnClickListener(new OnClickListener() {
+		mBadgeView = new BadgeView(this, menuLayoutV.findViewById(R.id.badge_v));
+		mBadgeView.setText(String.valueOf("0"));
+		mBadgeView.setTextColor(Color.BLUE);
+		mBadgeView.setBadgePosition(BadgeView.POSITION_BOTTOM_RIGHT);
+		menuLayoutV.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				PlaygroundListActivity.showInstance(MapActivity.this, mAvailablePlaygroundList);

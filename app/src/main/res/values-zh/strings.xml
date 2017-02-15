@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Playgrounds App</string>
-    <string name="application_name">Playgrounds App</string>
+    <string name="app_name">玩耍地 搜索</string>
+    <string name="application_name">玩耍地 搜索</string>
+    <string name="title_activity_maps">玩耍地</string>
 
     <string name="action_search">搜索</string>
     <string name="action_share">分享</string>
