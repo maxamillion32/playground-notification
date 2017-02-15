@@ -6,17 +6,21 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
+import com.chopping.utils.Utils;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
+import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.PlaygroundListFragment;
 import com.playground.notification.bus.BackPressedEvent;
 import com.playground.notification.bus.DetailClosedEvent;
 import com.playground.notification.bus.DetailShownEvent;
 import com.playground.notification.ds.grounds.Playground;
+import com.playground.notification.utils.Prefs;
 
 import java.io.Serializable;
 import java.util.List;
@@ -95,10 +99,27 @@ public final class PlaygroundListActivity extends AppBarActivity {
 	}
 
 	@Override
+	public boolean onPrepareOptionsMenu(final Menu menu) {
+		//Share application.
+		MenuItem menuAppShare = menu.findItem(R.id.action_share_app);
+		android.support.v7.widget.ShareActionProvider provider = (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuAppShare);
+		String subject = getString(R.string.lbl_share_app_title);
+		String text = getString(R.string.lbl_share_app_content,
+		                        getString(R.string.application_name),
+		                        Prefs.getInstance()
+		                             .getAppDownloadInfo());
+		provider.setShareIntent(Utils.getDefaultShareIntent(provider, subject, text));
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.action_map_mode:
 				supportFinishAfterTransition();
+				break;
+			case R.id.action_about:
+				showDialogFragment(AboutDialogFragment.newInstance(this), null);
 				break;
 		}
 		return super.onOptionsItemSelected(item);
