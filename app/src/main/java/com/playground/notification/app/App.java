@@ -64,11 +64,12 @@ public final class App extends MultiDexApplication {
 	/**
 	 * Current position.
 	 */
-	private Location  mCurrentLocation;
+	private Location mCurrentLocation;
 	/**
 	 * Application's instance.
 	 */
 	public static App Instance;
+
 
 	{
 		Instance = this;
@@ -90,37 +91,35 @@ public final class App extends MultiDexApplication {
 	 */
 	private String mWeatherKey;
 
-	public double getListItemWidth() {
-		return mListItemWidth;
-	}
 
-	public double getListItemHeight() {
-		return mListItemHeight;
-	}
-
+	/**
+	 * Width of item in {@link android.support.v7.app.AlertController.RecycleListView}.
+	 */
 	private double mListItemWidth;
-
+	/**
+	 * Height of item in {@link android.support.v7.app.AlertController.RecycleListView}.
+	 */
 	private double mListItemHeight;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
-		Fabric.with( this, new Crashlytics() );
+		Fabric.with(this, new Crashlytics());
 		//		Stetho.initialize(Stetho.newInitializerBuilder(this).enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
 		//				.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this)).build());
 
 		Properties prop = new Properties();
 		try {
-			prop.load( getClassLoader().getResourceAsStream( "key.properties" ) );
-			Bmob.initialize( this, prop.getProperty( "bmobkey" ) );
-			mDistanceMatrixKey = prop.getProperty( "distancematrixkey" );
-			mWeatherKey = prop.getProperty( "weather_key" );
-		} catch( IOException e ) {
+			prop.load(getClassLoader().getResourceAsStream("key.properties"));
+			Bmob.initialize(this, prop.getProperty("bmobkey"));
+			mDistanceMatrixKey = prop.getProperty("distancematrixkey");
+			mWeatherKey = prop.getProperty("weather_key");
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		TaskHelper.init( getApplicationContext() );
-		Prefs.createInstance( this );
+		TaskHelper.init(getApplicationContext());
+		Prefs.createInstance(this);
 
 		//Short the link of app-download and make a download-info, store to preference.
 		//You'll see text like
@@ -128,28 +127,28 @@ public final class App extends MultiDexApplication {
 		//			Download: http://tinyurl/asdfasdf
 		//</code>
 		//in sharing text.
-		String url = Prefs.getInstance().getAppDownloadInfo();
-		if( TextUtils.isEmpty( url ) || !url.contains( "tinyurl" ) ) {
-			Api.getTinyUrl( getString( R.string.lbl_store_url, getPackageName() ), new Callback<com.tinyurl4j.data.Response>() {
+		String url = Prefs.getInstance()
+		                  .getAppDownloadInfo();
+		if (TextUtils.isEmpty(url) || !url.contains("tinyurl")) {
+			Api.getTinyUrl(getString(R.string.lbl_store_url, getPackageName()), new Callback<com.tinyurl4j.data.Response>() {
 				@Override
-				public void success( com.tinyurl4j.data.Response response, retrofit.client.Response response2 ) {
-					Prefs.getInstance().setAppDownloadInfo(
-							getString( R.string.lbl_share_download_app, getString( R.string.application_name ), response.getResult() ) );
+				public void success(com.tinyurl4j.data.Response response, retrofit.client.Response response2) {
+					Prefs.getInstance()
+					     .setAppDownloadInfo(getString(R.string.lbl_share_download_app, getString(R.string.application_name), response.getResult()));
 				}
 
 				@Override
-				public void failure( RetrofitError error ) {
-					Prefs.getInstance().setAppDownloadInfo( getString( R.string.lbl_share_download_app, getString( R.string.application_name ),
-																	   getString( R.string.lbl_store_url, getPackageName() )
-					) );
+				public void failure(RetrofitError error) {
+					Prefs.getInstance()
+					     .setAppDownloadInfo(getString(R.string.lbl_share_download_app, getString(R.string.application_name), getString(R.string.lbl_store_url, getPackageName())));
 				}
-			} );
+			});
 		}
-		mScreenSize = DeviceUtils.getScreenSize( this );
+		mScreenSize = DeviceUtils.getScreenSize(this);
 		startAppGuardService();
 
 		ScreenSize screenSize = getScreenSize();
-		if(!getResources().getBoolean(R.bool.is_small_screen)) {
+		if (!getResources().getBoolean(R.bool.is_small_screen)) {
 			mListItemWidth = screenSize.Width / 3f;
 			mListItemHeight = mListItemWidth * 0.382;
 		} else {
@@ -162,7 +161,7 @@ public final class App extends MultiDexApplication {
 	 * A background service that will looking for time to notify user for some weather condition.
 	 */
 	private void startAppGuardService() {
-		App.Instance.startService( new Intent( App.Instance, TickerService.class ) );
+		App.Instance.startService(new Intent(App.Instance, TickerService.class));
 	}
 
 	/**
@@ -190,7 +189,7 @@ public final class App extends MultiDexApplication {
 	/**
 	 * Current position.
 	 */
-	public synchronized void setCurrentLocation( Location currentLocation ) {
+	public synchronized void setCurrentLocation(Location currentLocation) {
 		mCurrentLocation = currentLocation;
 	}
 
@@ -201,5 +200,21 @@ public final class App extends MultiDexApplication {
 		return mWeatherKey;
 	}
 
+	/**
+	 * For {@link android.support.v7.app.AlertController.RecycleListView} that we want to get correct width of every item.
+	 *
+	 * @return Width of item in {@link android.support.v7.app.AlertController.RecycleListView}.
+	 */
+	public double getListItemWidth() {
+		return mListItemWidth;
+	}
 
+	/**
+	 * For {@link android.support.v7.app.AlertController.RecycleListView} that we want to get correct height of every item.
+	 *
+	 * @return height of item in {@link android.support.v7.app.AlertController.RecycleListView}.
+	 */
+	public double getListItemHeight() {
+		return mListItemHeight;
+	}
 }
