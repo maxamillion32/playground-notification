@@ -370,7 +370,6 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		initDrawer();
 		initBoard();
 		initAddMyLocation();
-
 		//For search and suggestions.
 		mSuggestions = new SearchRecentSuggestions(this, getString(R.string.suggestion_auth), SearchSuggestionProvider.MODE);
 

@@ -49,6 +49,8 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 
 	@Override
 	public void onBindViewHolder(final PlaygroundListAdapterViewHolder holder, int position) {
+		holder.mBinding.getRoot().getLayoutParams().width = (int) App.Instance.getListItemWidth();
+		holder.mBinding.getRoot().getLayoutParams().height = (int) App.Instance.getListItemHeight();
 		holder.initializeMapView();
 		holder.mBinding.executePendingBindings();
 	}

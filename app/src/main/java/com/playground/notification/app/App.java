@@ -90,6 +90,17 @@ public final class App extends MultiDexApplication {
 	 */
 	private String mWeatherKey;
 
+	public double getListItemWidth() {
+		return mListItemWidth;
+	}
+
+	public double getListItemHeight() {
+		return mListItemHeight;
+	}
+
+	private double mListItemWidth;
+
+	private double mListItemHeight;
 
 	@Override
 	public void onCreate() {
@@ -136,6 +147,15 @@ public final class App extends MultiDexApplication {
 		}
 		mScreenSize = DeviceUtils.getScreenSize( this );
 		startAppGuardService();
+
+		ScreenSize screenSize = getScreenSize();
+		if(!getResources().getBoolean(R.bool.is_small_screen)) {
+			mListItemWidth = screenSize.Width / 3f;
+			mListItemHeight = mListItemWidth * 0.382;
+		} else {
+			mListItemWidth = screenSize.Width;
+			mListItemHeight = mListItemWidth * 0.382;
+		}
 	}
 
 	/**

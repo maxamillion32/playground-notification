@@ -9,8 +9,8 @@
 
 
     <android.support.v7.widget.CardView
-        android:layout_width="@dimen/item_map_width"
-        android:layout_height="@dimen/item_map_height"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         app:cardCornerRadius="1dp"
         app:cardUseCompatPadding="false">
