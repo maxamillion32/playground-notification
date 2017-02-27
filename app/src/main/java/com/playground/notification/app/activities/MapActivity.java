@@ -40,7 +40,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 
 import com.bumptech.glide.Glide;
 import com.chopping.application.LL;
@@ -83,10 +82,12 @@ import com.playground.notification.app.SearchSuggestionProvider;
 import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.AppListImpFragment;
 import com.playground.notification.app.fragments.MyLocationFragment;
+import com.playground.notification.app.fragments.PlaygroundListFragment;
 import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
 import com.playground.notification.bus.FavoriteListLoadingErrorEvent;
 import com.playground.notification.bus.FavoriteListLoadingSuccessEvent;
+import com.playground.notification.bus.GetListWidthEvent;
 import com.playground.notification.bus.MyLocationLoadingErrorEvent;
 import com.playground.notification.bus.MyLocationLoadingSuccessEvent;
 import com.playground.notification.bus.NearRingListLoadingErrorEvent;
@@ -201,11 +202,15 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	/**
 	 * The  {@link MenuItem} that can open list of {@link Playground}s., on itself shows count of current count of {@link Playground}s.
 	 */
-	private MenuItem menuLocationList;
+	private @Nullable MenuItem menuLocationList;
 	/**
 	 * {@link #mBadgeView} shows count of current {@link Playground}s.
 	 */
-	private BadgeView mBadgeView;
+	private @Nullable BadgeView mBadgeView;
+	/**
+	 * For large-screen, we show all list of {@link Playground}s over map directly.
+	 */
+	private @Nullable PlaygroundListFragment mPlaygroundListFragment;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -299,13 +304,15 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	}
 
 
+
 	/**
-	 * Handler for {@link ShowStreetViewEvent}.
+	 * Handler for {@link GetListWidthEvent}.
 	 *
-	 * @param e Event {@link ShowStreetViewEvent}.
+	 * @param e Event {@link GetListWidthEvent}.
 	 */
-	public void onEvent(ShowStreetViewEvent e) {
-		StreetViewActivity.showInstance(this, e.getTitle(), e.getLocation());
+	public void onEvent(GetListWidthEvent e) {
+		mBinding.geocodeLv.getLayoutParams().width = e.getWidth();
+		mBinding.playGroundsListContainer.getLayoutParams().width = e.getWidth();
 	}
 	//------------------------------------------------
 
@@ -1137,7 +1144,14 @@ public final class MapActivity extends AppActivity implements LocationListener,
 								                                                 .getCachedList());
 							}
 							mPlaygroundClusterManager = PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, mAvailablePlaygroundList);
-							updateBadgeTextOnAppBar();
+							if (!getResources().getBoolean(R.bool.is_small_screen)) {
+								if (mPlaygroundListFragment == null) {
+									mPlaygroundListFragment = (PlaygroundListFragment) (getSupportFragmentManager().findFragmentById(R.id.play_grounds_list));
+								}
+								mPlaygroundListFragment.refresh(mAvailablePlaygroundList);
+							} else {
+								updateBadgeTextOnAppBar();
+							}
 						}
 					}
 
@@ -1153,11 +1167,12 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		}
 	}
 
+
 	/**
 	 * Refresh count of playground on app-bar on menu.
 	 */
 	private void updateBadgeTextOnAppBar() {
-		if (menuLocationList == null ) {
+		if (menuLocationList == null) {
 			return;
 		}
 
@@ -1227,6 +1242,9 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 */
 	private void initBadgeMenuItemsOnAppBar(Menu menu) {
 		menuLocationList = menu.findItem(R.id.action_list_mode);
+		if (menuLocationList == null) {
+			return;
+		}
 		View menuLayoutV = MenuItemCompat.getActionView(menuLocationList);
 		mBadgeView = new BadgeView(this, menuLayoutV.findViewById(R.id.badge_v));
 		mBadgeView.setText(String.valueOf("0"));

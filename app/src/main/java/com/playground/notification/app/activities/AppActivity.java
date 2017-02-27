@@ -19,6 +19,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.playground.notification.R;
 import com.playground.notification.app.fragments.AboutDialogFragment.EulaConfirmationDialog;
+import com.playground.notification.bus.ShowStreetViewEvent;
 import com.playground.notification.utils.Prefs;
 
 /**
@@ -32,40 +33,56 @@ public abstract class AppActivity extends BaseActivity {
 	 */
 	private int mAppBarHeight;
 
+
+	//------------------------------------------------
+	//Subscribes, event-handlers
+	//------------------------------------------------
+
+
+		/**
+		 * Handler for {@link ShowStreetViewEvent}.
+		 *
+		 * @param e Event {@link ShowStreetViewEvent}.
+		 */
+		public void onEvent(ShowStreetViewEvent e) {
+			StreetViewActivity.showInstance(this, e.getTitle(), e.getLocation());
+		}
+
+	//------------------------------------------------
+
+
 	@Override
-	protected void onCreate( Bundle savedInstanceState ) {
-		super.onCreate( savedInstanceState );
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		calcAppBarHeight();
 	}
 
 	/**
 	 * Show  {@link android.support.v4.app.DialogFragment}.
 	 *
-	 * @param _dlgFrg
-	 * 		An instance of {@link android.support.v4.app.DialogFragment}.
-	 * @param _tagName
-	 * 		Tag name for dialog, default is "dlg". To grantee that only one instance of {@link android.support.v4.app.DialogFragment} can been seen.
+	 * @param _dlgFrg  An instance of {@link android.support.v4.app.DialogFragment}.
+	 * @param _tagName Tag name for dialog, default is "dlg". To grantee that only one instance of {@link android.support.v4.app.DialogFragment} can been seen.
 	 */
-	public void showDialogFragment( DialogFragment _dlgFrg, String _tagName ) {
+	public void showDialogFragment(DialogFragment _dlgFrg, String _tagName) {
 		try {
-			if( _dlgFrg != null ) {
-				DialogFragment      dialogFragment = _dlgFrg;
-				FragmentTransaction ft             = getSupportFragmentManager().beginTransaction();
+			if (_dlgFrg != null) {
+				DialogFragment dialogFragment = _dlgFrg;
+				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 				// Ensure that there's only one dialog to the user.
-				Fragment prev = getSupportFragmentManager().findFragmentByTag( "dlg" );
-				if( prev != null ) {
-					ft.remove( prev );
+				Fragment prev = getSupportFragmentManager().findFragmentByTag("dlg");
+				if (prev != null) {
+					ft.remove(prev);
 				}
 				try {
-					if( TextUtils.isEmpty( _tagName ) ) {
-						dialogFragment.show( ft, "dlg" );
+					if (TextUtils.isEmpty(_tagName)) {
+						dialogFragment.show(ft, "dlg");
 					} else {
-						dialogFragment.show( ft, _tagName );
+						dialogFragment.show(ft, _tagName);
 					}
-				} catch( Exception _e ) {
+				} catch (Exception _e) {
 				}
 			}
-		} catch( Exception _e ) {
+		} catch (Exception _e) {
 		}
 	}
 
@@ -79,33 +96,38 @@ public abstract class AppActivity extends BaseActivity {
 	 * To confirm whether the validation of the Play-service of Google Inc.
 	 */
 	private void checkPlayService() {
-		final int isFound = GooglePlayServicesUtil.isGooglePlayServicesAvailable( this );
-		if( isFound == ConnectionResult.SUCCESS ) {//Ignore update.
+		final int isFound = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+		if (isFound == ConnectionResult.SUCCESS) {//Ignore update.
 			//The "End User License Agreement" must be confirmed before you use this application.
-			if( !Prefs.getInstance().isEULAOnceConfirmed() ) {
-				showDialogFragment( new EulaConfirmationDialog(), null );
+			if (!Prefs.getInstance()
+			          .isEULAOnceConfirmed()) {
+				showDialogFragment(new EulaConfirmationDialog(), null);
 			}
 		} else {
-			new Builder( this ).setTitle( R.string.application_name ).setMessage( R.string.lbl_play_service ).setCancelable( false )
-					.setPositiveButton( R.string.btn_yes, new DialogInterface.OnClickListener() {
-						public void onClick( DialogInterface dialog, int whichButton ) {
-							dialog.dismiss();
-							Intent intent = new Intent( Intent.ACTION_VIEW );
-							intent.setData( Uri.parse( getString( R.string.play_service_url ) ) );
-							try {
-								startActivity( intent );
-							} catch( ActivityNotFoundException e0 ) {
-								intent.setData( Uri.parse( getString( R.string.play_service_web ) ) );
-								try {
-									startActivity( intent );
-								} catch( Exception e1 ) {
-									//Ignore now.
-								}
-							} finally {
-								finish();
-							}
-						}
-					} ).create().show();
+			new Builder(this).setTitle(R.string.application_name)
+			                 .setMessage(R.string.lbl_play_service)
+			                 .setCancelable(false)
+			                 .setPositiveButton(R.string.btn_yes, new DialogInterface.OnClickListener() {
+				                 public void onClick(DialogInterface dialog, int whichButton) {
+					                 dialog.dismiss();
+					                 Intent intent = new Intent(Intent.ACTION_VIEW);
+					                 intent.setData(Uri.parse(getString(R.string.play_service_url)));
+					                 try {
+						                 startActivity(intent);
+					                 } catch (ActivityNotFoundException e0) {
+						                 intent.setData(Uri.parse(getString(R.string.play_service_web)));
+						                 try {
+							                 startActivity(intent);
+						                 } catch (Exception e1) {
+							                 //Ignore now.
+						                 }
+					                 } finally {
+						                 finish();
+					                 }
+				                 }
+			                 })
+			                 .create()
+			                 .show();
 		}
 	}
 
@@ -115,13 +137,13 @@ public abstract class AppActivity extends BaseActivity {
 	 */
 	protected void calcAppBarHeight() {
 		int[] abSzAttr;
-		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			abSzAttr = new int[] { android.R.attr.actionBarSize };
 		} else {
 			abSzAttr = new int[] { R.attr.actionBarSize };
 		}
-		TypedArray a = obtainStyledAttributes( abSzAttr );
-		mAppBarHeight = a.getDimensionPixelSize( 0, -1 );
+		TypedArray a = obtainStyledAttributes(abSzAttr);
+		mAppBarHeight = a.getDimensionPixelSize(0, -1);
 	}
 
 	/**

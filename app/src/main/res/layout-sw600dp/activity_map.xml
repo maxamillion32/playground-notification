@@ -24,6 +24,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
+            <FrameLayout
+                android:id="@+id/play_grounds_list_container"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/list_padding_left"
+                android:layout_marginStart="@dimen/list_padding_left"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:background="?android:attr/windowBackground"
+                android:elevation="5dp">
+
+                <fragment
+                    android:id="@+id/play_grounds_list"
+                    android:name="com.playground.notification.app.fragments.PlaygroundListFragment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    />
+            </FrameLayout>
+
 
             <ImageButton
                 android:id="@+id/current_btn"
@@ -101,9 +119,9 @@
                 android:layout_gravity="end|bottom"
                 android:clickable="true"
                 android:src="@drawable/ic_add"
-                app:useCompatPadding="true"
                 app:backgroundTint="@color/primary_dark_color"
-                app:rippleColor="@color/primary_color"/>
+                app:rippleColor="@color/primary_color"
+                app:useCompatPadding="true"/>
 
             <com.playground.notification.ui.RevealLayout
                 android:id="@+id/add_pane_v"
@@ -136,8 +154,8 @@
                         style="@style/MaterialRippleLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
                         android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:paddingBottom="5dp"
                         android:paddingLeft="5dp"
@@ -159,9 +177,10 @@
 
             <ListView
                 android:id="@+id/geocode_lv"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
+                android:background="?android:attr/windowBackground"
+                android:layout_gravity="bottom|center_horizontal"
                 android:layout_marginTop="?attr/actionBarSize"
                 android:visibility="gone"/>
         </FrameLayout>
@@ -195,6 +214,7 @@
 
 
         </ScrollView>
+
     </android.support.v4.widget.DrawerLayout>
 
 

@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,8 +21,9 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.chopping.application.LL;
 import com.google.android.gms.maps.model.LatLng;
@@ -79,6 +81,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 	private static final String EXTRAS_LAT = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lat";
 	private static final String EXTRAS_LNG = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lng";
 	private static final String EXTRAS_CLICKABLE = MyLocationFragment.class.getName() + ".EXTRAS.clickable";
+	private static final String EXTRAS_PAGE = MyLocationFragment.class.getName() + ".EXTRAS.page";
 	/**
 	 * Main layout for this component.
 	 */
@@ -91,7 +94,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 	/**
 	 * {@code true} if we show map here, otherwise we show streetview.
 	 */
-	private boolean mShowMap = true;
+	private boolean mShowMap = false;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -185,13 +188,31 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 	 * @return An instance of {@link PlaygroundDetailFragment}.
 	 */
 	public static PlaygroundDetailFragment newInstance(Context context, double fromLat, double fromLng, Playground playground, boolean clickable) {
+		return newInstance( context,  fromLat,  fromLng,  playground,  clickable, false);
+	}
+
+
+	/**
+	 * New an instance of {@link PlaygroundDetailFragment}.
+	 *
+	 * @param context    {@link android.content.Context}.
+	 * @param fromLat    The latitude of "from" position to {@code playground}.
+	 * @param fromLng    The longitude of "from" position to {@code playground}.
+	 * @param playground {@link Playground}.
+	 * @param clickable  {@code true} if the preview map can be clicked and show marker on main map.
+	 * @param page       The host of this {@link PlaygroundDetailFragment} is {@link com.playground.notification.app.activities.ViewPagerActivity}.
+	 * @return An instance of {@link PlaygroundDetailFragment}.
+	 */
+	public static PlaygroundDetailFragment newInstance(Context context, double fromLat, double fromLng, Playground playground, boolean clickable, boolean page) {
 		Bundle args = new Bundle();
 		args.putDouble(EXTRAS_LAT, fromLat);
 		args.putDouble(EXTRAS_LNG, fromLng);
 		args.putSerializable(EXTRAS_GROUND, (Serializable) playground);
 		args.putBoolean(EXTRAS_CLICKABLE, clickable);
+		args.putBoolean(EXTRAS_PAGE, page);
 		return (PlaygroundDetailFragment) PlaygroundDetailFragment.instantiate(context, PlaygroundDetailFragment.class.getName(), args);
 	}
+
 
 	private BottomSheetBehavior mBehavior;
 
@@ -232,7 +253,8 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		EventBus.getDefault().post(new DetailClosedEvent());
+		EventBus.getDefault()
+		        .post(new DetailClosedEvent());
 	}
 
 	@NonNull
@@ -247,7 +269,8 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 	}
 
 	private void initView(View view) {
-		EventBus.getDefault().post(new DetailShownEvent());
+		EventBus.getDefault()
+		        .post(new DetailShownEvent());
 		Bundle args = getArguments();
 		final Playground playground = (Playground) args.getSerializable(EXTRAS_GROUND);
 		if (playground != null) {
@@ -425,78 +448,154 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 			                 "hybrid";
 			url = prefs.getGoogleApiHost() + "maps/api/staticmap?center=" + latlng + "&zoom=16&size=" + prefs.getDetailPreviewSize() + "&markers=color:red%7Clabel:S%7C" + latlng + "&key=" + App
 					.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
-			Glide.with(App.Instance)
-			     .load(url)
-			     .skipMemoryCache(false)
-			     .diskCacheStrategy(DiskCacheStrategy.ALL)
-			     .listener(new RequestListener<String, GlideDrawable>() {
-				     @Override
-				     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-					     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
-					     mBinding.loadingImgPb.setVisibility(View.GONE);
-					     return false;
-				     }
 
-				     @Override
-				     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-					     mBinding.viewSwitchIbtn.setVisibility(View.INVISIBLE);
-					     mBinding.loadingImgPb.setVisibility(View.GONE);
-					     return false;
-				     }
-			     })
-			     .into(mBinding.locationPreviewIv);
 
+			if (App.Instance.getResources()
+			                .getBoolean(R.bool.is_small_screen) || getArguments().getBoolean(EXTRAS_PAGE) ) {
+				Glide.with(App.Instance)
+				     .load(url)
+				     .asBitmap()
+				     .skipMemoryCache(false)
+				     .diskCacheStrategy(DiskCacheStrategy.ALL)
+				     .listener(new RequestListener<String, Bitmap>() {
+					     @Override
+					     public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+						     mBinding.loadingImgPb.setVisibility(View.GONE);
+						     return false;
+					     }
+
+					     @Override
+					     public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+						     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
+						     mBinding.loadingImgPb.setVisibility(View.GONE);
+						     return false;
+					     }
+				     })
+				     .into(mBinding.locationPreviewIv);
+			} else {
+				Glide.with(App.Instance)
+				     .load(url)
+				     .asBitmap()
+				     .skipMemoryCache(false)
+				     .diskCacheStrategy(DiskCacheStrategy.ALL)
+				     .into(new SimpleTarget<Bitmap>() {
+					     @Override
+					     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+						     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
+						     mBinding.loadingImgPb.setVisibility(View.GONE);
+						     mBinding.locationPreviewIv.setImageBitmap(resource);
+					     }
+
+					     @Override
+					     public void onLoadFailed(Exception e, Drawable errorDrawable) {
+						     super.onLoadFailed(e, errorDrawable);
+						     mBinding.loadingImgPb.setVisibility(View.GONE);
+					     }
+				     });
+			}
 		} else {
 			url = prefs.getApiStreetView(700, 350, new LatLng(playground.getLatitude(), playground.getLongitude()));
-			Glide.with(App.Instance)
-			     .load(url)
-			     .asBitmap()
-			     .skipMemoryCache(false)
-			     .diskCacheStrategy(DiskCacheStrategy.ALL)
-			     .listener(new RequestListener<String, Bitmap>() {
+			if (App.Instance.getResources()
+			                .getBoolean(R.bool.is_small_screen)  || getArguments().getBoolean(EXTRAS_PAGE) ) {
+				Glide.with(App.Instance)
+				     .load(url)
+				     .asBitmap()
+				     .skipMemoryCache(false)
+				     .diskCacheStrategy(DiskCacheStrategy.ALL)
+				     .listener(new RequestListener<String, Bitmap>() {
 
-				     @Override
-				     public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-					     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
-					     mBinding.loadingImgPb.setVisibility(View.GONE);
-					     boolean streetViewAvail = streetViewBitmapHasRealContent(resource);
-					     if (!streetViewAvail) {
-						     com.chopping.utils.Utils.showLongToast(getContext(), R.string.streetview_not_available);
-						     mBinding.locationPreviewIv.setOnClickListener(null);
-					     } else {
-						     mBinding.locationPreviewIv.setOnClickListener(new OnClickListener() {
-							     @Override
-							     public void onClick(View view) {
-								     if (mShowMap) {
-									     return;
+					     @Override
+					     public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+						     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
+						     mBinding.loadingImgPb.setVisibility(View.GONE);
+						     boolean streetViewAvail = streetViewBitmapHasRealContent(resource);
+						     if (!streetViewAvail) {
+							     com.chopping.utils.Utils.showLongToast(getContext(), R.string.streetview_not_available);
+							     mBinding.locationPreviewIv.setOnClickListener(null);
+							     mBinding.viewSwitchIbtn.performClick();
+						     } else {
+							     mBinding.locationPreviewIv.setOnClickListener(new OnClickListener() {
+								     @Override
+								     public void onClick(View view) {
+									     if (mShowMap) {
+										     return;
+									     }
+									     Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+									     if (playground == null) {
+										     return;
+									     }
+									     final Matrix matrix = mBinding.getMatrix();
+									     if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
+									                                                                                                        .size() > 0 && matrix.getDestination()
+									                                                                                                                             .get(0) != null) {
+										     EventBus.getDefault()
+										             .post(new ShowStreetViewEvent(matrix.getDestination()
+										                                                 .get(0), playground.getPosition()));
+									     }
 								     }
-								     Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-								     if (playground == null) {
-									     return;
-								     }
-								     final Matrix matrix = mBinding.getMatrix();
-								     if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
-								                                                                                                        .size() > 0 && matrix.getDestination()
-								                                                                                                                             .get(0) != null) {
-									     EventBus.getDefault()
-									             .post(new ShowStreetViewEvent(matrix.getDestination()
-									                                                 .get(0), playground.getPosition()));
-								     }
-							     }
-						     });
+							     });
+						     }
+						     return false;
 					     }
-					     return false;
-				     }
 
-				     @Override
-				     public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
-					     mBinding.viewSwitchIbtn.setVisibility(View.INVISIBLE);
-					     mBinding.loadingImgPb.setVisibility(View.GONE);
-					     mBinding.locationPreviewIv.setOnClickListener(null);
-					     return false;
-				     }
-			     })
-			     .into(mBinding.locationPreviewIv);
+					     @Override
+					     public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+						     mBinding.loadingImgPb.setVisibility(View.GONE);
+						     mBinding.locationPreviewIv.setOnClickListener(null);
+						     mBinding.viewSwitchIbtn.performClick();
+						     return false;
+					     }
+				     })
+				     .into(mBinding.locationPreviewIv);
+			} else {
+				Glide.with(App.Instance)
+				     .load(url)
+				     .asBitmap()
+				     .skipMemoryCache(false)
+				     .diskCacheStrategy(DiskCacheStrategy.ALL)
+				     .into(new SimpleTarget<Bitmap>() {
+					     @Override
+					     public void onLoadFailed(Exception e, Drawable errorDrawable) {
+						     super.onLoadFailed(e, errorDrawable);
+						     mBinding.loadingImgPb.setVisibility(View.GONE);
+						     mBinding.locationPreviewIv.setOnClickListener(null);
+						     mBinding.viewSwitchIbtn.performClick();
+					     }
+
+					     @Override
+					     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+						     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
+						     mBinding.loadingImgPb.setVisibility(View.GONE);
+						     boolean streetViewAvail = streetViewBitmapHasRealContent(resource);
+						     if (!streetViewAvail) {
+							     com.chopping.utils.Utils.showLongToast(getContext(), R.string.streetview_not_available);
+							     mBinding.viewSwitchIbtn.performClick();
+						     } else {
+							     mBinding.locationPreviewIv.setOnClickListener(new OnClickListener() {
+								     @Override
+								     public void onClick(View view) {
+									     if (mShowMap) {
+										     return;
+									     }
+									     Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+									     if (playground == null) {
+										     return;
+									     }
+									     final Matrix matrix = mBinding.getMatrix();
+									     if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
+									                                                                                                        .size() > 0 && matrix.getDestination()
+									                                                                                                                             .get(0) != null) {
+										     EventBus.getDefault()
+										             .post(new ShowStreetViewEvent(matrix.getDestination()
+										                                                 .get(0), playground.getPosition()));
+									     }
+								     }
+							     });
+						     }
+						     mBinding.locationPreviewIv.setImageBitmap(resource);
+					     }
+				     });
+			}
 		}
 
 		if (getArguments().getBoolean(EXTRAS_CLICKABLE)) {

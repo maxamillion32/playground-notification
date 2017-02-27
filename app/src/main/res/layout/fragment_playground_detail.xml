@@ -46,7 +46,7 @@
     <RelativeLayout
         android:id="@+id/playground_detail_vg"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/common_white">
 
         <com.playground.notification.ui.ib.appcompat.IBCompatNestedScrollView
@@ -95,6 +95,7 @@
                             android:id="@+id/location_preview_iv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="top|center_horizontal"
                             android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
                     </com.playground.notification.ui.MaterialRippleLayout>
 
@@ -244,8 +245,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/common_padding"
-                        android:layout_marginRight="@dimen/common_padding"
                         android:layout_marginEnd="@dimen/common_padding"
+                        android:layout_marginRight="@dimen/common_padding"
                         android:text="@{matrix.rows.get(0).elements.get(0).duration.text}"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
                         android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>

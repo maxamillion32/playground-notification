@@ -28,7 +28,7 @@ public final class SyncPlaygroundsPagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public Fragment getItem( int position ) {
-		return PlaygroundDetailFragment.newInstance( App.Instance, mFrom.latitude, mFrom.longitude, mGrounds.get( position ), true );
+		return PlaygroundDetailFragment.newInstance( App.Instance, mFrom.latitude, mFrom.longitude, mGrounds.get( position ), true, true );
 	}
 
 	@Override

@@ -23,6 +23,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/application_name"
         android:theme="@style/AppTheme"
+        android:largeHeap="true"
         tools:replace="android:label">
         <meta-data
             android:name="com.google.android.gms.version"
@@ -38,7 +39,6 @@
 
         <activity
             android:name=".app.activities.SplashActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -49,8 +49,7 @@
         <activity
             android:name=".app.activities.MapActivity"
             android:label="@string/title_activity_maps"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait">
+            android:launchMode="singleTop" >
 
             <meta-data
                 android:name="android.app.default_searchable"
@@ -65,24 +64,20 @@
 
         <activity
             android:name=".app.activities.ConnectGoogleActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.FirstPage"/>
 
         <activity
             android:name=".app.activities.ViewPagerActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/PagerTheme"/>
 
         <activity
             android:name=".app.activities.SettingsActivity"
             android:label="@string/action_settings"
-            android:screenOrientation="portrait"
             android:theme="@style/SettingsTheme"/>
 
         <activity
             android:name=".app.activities.MyLocationListActivity"
-            android:label="@string/lbl_my_location_list"
-            android:screenOrientation="portrait"/>
+            android:label="@string/lbl_my_location_list" />
 
 
         <activity
@@ -91,14 +86,12 @@
 
         <activity
             android:name=".app.activities.PlaygroundListActivity"
-            android:label="@string/title_activity_maps"
-            android:screenOrientation="portrait"/>
+            android:label="@string/title_activity_maps" />
 
         <!--Include the AdActivity configChanges and theme. -->
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent"/>
 
         <service

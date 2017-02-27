@@ -12,6 +12,7 @@ import com.playground.notification.databinding.ItemPlaygroundBinding;
 import com.playground.notification.ds.grounds.Playground;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -48,6 +49,18 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 		return mPlaygroundList == null ?
 		       0 :
 		       mPlaygroundList.size();
+	}
+
+	public  void refresh(List<Playground>  data) {
+		if(mPlaygroundList != null && mPlaygroundList.size() > 0) {
+			mPlaygroundList.clear();
+		} else {
+			if(mPlaygroundList == null) {
+				mPlaygroundList = new ArrayList<>();
+			}
+		}
+		mPlaygroundList.addAll(data);
+		notifyDataSetChanged();
 	}
 
 	static class PlaygroundListAdapterViewHolder extends RecyclerView.ViewHolder {

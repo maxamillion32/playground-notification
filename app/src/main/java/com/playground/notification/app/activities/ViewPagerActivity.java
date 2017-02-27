@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import com.google.android.gms.maps.model.LatLng;
 import com.playground.notification.R;
 import com.playground.notification.app.adapters.SyncPlaygroundsPagerAdapter;
-import com.playground.notification.bus.ShowStreetViewEvent;
 import com.playground.notification.databinding.ViewPagerBinding;
 import com.playground.notification.ds.sync.SyncPlayground;
 
@@ -49,20 +48,7 @@ public final class ViewPagerActivity extends AppActivity implements OnPageChange
 	private String mTitle;
 
 
-	//------------------------------------------------
-	//Subscribes, event-handlers
-	//------------------------------------------------
 
-
-	/**
-	 * Handler for {@link ShowStreetViewEvent}.
-	 *
-	 * @param e Event {@link ShowStreetViewEvent}.
-	 */
-	public void onEvent(ShowStreetViewEvent e) {
-		StreetViewActivity.showInstance(this, e.getTitle(), e.getLocation());
-	}
-	//------------------------------------------------
 
 	/**
 	 * Show single instance of {@link}

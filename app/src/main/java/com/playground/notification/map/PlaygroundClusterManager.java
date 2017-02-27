@@ -24,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.MarkerManager;
 import com.google.maps.android.clustering.ClusterManager;
+import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.app.fragments.PlaygroundDetailFragment;
 import com.playground.notification.ds.grounds.Playground;
@@ -32,7 +33,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 
-public final class PlaygroundClusterManager extends ClusterManager<Playground> implements ClusterManager.OnClusterItemClickListener<Playground>  {
+public final class PlaygroundClusterManager extends ClusterManager<Playground> implements ClusterManager.OnClusterItemClickListener<Playground> {
 	private WeakReference<FragmentActivity> mHost;
 
 	private PlaygroundClusterManager(@NonNull FragmentActivity host, @NonNull GoogleMap map) {
@@ -52,6 +53,11 @@ public final class PlaygroundClusterManager extends ClusterManager<Playground> i
 
 	@Override
 	public boolean onClusterItemClick(Playground playground) {
+		if (!App.Instance.getResources()
+		                 .getBoolean(R.bool.is_small_screen)) {
+			return false;
+		}
+
 		if (mHost.get() == null) {
 			return false;
 		}

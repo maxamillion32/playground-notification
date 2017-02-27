@@ -24,6 +24,7 @@ import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ui.ib.IBLayoutBase;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -37,6 +38,7 @@ public final class PlaygroundListFragment extends Fragment {
 	private static final String EXTRAS_PLAYGROUND_LIST = PlaygroundListFragment.class.getName() + ".EXTRAS.playground.list";
 	private static final int LAYOUT = R.layout.fragment_playground_list;
 	private PlaygroundListBinding mBinding;
+	private PlaygroundListAdapter mPlaygroundListAdapter;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -91,7 +93,11 @@ public final class PlaygroundListFragment extends Fragment {
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		mBinding.playgroundListRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-		mBinding.playgroundListRv.setAdapter(new PlaygroundListAdapter((List<Playground>) getArguments().getSerializable(EXTRAS_PLAYGROUND_LIST)));
+		if (getArguments() != null) {
+			mBinding.playgroundListRv.setAdapter(mPlaygroundListAdapter = new PlaygroundListAdapter((List<Playground>) getArguments().getSerializable(EXTRAS_PLAYGROUND_LIST)));
+		} else {
+			mBinding.playgroundListRv.setAdapter(mPlaygroundListAdapter = new PlaygroundListAdapter(new ArrayList<Playground>()));
+		}
 		final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
 		dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.divider_drawable));
 		mBinding.playgroundListRv.addItemDecoration(dividerItemDecoration);
@@ -112,6 +118,10 @@ public final class PlaygroundListFragment extends Fragment {
 			}
 		});
 
+	}
+
+	public void refresh(List<Playground> data) {
+		mPlaygroundListAdapter.refresh(data);
 	}
 
 	@Override
