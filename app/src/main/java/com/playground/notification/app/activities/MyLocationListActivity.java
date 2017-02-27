@@ -191,7 +191,7 @@ public final class MyLocationListActivity extends AppActivity {
 		                     .size() > 0) {
 			final MyLocation myLocation = MyLocationManager.getInstance()
 			                                               .getCachedList()
-			                                               .get(4);
+			                                               .get(0);
 			Prefs prefs = Prefs.getInstance();
 			String latlng = myLocation.getLatitude() + "," + myLocation.getLongitude();
 			String maptype = Prefs.getInstance()

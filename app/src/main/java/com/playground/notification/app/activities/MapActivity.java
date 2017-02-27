@@ -65,6 +65,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
@@ -87,7 +88,6 @@ import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
 import com.playground.notification.bus.FavoriteListLoadingErrorEvent;
 import com.playground.notification.bus.FavoriteListLoadingSuccessEvent;
-import com.playground.notification.bus.GetListWidthEvent;
 import com.playground.notification.bus.MyLocationLoadingErrorEvent;
 import com.playground.notification.bus.MyLocationLoadingSuccessEvent;
 import com.playground.notification.bus.NearRingListLoadingErrorEvent;
@@ -304,16 +304,6 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	}
 
 
-
-	/**
-	 * Handler for {@link GetListWidthEvent}.
-	 *
-	 * @param e Event {@link GetListWidthEvent}.
-	 */
-	public void onEvent(GetListWidthEvent e) {
-		mBinding.geocodeLv.getLayoutParams().width = e.getWidth();
-		mBinding.playGroundsListContainer.getLayoutParams().width = e.getWidth();
-	}
 	//------------------------------------------------
 
 	/**
@@ -370,6 +360,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		MapsInitializer.initialize(App.Instance);
 
 		//Init data-binding.
 		mBinding = DataBindingUtil.setContentView(this, LAYOUT);

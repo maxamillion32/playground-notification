@@ -4,12 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.content.res.AppCompatResources;
 
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -165,5 +170,19 @@ public final class Utils {
 			   .findItem(itemResId)
 			   .setTitle(App.Instance.getString(itemTitleResId, 0));
 		}
+	}
+
+
+	public static BitmapDescriptor getBitmapDescriptor(Context cxt, int resId) {
+		if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+			return BitmapDescriptorFactory.fromResource(resId);
+		}
+		Drawable drawable = AppCompatResources.getDrawable(cxt, resId);
+		Canvas canvas = new Canvas();
+		Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+		canvas.setBitmap(bitmap);
+		drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+		drawable.draw(canvas);
+		return BitmapDescriptorFactory.fromBitmap(bitmap);
 	}
 }
