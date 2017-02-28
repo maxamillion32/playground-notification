@@ -538,7 +538,12 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 				Marker marker = googleMap.addMarker(new MarkerOptions().position(playground.getPosition()));
 				marker.setIcon(getBitmapDescriptor(App.Instance, R.drawable.ic_pin_500));
 
-				googleMap.setOnMapClickListener(null);
+				googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+					@Override
+					public void onMapClick(LatLng latLng) {
+						//Nothing , just prevent from opening extra map apps.
+					}
+				});
 				if (getArguments().getBoolean(EXTRAS_CLICKABLE)) {
 					googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 						@Override
