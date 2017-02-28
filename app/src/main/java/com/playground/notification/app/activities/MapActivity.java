@@ -370,11 +370,20 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		initDrawer();
 		initBoard();
 		initAddMyLocation();
+		initPlaygroundsListIfNeeds();
 		//For search and suggestions.
 		mSuggestions = new SearchRecentSuggestions(this, getString(R.string.suggestion_auth), SearchSuggestionProvider.MODE);
 
 		//Ads
 		buildAds();
+	}
+
+	private void initPlaygroundsListIfNeeds() {
+		boolean isSmall = App.Instance.getResources().getBoolean(R.bool.is_small_screen);
+		if (!isSmall) {
+			mBinding.playGroundsListContainer.getLayoutParams().width = (int)App.Instance.getListItemWidth();
+			mBinding.playGroundsListContainer.requestLayout();
+}
 	}
 
 	@Override

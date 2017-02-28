@@ -6,15 +6,12 @@ import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.util.Log;
 
-import com.playground.notification.R;
-import com.playground.notification.app.App;
-
 public final class IBCompatNestedScrollView extends NestedScrollView {
 	private static final String TAG = IBCompatNestedScrollView.class.getName();
 
 	private boolean mAtTop = true;
 
-	private boolean mAtBottom = !App.Instance.getResources().getBoolean(R.bool.is_small_screen);
+	private boolean mAtBottom = false;//!App.Instance.getResources().getBoolean(R.bool.is_small_screen);
 
 
 	public IBCompatNestedScrollView(Context context) {

@@ -115,10 +115,13 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 			if (getAdapterPosition() < 0) {
 				return;
 			}
-			mGoogleMap = googleMap;
 			Playground playground = mPlaygroundList.get(getAdapterPosition());
+			mGoogleMap = googleMap;
+			mGoogleMap.setBuildingsEnabled(false);
+			mGoogleMap.setIndoorEnabled(false);
 			googleMap.getUiSettings()
 			         .setMapToolbarEnabled(false);
+			googleMap.getUiSettings().setScrollGesturesEnabled(false);
 			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 16));
 			Marker marker = googleMap.addMarker(new MarkerOptions().position(playground.getPosition()));
 			marker.setIcon(getBitmapDescriptor(App.Instance, R.drawable.ic_pin_500));

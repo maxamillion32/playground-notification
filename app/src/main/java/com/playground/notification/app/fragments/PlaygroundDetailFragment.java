@@ -13,6 +13,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.content.res.AppCompatResources;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,12 +22,20 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
 import com.chopping.application.LL;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
+import com.google.android.gms.maps.StreetViewPanorama;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.view.ViewPropertyAnimator;
@@ -69,6 +78,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import static com.playground.notification.utils.Utils.getBitmapDescriptor;
 import static com.playground.notification.utils.Utils.streetViewBitmapHasRealContent;
 
 /**
@@ -95,7 +105,9 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 	 * {@code true} if we show map here, otherwise we show streetview.
 	 */
 	private boolean mShowMap = false;
-
+	private SupportMapFragment mMapFragment;
+	private SupportStreetViewPanoramaFragment mStreetViewPanoramaFragment;
+	private BottomSheetBehavior mBehavior;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -188,7 +200,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 	 * @return An instance of {@link PlaygroundDetailFragment}.
 	 */
 	public static PlaygroundDetailFragment newInstance(Context context, double fromLat, double fromLng, Playground playground, boolean clickable) {
-		return newInstance( context,  fromLat,  fromLng,  playground,  clickable, false);
+		return newInstance(context, fromLat, fromLng, playground, clickable, false);
 	}
 
 
@@ -213,8 +225,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 		return (PlaygroundDetailFragment) PlaygroundDetailFragment.instantiate(context, PlaygroundDetailFragment.class.getName(), args);
 	}
 
-
-	private BottomSheetBehavior mBehavior;
 
 	@Override
 	public void onStart() {
@@ -433,182 +443,115 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 		}
 	}
 
+
 	private void setPreview() {
 		Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
 		if (playground == null) {
 			return;
 		}
-		Prefs prefs = Prefs.getInstance();
-		String url;
+
+		mBinding.locationContainer.getLayoutParams().width = (int) App.Instance.getListItemWidth() * 2;
+		mBinding.locationContainer.getLayoutParams().height = (int) App.Instance.getListItemHeight() * 2;
 		if (mShowMap) {
-			String latlng = playground.getLatitude() + "," + playground.getLongitude();
-			String maptype = prefs.getMapType()
-			                      .equals("0") ?
-			                 "roadmap" :
-			                 "hybrid";
-			url = prefs.getGoogleApiHost() + "maps/api/staticmap?center=" + latlng + "&zoom=16&size=" + prefs.getDetailPreviewSize() + "&markers=color:red%7Clabel:S%7C" + latlng + "&key=" + App
-					.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
-
-
-			if (App.Instance.getResources()
-			                .getBoolean(R.bool.is_small_screen) || getArguments().getBoolean(EXTRAS_PAGE) ) {
-				Glide.with(App.Instance)
-				     .load(url)
-				     .asBitmap()
-				     .skipMemoryCache(false)
-				     .diskCacheStrategy(DiskCacheStrategy.ALL)
-				     .listener(new RequestListener<String, Bitmap>() {
-					     @Override
-					     public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
-						     mBinding.loadingImgPb.setVisibility(View.GONE);
-						     return false;
-					     }
-
-					     @Override
-					     public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-						     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
-						     mBinding.loadingImgPb.setVisibility(View.GONE);
-						     return false;
-					     }
-				     })
-				     .into(mBinding.locationPreviewIv);
-			} else {
-				Glide.with(App.Instance)
-				     .load(url)
-				     .asBitmap()
-				     .skipMemoryCache(false)
-				     .diskCacheStrategy(DiskCacheStrategy.ALL)
-				     .into(new SimpleTarget<Bitmap>() {
-					     @Override
-					     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-						     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
-						     mBinding.loadingImgPb.setVisibility(View.GONE);
-						     mBinding.locationPreviewIv.setImageBitmap(resource);
-					     }
-
-					     @Override
-					     public void onLoadFailed(Exception e, Drawable errorDrawable) {
-						     super.onLoadFailed(e, errorDrawable);
-						     mBinding.loadingImgPb.setVisibility(View.GONE);
-					     }
-				     });
-			}
+			showMapLite();
 		} else {
-			url = prefs.getApiStreetView(700, 350, new LatLng(playground.getLatitude(), playground.getLongitude()));
-			if (App.Instance.getResources()
-			                .getBoolean(R.bool.is_small_screen)  || getArguments().getBoolean(EXTRAS_PAGE) ) {
-				Glide.with(App.Instance)
-				     .load(url)
-				     .asBitmap()
-				     .skipMemoryCache(false)
-				     .diskCacheStrategy(DiskCacheStrategy.ALL)
-				     .listener(new RequestListener<String, Bitmap>() {
-
-					     @Override
-					     public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-						     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
-						     mBinding.loadingImgPb.setVisibility(View.GONE);
-						     boolean streetViewAvail = streetViewBitmapHasRealContent(resource);
-						     if (!streetViewAvail) {
-							     com.chopping.utils.Utils.showLongToast(getContext(), R.string.streetview_not_available);
-							     mBinding.locationPreviewIv.setOnClickListener(null);
-							     mBinding.viewSwitchIbtn.performClick();
-						     } else {
-							     mBinding.locationPreviewIv.setOnClickListener(new OnClickListener() {
-								     @Override
-								     public void onClick(View view) {
-									     if (mShowMap) {
-										     return;
-									     }
-									     Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-									     if (playground == null) {
-										     return;
-									     }
-									     final Matrix matrix = mBinding.getMatrix();
-									     if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
-									                                                                                                        .size() > 0 && matrix.getDestination()
-									                                                                                                                             .get(0) != null) {
-										     EventBus.getDefault()
-										             .post(new ShowStreetViewEvent(matrix.getDestination()
-										                                                 .get(0), playground.getPosition()));
-									     }
-								     }
-							     });
-						     }
-						     return false;
-					     }
-
-					     @Override
-					     public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
-						     mBinding.loadingImgPb.setVisibility(View.GONE);
-						     mBinding.locationPreviewIv.setOnClickListener(null);
-						     mBinding.viewSwitchIbtn.performClick();
-						     return false;
-					     }
-				     })
-				     .into(mBinding.locationPreviewIv);
-			} else {
-				Glide.with(App.Instance)
-				     .load(url)
-				     .asBitmap()
-				     .skipMemoryCache(false)
-				     .diskCacheStrategy(DiskCacheStrategy.ALL)
-				     .into(new SimpleTarget<Bitmap>() {
-					     @Override
-					     public void onLoadFailed(Exception e, Drawable errorDrawable) {
-						     super.onLoadFailed(e, errorDrawable);
-						     mBinding.loadingImgPb.setVisibility(View.GONE);
-						     mBinding.locationPreviewIv.setOnClickListener(null);
-						     mBinding.viewSwitchIbtn.performClick();
-					     }
-
-					     @Override
-					     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-						     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
-						     mBinding.loadingImgPb.setVisibility(View.GONE);
-						     boolean streetViewAvail = streetViewBitmapHasRealContent(resource);
-						     if (!streetViewAvail) {
-							     com.chopping.utils.Utils.showLongToast(getContext(), R.string.streetview_not_available);
-							     mBinding.viewSwitchIbtn.performClick();
-						     } else {
-							     mBinding.locationPreviewIv.setOnClickListener(new OnClickListener() {
-								     @Override
-								     public void onClick(View view) {
-									     if (mShowMap) {
-										     return;
-									     }
-									     Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-									     if (playground == null) {
-										     return;
-									     }
-									     final Matrix matrix = mBinding.getMatrix();
-									     if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
-									                                                                                                        .size() > 0 && matrix.getDestination()
-									                                                                                                                             .get(0) != null) {
-										     EventBus.getDefault()
-										             .post(new ShowStreetViewEvent(matrix.getDestination()
-										                                                 .get(0), playground.getPosition()));
-									     }
-								     }
-							     });
-						     }
-						     mBinding.locationPreviewIv.setImageBitmap(resource);
-					     }
-				     });
-			}
+			showStreetView();
 		}
+	}
 
-		if (getArguments().getBoolean(EXTRAS_CLICKABLE)) {
-			mBinding.locationPreviewIv.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (mShowMap) {
-						Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-						MapActivity.showInstance((Activity) mBinding.locationPreviewIv.getContext(), playground);
-					}
+	private void showStreetView() {
+		mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
+		mBinding.loadingImgPb.setVisibility(View.GONE);
+		Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+		String url = Prefs.getInstance()
+		                  .getApiStreetView(700, 350, new LatLng(playground.getLatitude(), playground.getLongitude()));
+		Glide.with(App.Instance)
+		     .load(url)
+		     .asBitmap()
+		     .skipMemoryCache(false)
+		     .diskCacheStrategy(DiskCacheStrategy.ALL)
+		     .into(new SimpleTarget<Bitmap>() {
+			     @Override
+			     public void onLoadFailed(Exception e, Drawable errorDrawable) {
+				     super.onLoadFailed(e, errorDrawable);
+				     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
+				     mBinding.loadingImgPb.setVisibility(View.GONE);
+				     com.chopping.utils.Utils.showLongToast(getContext(), R.string.streetview_not_available);
+				     mBinding.viewSwitchIbtn.performClick();
+			     }
+
+			     @Override
+			     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+				     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
+				     mBinding.loadingImgPb.setVisibility(View.GONE);
+				     boolean streetViewAvail = streetViewBitmapHasRealContent(resource);
+				     if (!streetViewAvail) {
+					     com.chopping.utils.Utils.showLongToast(getContext(), R.string.streetview_not_available);
+					     mBinding.viewSwitchIbtn.performClick();
+				     } else {
+					     if (mStreetViewPanoramaFragment == null) {
+						     mStreetViewPanoramaFragment = SupportStreetViewPanoramaFragment.newInstance();
+					     }
+					     FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+					     fragmentTransaction.replace(R.id.location_container, mStreetViewPanoramaFragment);
+					     fragmentTransaction.commit();
+					     mStreetViewPanoramaFragment.getStreetViewPanoramaAsync(new OnStreetViewPanoramaReadyCallback() {
+						     @Override
+						     public void onStreetViewPanoramaReady(StreetViewPanorama streetViewPanorama) {
+							     Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+							     streetViewPanorama.setPosition(playground.getPosition());
+						     }
+					     });
+					     mBinding.locationContainer.setOnClickListener(new OnClickListener() {
+						     @Override
+						     public void onClick(View v) {
+							     Matrix matrix = mBinding.getMatrix();
+							     Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+							     if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
+							                                                                                                        .size() > 0 && matrix.getDestination()
+							                                                                                                                             .get(0) != null) {
+								     EventBus.getDefault()
+								             .post(new ShowStreetViewEvent(matrix.getDestination()
+								                                                 .get(0), playground.getPosition()));
+							     }
+						     }
+					     });
+				     }
+			     }
+		     });
+	}
+
+	private void showMapLite() {
+		mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
+		mBinding.loadingImgPb.setVisibility(View.GONE);
+		if (mMapFragment == null) {
+			mMapFragment = SupportMapFragment.newInstance(new GoogleMapOptions().liteMode(true).rotateGesturesEnabled(false).zoomControlsEnabled(false).zoomGesturesEnabled(false).scrollGesturesEnabled(false));
+		}
+		FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+		fragmentTransaction.replace(R.id.location_container, mMapFragment);
+		fragmentTransaction.commit();
+		mMapFragment.getMapAsync(new OnMapReadyCallback() {
+			@Override
+			public void onMapReady(GoogleMap googleMap) {
+				Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+				googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 16));
+				Marker marker = googleMap.addMarker(new MarkerOptions().position(playground.getPosition()));
+				marker.setIcon(getBitmapDescriptor(App.Instance, R.drawable.ic_pin_500));
+
+				googleMap.setOnMapClickListener(null);
+				if (getArguments().getBoolean(EXTRAS_CLICKABLE)) {
+					googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+						@Override
+						public void onMapClick(LatLng latLng) {
+							Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+							MapActivity.showInstance((Activity) mBinding.locationContainer.getContext(), playground);
+						}
+					});
 				}
-			});
-		}
+			}
+		});
+
+
 	}
 
 
