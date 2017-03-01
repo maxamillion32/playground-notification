@@ -75,7 +75,7 @@ public final class PlaygroundListFragment extends Fragment {
 	}
 	//------------------------------------------------
 
-	public static PlaygroundListFragment newInstance(Context cxt, List<Playground> playgroundList) {
+	public static PlaygroundListFragment newInstance(Context cxt, List<? extends  Playground> playgroundList) {
 		Bundle args = new Bundle();
 		args.putSerializable(EXTRAS_PLAYGROUND_LIST, (Serializable) playgroundList);
 		return (PlaygroundListFragment) PlaygroundListFragment.instantiate(cxt, PlaygroundListFragment.class.getName(), args);
@@ -94,7 +94,7 @@ public final class PlaygroundListFragment extends Fragment {
 		super.onViewCreated(view, savedInstanceState);
 		mBinding.playgroundListRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 		if (getArguments() != null) {
-			mBinding.playgroundListRv.setAdapter(mPlaygroundListAdapter = new PlaygroundListAdapter((List<Playground>) getArguments().getSerializable(EXTRAS_PLAYGROUND_LIST)));
+			mBinding.playgroundListRv.setAdapter(mPlaygroundListAdapter = new PlaygroundListAdapter((List<? extends  Playground>) getArguments().getSerializable(EXTRAS_PLAYGROUND_LIST)));
 		} else {
 			mBinding.playgroundListRv.setAdapter(mPlaygroundListAdapter = new PlaygroundListAdapter(new ArrayList<Playground>()));
 		}
@@ -120,7 +120,7 @@ public final class PlaygroundListFragment extends Fragment {
 
 	}
 
-	public void refresh(List<Playground> data) {
+	public void refresh(List<? extends  Playground> data) {
 		mPlaygroundListAdapter.refresh(data);
 	}
 

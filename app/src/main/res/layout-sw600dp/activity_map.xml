@@ -32,7 +32,8 @@
                 android:layout_marginStart="@dimen/list_padding_left"
                 android:layout_marginTop="?attr/actionBarSize"
                 android:background="?android:attr/windowBackground"
-                android:elevation="5dp">
+                android:elevation="5dp"
+                android:visibility="gone">
 
                 <fragment
                     android:id="@+id/play_grounds_list"
@@ -179,9 +180,9 @@
                 android:id="@+id/geocode_lv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/windowBackground"
                 android:layout_gravity="bottom|center_horizontal"
                 android:layout_marginTop="?attr/actionBarSize"
+                android:background="?android:attr/windowBackground"
                 android:visibility="gone"/>
         </FrameLayout>
 

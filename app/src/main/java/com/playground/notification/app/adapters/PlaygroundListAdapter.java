@@ -22,7 +22,6 @@ import com.playground.notification.utils.RatingUI;
 import com.playground.notification.utils.Utils;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -37,9 +36,9 @@ import static com.playground.notification.utils.Utils.getBitmapDescriptor;
  */
 public final class PlaygroundListAdapter extends RecyclerView.Adapter<PlaygroundListAdapter.PlaygroundListAdapterViewHolder> {
 	private static final int ITEM_LAYOUT = R.layout.item_playground_list;
-	private List<Playground> mPlaygroundList;
+	private List<? extends Playground> mPlaygroundList;
 
-	public PlaygroundListAdapter(List<Playground> playgroundList) {
+	public PlaygroundListAdapter(List<? extends Playground> playgroundList) {
 		mPlaygroundList = playgroundList;
 	}
 
@@ -47,7 +46,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 	public PlaygroundListAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		Context cxt = parent.getContext();
 		ItemPlaygroundBinding binding = DataBindingUtil.inflate(LayoutInflater.from(cxt), ITEM_LAYOUT, parent, false);
-		return new PlaygroundListAdapterViewHolder(mPlaygroundList, binding);
+		return new PlaygroundListAdapterViewHolder(this, binding);
 	}
 
 	@Override
@@ -71,27 +70,24 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 		       mPlaygroundList.size();
 	}
 
-	public void refresh(List<Playground> data) {
+	public void refresh(List<? extends Playground> data) {
 		if (mPlaygroundList != null && mPlaygroundList.size() > 0) {
 			mPlaygroundList.clear();
-		} else {
-			if (mPlaygroundList == null) {
-				mPlaygroundList = new ArrayList<>();
-			}
 		}
-		mPlaygroundList.addAll(data);
+		mPlaygroundList = null;
+		mPlaygroundList = data;
 		notifyDataSetChanged();
 	}
 
 	protected static class PlaygroundListAdapterViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback,
 	                                                                                                  RatingUI {
 		private final ItemPlaygroundBinding mBinding;
-		private final List<Playground> mPlaygroundList;
+		private final PlaygroundListAdapter mPlaygroundListAdapter;
 		private GoogleMap mGoogleMap;
 
-		private PlaygroundListAdapterViewHolder(List<Playground> playgroundList, ItemPlaygroundBinding binding) {
+		private PlaygroundListAdapterViewHolder(PlaygroundListAdapter playgroundListAdapter, ItemPlaygroundBinding binding) {
 			super(binding.getRoot());
-			mPlaygroundList = playgroundList;
+			mPlaygroundListAdapter = playgroundListAdapter;
 			mBinding = binding;
 		}
 
@@ -109,17 +105,18 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 		}
 
 		private void showData(GoogleMap googleMap) {
-			if (getAdapterPosition() < 0) {
+			if (getAdapterPosition() < 0 || mPlaygroundListAdapter.mPlaygroundList == null || mPlaygroundListAdapter.mPlaygroundList.size() <= 0) {
 				return;
 			}
-			Playground playground = mPlaygroundList.get(getAdapterPosition());
+			Playground playground = mPlaygroundListAdapter.mPlaygroundList.get(getAdapterPosition());
 			Utils.showRating(playground, this);
 			mGoogleMap = googleMap;
 			mGoogleMap.setBuildingsEnabled(false);
 			mGoogleMap.setIndoorEnabled(false);
 			googleMap.getUiSettings()
 			         .setMapToolbarEnabled(false);
-			googleMap.getUiSettings().setScrollGesturesEnabled(false);
+			googleMap.getUiSettings()
+			         .setScrollGesturesEnabled(false);
 			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 16));
 			Marker marker = googleMap.addMarker(new MarkerOptions().position(playground.getPosition()));
 			marker.setIcon(getBitmapDescriptor(App.Instance, R.drawable.ic_pin_500));
@@ -127,7 +124,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 				@Override
 				public void onMapClick(LatLng latLng) {
 					if (getAdapterPosition() >= 0) {
-						Playground playground = mPlaygroundList.get(getAdapterPosition());
+						Playground playground = mPlaygroundListAdapter.mPlaygroundList.get(getAdapterPosition());
 						EventBus.getDefault()
 						        .post(new OpenPlaygroundEvent(playground, getAdapterPosition(), new WeakReference<>(itemView)));
 					}
@@ -135,7 +132,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 			});
 		}
 
-		private  void onViewRecycled() {
+		private void onViewRecycled() {
 			if (mGoogleMap != null) {
 				mGoogleMap.clear();
 				mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NONE);

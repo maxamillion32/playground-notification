@@ -28,7 +28,8 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 
 /**
- * The list-mode of search result.
+ * {@link PlaygroundListActivity} shows the list-mode of search result.
+ * It works only for phone.
  *
  * @author Xinyue Zhao
  */
@@ -41,12 +42,16 @@ public final class PlaygroundListActivity extends AppBarActivity {
 	private static final int MENU = R.menu.menu_list;
 
 	private boolean mItemSelected;
+
+	private PlaygroundListFragment mPlaygroundListFragment;
+
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
 
 	/**
 	 * Handler for {@link DetailShownEvent}.
+	 *
 	 * @param e Event {@link DetailShownEvent}.
 	 */
 	public void onEvent(DetailShownEvent e) {
@@ -56,6 +61,7 @@ public final class PlaygroundListActivity extends AppBarActivity {
 
 	/**
 	 * Handler for {@link DetailClosedEvent}.
+	 *
 	 * @param e Event {@link DetailClosedEvent}.
 	 */
 	public void onEvent(DetailClosedEvent e) {
@@ -69,7 +75,7 @@ public final class PlaygroundListActivity extends AppBarActivity {
 	 * @param cxt            {@link Activity}.
 	 * @param playgroundList A list of {@link Playground}.
 	 */
-	public static void showInstance(@NonNull Activity cxt, @Nullable List<Playground> playgroundList) {
+	public static void showInstance(@NonNull Activity cxt, @Nullable List<? extends Playground> playgroundList) {
 		if (playgroundList == null) {
 			return;
 		}
@@ -85,10 +91,20 @@ public final class PlaygroundListActivity extends AppBarActivity {
 		if (intent == null) {
 			return;
 		}
-		List<Playground> playgroundList = (List<Playground>) intent.getSerializableExtra(EXTRAS_PLAYGROUND_LIST);
+		List<? extends Playground> playgroundList = (List<? extends Playground>) intent.getSerializableExtra(EXTRAS_PLAYGROUND_LIST);
 		getSupportFragmentManager().beginTransaction()
-		                           .replace(contentLayout.getId(), PlaygroundListFragment.newInstance(App.Instance, playgroundList))
+		                           .replace(contentLayout.getId(), mPlaygroundListFragment = PlaygroundListFragment.newInstance(App.Instance, playgroundList))
 		                           .commit();
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		setIntent(intent);
+		if (mPlaygroundListFragment != null) {
+			List<? extends Playground> playgroundList = (List<? extends Playground>) intent.getSerializableExtra(EXTRAS_PLAYGROUND_LIST);
+			mPlaygroundListFragment.refresh(playgroundList);
+		}
 	}
 
 	@Override
@@ -127,7 +143,7 @@ public final class PlaygroundListActivity extends AppBarActivity {
 
 	@Override
 	public void onBackPressed() {
-		if(mItemSelected) {
+		if (mItemSelected) {
 			EventBus.getDefault()
 			        .post(new BackPressedEvent());
 		} else {

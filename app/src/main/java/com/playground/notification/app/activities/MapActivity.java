@@ -92,7 +92,6 @@ import com.playground.notification.bus.MyLocationLoadingErrorEvent;
 import com.playground.notification.bus.MyLocationLoadingSuccessEvent;
 import com.playground.notification.bus.NearRingListLoadingErrorEvent;
 import com.playground.notification.bus.NearRingListLoadingSuccessEvent;
-import com.playground.notification.bus.ShowStreetViewEvent;
 import com.playground.notification.databinding.MainBinding;
 import com.playground.notification.ds.google.Geobound;
 import com.playground.notification.ds.google.Geocode;
@@ -1144,10 +1143,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 							}
 							mPlaygroundClusterManager = PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, mAvailablePlaygroundList);
 							if (!getResources().getBoolean(R.bool.is_small_screen)) {
-								if (mPlaygroundListFragment == null) {
-									mPlaygroundListFragment = (PlaygroundListFragment) (getSupportFragmentManager().findFragmentById(R.id.play_grounds_list));
-								}
-								mPlaygroundListFragment.refresh(mAvailablePlaygroundList);
+								refreshPlaygroundList(mAvailablePlaygroundList);
 							} else {
 								updateBadgeTextOnAppBar();
 							}
@@ -1164,6 +1160,17 @@ public final class MapActivity extends AppActivity implements LocationListener,
 				mBinding.loadPinPb.setVisibility(View.GONE);
 			}
 		}
+	}
+
+	/**
+	 * {@link #refreshPlaygroundList(List)} Only works for large screen like tablet to get list of {@link Playground}s.
+	 */
+	private void refreshPlaygroundList(List<? extends  Playground> list) {
+		if (mPlaygroundListFragment == null) {
+			mBinding.playGroundsListContainer.setVisibility(View.VISIBLE);
+			mPlaygroundListFragment = (PlaygroundListFragment) (getSupportFragmentManager().findFragmentById(R.id.play_grounds_list));
+		}
+		mPlaygroundListFragment.refresh(list);
 	}
 
 
@@ -1417,22 +1424,29 @@ public final class MapActivity extends AppActivity implements LocationListener,
 				mBinding.drawerLayout.closeDrawer(Gravity.LEFT);
 
 				if (mMap != null) {
-					Location location = App.Instance.getCurrentLocation();
-					double lat = location.getLatitude();
-					double lng = location.getLongitude();
 					switch (menuItem.getItemId()) {
 						case R.id.action_favorite:
 							FavoriteManager favoriteManager = FavoriteManager.getInstance();
 							if (favoriteManager.getCachedList()
 							                   .size() > 0) {
-								ViewPagerActivity.showInstance(MapActivity.this, lat, lng, favoriteManager.getCachedList(), getString(R.string.lbl_favorite_list));
+								if (!getResources().getBoolean(R.bool.is_small_screen)) {
+									menuItem.setCheckable(true);
+									refreshPlaygroundList(favoriteManager.getCachedList());
+								} else {
+									PlaygroundListActivity.showInstance(MapActivity.this, favoriteManager.getCachedList());
+								}
 							}
 							break;
 						case R.id.action_near_ring:
 							NearRingManager nearRingManager = NearRingManager.getInstance();
 							if (nearRingManager.getCachedList()
 							                   .size() > 0) {
-								ViewPagerActivity.showInstance(MapActivity.this, lat, lng, nearRingManager.getCachedList(), getString(R.string.lbl_near_ring_list));
+								if (!getResources().getBoolean(R.bool.is_small_screen)) {
+									menuItem.setCheckable(true);
+									refreshPlaygroundList(nearRingManager.getCachedList());
+								} else {
+									PlaygroundListActivity.showInstance(MapActivity.this, nearRingManager.getCachedList());
+								}
 							}
 							break;
 						case R.id.action_my_location_list:
