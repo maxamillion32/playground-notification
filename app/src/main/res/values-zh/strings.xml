@@ -151,4 +151,9 @@
     <string name="app_settings_dialog_cancel">关闭应用</string>
 
     <string name="streetview_not_available">无法打开街景功能。</string>
+
+
+
+    <string name="no_map_app_title">无法取得路线导航</string>
+    <string name="no_map_apps">必须下载一个额外类似地图的应用来取得导航。</string>
 </resources>

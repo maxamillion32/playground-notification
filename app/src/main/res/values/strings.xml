@@ -210,4 +210,8 @@
     <string name="app_settings_dialog_cancel">Close app</string>
 
     <string name="streetview_not_available">Cannot show content of streetview.</string>
+
+
+    <string name="no_map_app_title">Route unavailable</string>
+    <string name="no_map_apps">You must download a map-like application to get route.</string>
 </resources>

@@ -13,6 +13,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.content.res.AppCompatResources;
 import android.view.LayoutInflater;
@@ -47,6 +48,7 @@ import com.playground.notification.app.activities.AppActivity;
 import com.playground.notification.app.activities.MapActivity;
 import com.playground.notification.bus.DetailClosedEvent;
 import com.playground.notification.bus.DetailShownEvent;
+import com.playground.notification.bus.OpenRouteEvent;
 import com.playground.notification.bus.ShowLocationRatingEvent;
 import com.playground.notification.bus.ShowStreetViewEvent;
 import com.playground.notification.databinding.PlaygroundDetailBinding;
@@ -57,6 +59,7 @@ import com.playground.notification.ds.sync.Rating;
 import com.playground.notification.ds.sync.SyncPlayground;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.NearRingManager;
+import com.playground.notification.ui.RouteCalcClientPicker;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.utils.Utils;
 
@@ -111,6 +114,19 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
+
+	/**
+	 * Handler for {@link OpenRouteEvent}.
+	 *
+	 * @param e Event {@link OpenRouteEvent}.
+	 */
+	public void onEvent(OpenRouteEvent e) {
+		FragmentActivity activity = getActivity();
+		if (activity == null) {
+			return;
+		}
+		RouteCalcClientPicker.show(activity, e.getIntent());
+	}
 
 	/**
 	 * Handler for {@link com.playground.notification.bus.ShowLocationRatingEvent}.
@@ -525,7 +541,11 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 		mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
 		mBinding.loadingImgPb.setVisibility(View.GONE);
 		if (mMapFragment == null) {
-			mMapFragment = SupportMapFragment.newInstance(new GoogleMapOptions().liteMode(true).rotateGesturesEnabled(false).zoomControlsEnabled(false).zoomGesturesEnabled(false).scrollGesturesEnabled(false));
+			mMapFragment = SupportMapFragment.newInstance(new GoogleMapOptions().liteMode(true)
+			                                                                    .rotateGesturesEnabled(false)
+			                                                                    .zoomControlsEnabled(false)
+			                                                                    .zoomGesturesEnabled(false)
+			                                                                    .scrollGesturesEnabled(false));
 		}
 		FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
 		fragmentTransaction.replace(R.id.location_container, mMapFragment);
@@ -643,8 +663,8 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 		}
 
 		public void onGoClicked(@SuppressWarnings("UnusedParameters") View v) {
-			mBinding.goBtn.getContext()
-			              .startActivity(com.playground.notification.utils.Utils.getMapWeb(new LatLng(mLat, mLng), new LatLng(mGround.getLatitude(), mGround.getLongitude())));
+			EventBus.getDefault()
+			        .post(new OpenRouteEvent(com.playground.notification.utils.Utils.getMapWeb(new LatLng(mLat, mLng), new LatLng(mGround.getLatitude(), mGround.getLongitude()))));
 		}
 
 
