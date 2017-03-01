@@ -124,7 +124,7 @@ public final class MyLocationListActivity extends AppActivity {
 					MyLocation del = new MyLocation(Prefs.getInstance()
 					                                     .getGoogleId(), location.getLabel(), location);
 					del.setObjectId(location.getObjectId());
-					del.delete(App.Instance);
+					del.delete();
 				}
 				//Remove on cache.
 				for (MyLocation alreadyRemoved : myLocations) {

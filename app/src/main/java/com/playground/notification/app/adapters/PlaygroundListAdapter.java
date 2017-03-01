@@ -17,6 +17,9 @@ import com.playground.notification.app.App;
 import com.playground.notification.bus.OpenPlaygroundEvent;
 import com.playground.notification.databinding.ItemPlaygroundBinding;
 import com.playground.notification.ds.grounds.Playground;
+import com.playground.notification.ds.sync.Rating;
+import com.playground.notification.utils.RatingUI;
+import com.playground.notification.utils.Utils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -49,22 +52,15 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 
 	@Override
 	public void onBindViewHolder(final PlaygroundListAdapterViewHolder holder, int position) {
-		holder.mBinding.getRoot().getLayoutParams().width = (int) App.Instance.getListItemWidth();
-		holder.mBinding.getRoot().getLayoutParams().height = (int) App.Instance.getListItemHeight();
+		holder.mBinding.itemMapRecyclerview.getLayoutParams().width = (int) App.Instance.getListItemWidth();
+		holder.mBinding.itemMapRecyclerview.getLayoutParams().height = (int) App.Instance.getListItemHeight();
 		holder.initializeMapView();
 		holder.mBinding.executePendingBindings();
 	}
 
 	@Override
 	public void onViewRecycled(PlaygroundListAdapterViewHolder holder) {
-		if (holder.mGoogleMap != null) {
-			holder.mGoogleMap.clear();
-			holder.mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NONE);
-
-			holder.mBinding.itemMapRecyclerview.onPause();
-			holder.mBinding.itemMapRecyclerview.onStop();
-			holder.mBinding.itemMapRecyclerview.onDestroy();
-		}
+		holder.onViewRecycled();
 	}
 
 
@@ -87,7 +83,8 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 		notifyDataSetChanged();
 	}
 
-	protected static class PlaygroundListAdapterViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback {
+	protected static class PlaygroundListAdapterViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback,
+	                                                                                                  RatingUI {
 		private final ItemPlaygroundBinding mBinding;
 		private final List<Playground> mPlaygroundList;
 		private GoogleMap mGoogleMap;
@@ -116,6 +113,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 				return;
 			}
 			Playground playground = mPlaygroundList.get(getAdapterPosition());
+			Utils.showRating(playground, this);
 			mGoogleMap = googleMap;
 			mGoogleMap.setBuildingsEnabled(false);
 			mGoogleMap.setIndoorEnabled(false);
@@ -135,6 +133,35 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 					}
 				}
 			});
+		}
+
+		private  void onViewRecycled() {
+			if (mGoogleMap != null) {
+				mGoogleMap.clear();
+				mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+
+				mBinding.itemMapRecyclerview.onPause();
+				mBinding.itemMapRecyclerview.onStop();
+				mBinding.itemMapRecyclerview.onDestroy();
+			}
+			mBinding.locationRb.setRating(0f);
+		}
+
+		@Override
+		public void setRating(Rating rate) {
+		}
+
+		@Override
+		public void setRating(float rate) {
+			mBinding.locationRb.setRating(rate);
+		}
+
+		@Override
+		public void showRating() {
+		}
+
+		@Override
+		public void dismissRating() {
 		}
 	}
 }

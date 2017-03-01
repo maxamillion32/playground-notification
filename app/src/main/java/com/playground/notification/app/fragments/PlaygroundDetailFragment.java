@@ -61,20 +61,14 @@ import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.ui.RouteCalcClientPicker;
 import com.playground.notification.utils.Prefs;
+import com.playground.notification.utils.RatingUI;
 import com.playground.notification.utils.Utils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.Serializable;
-import java.util.List;
 import java.util.Locale;
 
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.BmobQuery.CachePolicy;
-import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.FindStatisticsListener;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import de.greenrobot.event.EventBus;
 import retrofit.Callback;
@@ -89,7 +83,7 @@ import static com.playground.notification.utils.Utils.streetViewBitmapHasRealCon
  *
  * @author Xinyue Zhao
  */
-public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
+public final class PlaygroundDetailFragment extends BottomSheetDialogFragment implements RatingUI {
 	private static final String EXTRAS_GROUND = PlaygroundDetailFragment.class.getName() + ".EXTRAS.playground";
 	private static final String EXTRAS_LAT = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lat";
 	private static final String EXTRAS_LNG = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lng";
@@ -183,20 +177,28 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 						    Rating newRating = new Rating(Prefs.getInstance()
 						                                       .getGoogleId(), playground);
 						    newRating.setValue(mBinding.locationRb.getRating());
-						    newRating.save(App.Instance);
+						    newRating.save(new SaveListener<String>() {
+							    @Override
+							    public void done(String s, BmobException exp) {
+								    if (exp != null) {
+									    LL.d("newRating failed");
+									    return;
+								    }
+								    LL.d("newRating success");
+							    }
+						    });
 					    } else {
 						    Rating updateRating = new Rating(Prefs.getInstance()
 						                                          .getGoogleId(), playground);
 						    updateRating.setValue(mBinding.locationRb.getRating());
-						    updateRating.update(App.Instance, rating.getObjectId(), new UpdateListener() {
+						    updateRating.update(rating.getObjectId(), new UpdateListener() {
 							    @Override
-							    public void onSuccess() {
-								    LL.d("Rating success");
-							    }
-
-							    @Override
-							    public void onFailure(int code, String msg) {
-								    LL.d("Rating failed");
+							    public void done(BmobException exp) {
+								    if (exp != null) {
+									    LL.d("updateRating failed");
+									    return;
+								    }
+								    LL.d("updateRating success");
 							    }
 						    });
 					    }
@@ -406,57 +408,31 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment {
 
 
 			//Have you rated?
-			BmobQuery<Rating> q = new BmobQuery<>();
-			q.setCachePolicy(CachePolicy.NETWORK_ELSE_CACHE);
-			q.addWhereEqualTo("mUID",
-			                  Prefs.getInstance()
-			                       .getGoogleId());
-			q.addWhereEqualTo("mId", playground.getId());
-			q.findObjects(App.Instance, new FindListener<Rating>() {
-				@Override
-				public void onSuccess(List<Rating> list) {
-					if (list.size() > 0) {
-						mBinding.setRating(list.get(0));
-					}
-				}
-
-				@Override
-				public void onError(int i, String s) {
-				}
-			});
-
-			//Rating summary.
-			q = new BmobQuery<>();
-			q.addWhereEqualTo("mId", playground.getId());
-			q.average(new String[] { "mValue" });
-			q.findStatistics(App.Instance, Rating.class, new FindStatisticsListener() {
-
-				@Override
-				public void onSuccess(Object object) {
-					JSONArray ary = (JSONArray) object;
-					if (ary != null) {//
-						try {
-							JSONObject obj = ary.getJSONObject(0);
-							int avg = obj.getInt("_avgMValue");
-							mBinding.locationRb.setRating(avg);
-						} catch (JSONException ignored) {
-						}
-					} else {
-						mBinding.setRatedValue(0f);
-					}
-					mBinding.ratingVg.setVisibility(View.VISIBLE);
-				}
-
-				@Override
-				public void onFailure(int code, String msg) {
-					mBinding.setRatedValue(0f);
-					mBinding.ratingVg.setVisibility(View.VISIBLE);
-				}
-			});
+			Utils.showRating(playground, this);
 
 			//Preview
 			setPreview();
 		}
+	}
+
+	@Override
+	public void setRating(Rating rate) {
+		mBinding.setRating(rate);
+	}
+
+	@Override
+	public void setRating(float rate) {
+		mBinding.locationRb.setRating(rate);
+	}
+
+	@Override
+	public void showRating() {
+		mBinding.ratingVg.setVisibility(View.VISIBLE);
+	}
+
+	@Override
+	public void dismissRating() {
+		mBinding.ratingVg.setVisibility(View.GONE);
 	}
 
 

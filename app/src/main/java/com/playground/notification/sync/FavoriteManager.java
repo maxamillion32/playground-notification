@@ -1,11 +1,11 @@
 package com.playground.notification.sync;
 
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.chopping.application.LL;
 import com.playground.notification.R;
-import com.playground.notification.app.App;
 import com.playground.notification.bus.FavoriteListLoadingErrorEvent;
 import com.playground.notification.bus.FavoriteListLoadingSuccessEvent;
 import com.playground.notification.ds.grounds.Playground;
@@ -17,6 +17,7 @@ import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobQuery.CachePolicy;
+import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import de.greenrobot.event.EventBus;
 
@@ -52,11 +53,15 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 		LL.d("Start getting list of favorite");
 		//Load from backend.
 		BmobQuery<Favorite> q = new BmobQuery<>();
-		q.setCachePolicy( CachePolicy.NETWORK_ONLY );
+		q.setCachePolicy( CachePolicy.CACHE_THEN_NETWORK );
 		q.addWhereEqualTo( "mUID", Prefs.getInstance().getGoogleId() );
-		q.findObjects( App.Instance, new FindListener<Favorite>() {
+		q.findObjects(new FindListener<Favorite>() {
 			@Override
-			public void onSuccess( List<Favorite> list ) {
+			public void done( List<Favorite> list, BmobException exp) {
+				if(exp != null) {
+					onError(exp.toString());
+					return;
+				}
 				if( getCachedList().size() > 0 ) {
 					getCachedList().clear();
 				}
@@ -66,11 +71,13 @@ public final class FavoriteManager extends SyncManager<Favorite> {
 				LL.d("Get list of favorite");
 			}
 
-			@Override
-			public void onError( int i, String s ) {
+			private void onError(String s) {
+				LL.e("Cannot do at start getting list of favorite:" + (TextUtils.isEmpty(s) ?
+				                                                       "." :
+				                                                       s + "."));
 				setInit();
-				EventBus.getDefault().post( new FavoriteListLoadingErrorEvent() );
-				LL.d("Cant get list of favorite");
+				EventBus.getDefault()
+				        .post(new FavoriteListLoadingErrorEvent());
 			}
 		} );
 	}

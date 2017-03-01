@@ -1,11 +1,11 @@
 package com.playground.notification.sync;
 
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.chopping.application.LL;
 import com.playground.notification.R;
-import com.playground.notification.app.App;
 import com.playground.notification.bus.NearRingListLoadingErrorEvent;
 import com.playground.notification.bus.NearRingListLoadingSuccessEvent;
 import com.playground.notification.ds.grounds.Playground;
@@ -17,6 +17,7 @@ import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobQuery.CachePolicy;
+import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import de.greenrobot.event.EventBus;
 
@@ -52,11 +53,15 @@ public final class NearRingManager extends SyncManager<NearRing> {
 		LL.d("Start getting list of near-ring");
 		//Load from backend.
 		BmobQuery<NearRing> q = new BmobQuery<>();
-		q.setCachePolicy( CachePolicy.NETWORK_ONLY );
+		q.setCachePolicy( CachePolicy.CACHE_THEN_NETWORK );
 		q.addWhereEqualTo( "mUID", Prefs.getInstance().getGoogleId() );
-		q.findObjects( App.Instance, new FindListener<NearRing>() {
+		q.findObjects( new FindListener<NearRing>() {
 			@Override
-			public void onSuccess( List<NearRing> list ) {
+			public void done( List<NearRing> list, BmobException exp ) {
+				if(exp != null) {
+					onError(exp.toString());
+					return;
+				}
 				if( getCachedList().size() > 0 ) {
 					getCachedList().clear();
 				}
@@ -69,11 +74,12 @@ public final class NearRingManager extends SyncManager<NearRing> {
 				//				App.Instance.startService(new Intent(App.Instance, GeofenceManagerService.class));
 			}
 
-			@Override
-			public void onError( int i, String s ) {
+			private void onError( String s ) {
+				LL.e("Cannot do at start getting list of near-ring:" + (TextUtils.isEmpty(s) ?
+				                                                         "." :
+				                                                         s + "."));
 				setInit();
 				EventBus.getDefault().post( new NearRingListLoadingErrorEvent() );
-				LL.d("Cant get list of near-ring");
 			}
 		} );
 	}
