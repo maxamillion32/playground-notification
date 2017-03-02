@@ -4,6 +4,7 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -130,6 +131,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 					}
 				}
 			});
+			mBinding.loadingPb.setVisibility(View.GONE);
 		}
 
 		private void onViewRecycled() {
@@ -142,6 +144,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 				mBinding.itemMapRecyclerview.onDestroy();
 			}
 			mBinding.locationRb.setRating(0f);
+			mBinding.loadingPb.setVisibility(View.VISIBLE);
 		}
 
 		@Override
