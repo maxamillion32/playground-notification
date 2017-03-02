@@ -408,7 +408,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 
 
 			//Have you rated?
-			Utils.showRating(playground, this);
+			Utils.showAllRating(playground, this);
 
 			//Preview
 			setPreview();

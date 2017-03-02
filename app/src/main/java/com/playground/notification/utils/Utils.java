@@ -46,32 +46,29 @@ public final class Utils {
 	/**
 	 * Show different marker-icon for different distance.
 	 *
-	 * @param options
-	 * 		The the option of a marker.
-	 * @param center
-	 * 		Current center position.
-	 * @param to
-	 * 		The ground position.
+	 * @param options The the option of a marker.
+	 * @param center  Current center position.
+	 * @param to      The ground position.
 	 */
-	public static void changeMarkerIcon( MarkerOptions options, LatLng center, LatLng to ) {
-		synchronized( TAG ) {
-			float[] results = new float[ 1 ];
-			android.location.Location.distanceBetween( center.latitude, center.longitude, to.latitude, to.longitude, results );
-			float distance = results[ 0 ];
-			if( results.length > 0 ) {
-				if( distance <= 100 ) {
-					options.icon( BitmapDescriptorFactory.fromResource( R.drawable.ic_pin_100 ) );
-				} else if( distance <= 200 && distance > 100 ) {
-					options.icon( BitmapDescriptorFactory.fromResource( R.drawable.ic_pin_200 ) );
-				} else if( distance <= 300 && distance > 200 ) {
-					options.icon( BitmapDescriptorFactory.fromResource( R.drawable.ic_pin_300 ) );
-				} else if( distance <= 400 && distance > 300 ) {
-					options.icon( BitmapDescriptorFactory.fromResource( R.drawable.ic_pin_400 ) );
+	public static void changeMarkerIcon(MarkerOptions options, LatLng center, LatLng to) {
+		synchronized (TAG) {
+			float[] results = new float[1];
+			android.location.Location.distanceBetween(center.latitude, center.longitude, to.latitude, to.longitude, results);
+			float distance = results[0];
+			if (results.length > 0) {
+				if (distance <= 100) {
+					options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_100));
+				} else if (distance <= 200 && distance > 100) {
+					options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_200));
+				} else if (distance <= 300 && distance > 200) {
+					options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_300));
+				} else if (distance <= 400 && distance > 300) {
+					options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_400));
 				} else {
-					options.icon( BitmapDescriptorFactory.fromResource( R.drawable.ic_pin_500 ) );
+					options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_500));
 				}
 			} else {
-				options.icon( BitmapDescriptorFactory.fromResource( R.drawable.ic_pin_500 ) );
+				options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_500));
 			}
 		}
 	}
@@ -80,31 +77,30 @@ public final class Utils {
 	/**
 	 * Open a html page with external browser.
 	 *
-	 * @param cxt
-	 * 		The {@link Context}.
-	 * @param url
-	 * 		The url to the site.
+	 * @param cxt The {@link Context}.
+	 * @param url The url to the site.
 	 */
-	public static void openExternalBrowser( Activity cxt, String url ) {
-		Intent i = new Intent( Intent.ACTION_VIEW );
-		i.setData( Uri.parse( url ) );
-		ActivityCompat.startActivity( cxt, i, null );
+	public static void openExternalBrowser(Activity cxt, String url) {
+		Intent i = new Intent(Intent.ACTION_VIEW);
+		i.setData(Uri.parse(url));
+		ActivityCompat.startActivity(cxt, i, null);
 	}
 
 	/**
 	 * Open Google's map to show two points.
 	 *
-	 * @param fromLatLng
-	 * 		From point.
-	 * @param toLatLng
-	 * 		To point
+	 * @param fromLatLng From point.
+	 * @param toLatLng   To point
 	 */
-	public static Intent getMapWeb( LatLng fromLatLng, LatLng toLatLng ) {
-		String q = new StringBuilder().append( "http://maps.google.com/maps?" ).append( "saddr=" ).append(
-				fromLatLng.latitude + "," + fromLatLng.longitude ).append( "&daddr=" ).append( toLatLng.latitude + "," + toLatLng.longitude )
-				.toString();
-		Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( q.trim() ) );
-		intent.setFlags( Intent.FLAG_ACTIVITY_SINGLE_TOP );
+	public static Intent getMapWeb(LatLng fromLatLng, LatLng toLatLng) {
+		String q = new StringBuilder().append("http://maps.google.com/maps?")
+		                              .append("saddr=")
+		                              .append(fromLatLng.latitude + "," + fromLatLng.longitude)
+		                              .append("&daddr=")
+		                              .append(toLatLng.latitude + "," + toLatLng.longitude)
+		                              .toString();
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(q.trim()));
+		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		return intent;
 	}
 
@@ -112,41 +108,45 @@ public final class Utils {
 	/**
 	 * Share information by calling standards of system.
 	 */
-	public static Intent getShareInformation( String subject, String body ) {
-		Intent i = new Intent( Intent.ACTION_SEND );
-		i.setType( "text/plain" );
-		i.putExtra( android.content.Intent.EXTRA_SUBJECT, subject );
-		i.putExtra( android.content.Intent.EXTRA_TEXT, body );
+	public static Intent getShareInformation(String subject, String body) {
+		Intent i = new Intent(Intent.ACTION_SEND);
+		i.setType("text/plain");
+		i.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
+		i.putExtra(android.content.Intent.EXTRA_TEXT, body);
 		return i;
 	}
 
 	/**
 	 * Vibrate and make sound.
 	 */
-	public static void vibrateSound( Context cxt, android.support.v4.app.NotificationCompat.Builder notifyBuilder ) {
-		AudioManager audioManager = (AudioManager) cxt.getSystemService( Context.AUDIO_SERVICE );
-		if( audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT ) {
-			notifyBuilder.setVibrate( new long[] { 1000 , 1000 , 1000 , 1000 } );
-			notifyBuilder.setSound( Uri.parse( String.format( "android.resource://%s/%s", cxt.getPackageName(), R.raw.signal ) ) );
+	public static void vibrateSound(Context cxt, android.support.v4.app.NotificationCompat.Builder notifyBuilder) {
+		AudioManager audioManager = (AudioManager) cxt.getSystemService(Context.AUDIO_SERVICE);
+		if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+			notifyBuilder.setVibrate(new long[] { 1000,
+			                                      1000,
+			                                      1000,
+			                                      1000 });
+			notifyBuilder.setSound(Uri.parse(String.format("android.resource://%s/%s", cxt.getPackageName(), R.raw.signal)));
 		}
-		notifyBuilder.setLights( cxt.getResources().getColor( R.color.primary_color ), 1000, 1000 );
+		notifyBuilder.setLights(cxt.getResources()
+		                           .getColor(R.color.primary_color), 1000, 1000);
 	}
 
 	/**
 	 * Test whether the {@link String} is  valid value or not, if invalidate, shakes it.
 	 */
-	public static boolean validateStr( Context cxt, String s ) {
+	public static boolean validateStr(Context cxt, String s) {
 		boolean val;
-		if( s.matches( ".*[/=():;].*" ) ) {
+		if (s.matches(".*[/=():;].*")) {
 			val = false;
-			com.chopping.utils.Utils.showLongToast( cxt, R.string.lbl_exclude_chars );
+			com.chopping.utils.Utils.showLongToast(cxt, R.string.lbl_exclude_chars);
 		} else {
 			val = true;
 		}
 		return val;
 	}
 
-	public static boolean streetViewBitmapHasRealContent(@NonNull  Bitmap bitmap) {
+	public static boolean streetViewBitmapHasRealContent(@NonNull Bitmap bitmap) {
 		if (bitmap == null || bitmap.isRecycled()) {
 			return false;
 		}
@@ -167,7 +167,6 @@ public final class Utils {
 	}
 
 
-
 	/**
 	 * Helper to update menu-titles on drawer.
 	 */
@@ -177,7 +176,7 @@ public final class Utils {
 			   .findItem(itemResId)
 			   .setTitle(App.Instance.getString(itemTitleResId,
 			                                    mgr.getCachedList()
-			                          .size()));
+			                                       .size()));
 		} else {
 			niv.getMenu()
 			   .findItem(itemResId)
@@ -199,24 +198,15 @@ public final class Utils {
 		return BitmapDescriptorFactory.fromBitmap(bitmap);
 	}
 
-	public static void showRating(Playground playground, final RatingUI ratingUI) {
-		BmobQuery<Rating> q = new BmobQuery<>();
-		q.setCachePolicy(BmobQuery.CachePolicy.CACHE_THEN_NETWORK);
-		q.addWhereEqualTo("mUID",
-		                  Prefs.getInstance()
-		                       .getGoogleId());
-		q.addWhereEqualTo("mId", playground.getId());
-		q.findObjects(new FindListener<Rating>() {
-			@Override
-			public void done(List<Rating> list, BmobException exp) {
-				if (list.size() > 0) {
-					ratingUI.setRating(list.get(0));
-				}
-			}
-		});
 
-		//Rating summary.
-		q = new BmobQuery<>();
+	public static void showAllRating(Playground playground, final RatingUI ratingUI) {
+		showPersonalRating(playground, ratingUI);
+		showRatingSummary(playground, ratingUI);
+	}
+
+
+	public static void showRatingSummary(Playground playground, final RatingUI ratingUI) {
+		BmobQuery q = new BmobQuery<>();
 		q.setCachePolicy(BmobQuery.CachePolicy.CACHE_THEN_NETWORK);
 		q.addWhereEqualTo("mId", playground.getId());
 		q.average(new String[] { "mValue" });
@@ -224,7 +214,7 @@ public final class Utils {
 
 			@Override
 			public void done(JSONArray array, BmobException exp) {
-				if(exp != null) {
+				if (exp != null) {
 					ratingUI.setRating(0f);
 					ratingUI.showRating();
 					return;
@@ -240,6 +230,24 @@ public final class Utils {
 					ratingUI.setRating(0f);
 				}
 				ratingUI.showRating();
+			}
+		});
+	}
+
+
+	public static void showPersonalRating(Playground playground, final RatingUI ratingUI) {
+		BmobQuery<Rating> q = new BmobQuery<>();
+		q.setCachePolicy(BmobQuery.CachePolicy.CACHE_THEN_NETWORK);
+		q.addWhereEqualTo("mUID",
+		                  Prefs.getInstance()
+		                       .getGoogleId());
+		q.addWhereEqualTo("mId", playground.getId());
+		q.findObjects(new FindListener<Rating>() {
+			@Override
+			public void done(List<Rating> list, BmobException exp) {
+				if (list.size() > 0) {
+					ratingUI.setRating(list.get(0));
+				}
 			}
 		});
 	}

@@ -90,7 +90,7 @@ android {
 ext {
     appCompatVersion = "25.2.0"
     multidexVersion = "1.0.1"
-    mapsUtilsVersion = "0.4+"
+    mapsUtilsVersion = "0.5+"
     easyPermissions="0.2.0"
     playService = "10.2.0"
     imageLoad = "3.7.0"

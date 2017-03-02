@@ -22,6 +22,7 @@ import com.playground.notification.utils.RatingUI;
 import com.playground.notification.utils.Utils;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -36,10 +37,10 @@ import static com.playground.notification.utils.Utils.getBitmapDescriptor;
  */
 public final class PlaygroundListAdapter extends RecyclerView.Adapter<PlaygroundListAdapter.PlaygroundListAdapterViewHolder> {
 	private static final int ITEM_LAYOUT = R.layout.item_playground_list;
-	private List<? extends Playground> mPlaygroundList;
+	private List<Playground> mPlaygroundList = new ArrayList<>();
 
 	public PlaygroundListAdapter(List<? extends Playground> playgroundList) {
-		mPlaygroundList = playgroundList;
+		mPlaygroundList.addAll(playgroundList);
 	}
 
 	@Override
@@ -71,11 +72,10 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 	}
 
 	public void refresh(List<? extends Playground> data) {
-		if (mPlaygroundList != null && mPlaygroundList.size() > 0) {
+		if (mPlaygroundList.size() > 0) {
 			mPlaygroundList.clear();
 		}
-		mPlaygroundList = null;
-		mPlaygroundList = data;
+		mPlaygroundList.addAll(data);
 		notifyDataSetChanged();
 	}
 
@@ -109,7 +109,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 				return;
 			}
 			Playground playground = mPlaygroundListAdapter.mPlaygroundList.get(getAdapterPosition());
-			Utils.showRating(playground, this);
+			Utils.showRatingSummary(playground, this);
 			mGoogleMap = googleMap;
 			mGoogleMap.setBuildingsEnabled(false);
 			mGoogleMap.setIndoorEnabled(false);
