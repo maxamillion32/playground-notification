@@ -10,11 +10,15 @@ import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Rating;
 import com.playground.notification.utils.Prefs;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobRealTimeData;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.ValueEventListener;
 import de.greenrobot.event.EventBus;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -42,6 +46,8 @@ public final class RatingManager extends SyncManager<Rating> {
 	}
 
 
+	private BmobRealTimeData mRtd;
+
 	/**
 	 * No one can create this class.
 	 */
@@ -53,6 +59,24 @@ public final class RatingManager extends SyncManager<Rating> {
 	 * Init the manager.
 	 */
 	public void init() {
+		if (mRtd == null) {
+			mRtd = new BmobRealTimeData();
+			mRtd.start(new ValueEventListener() {
+				@Override
+				public void onDataChange(JSONObject data) {
+					LL.d("onDataChange");
+					init();
+				}
+
+				@Override
+				public void onConnectCompleted(Exception ex) {
+					LL.d("onConnectCompleted");
+					if (mRtd.isConnected()) {
+						mRtd.subTableUpdate("Rating");
+					}
+				}
+			});
+		}
 		LL.d("Start getting list of all ratings on all locations.");
 		//Load from backend.
 		BmobQuery<Rating> q = new BmobQuery<>();
@@ -137,6 +161,13 @@ public final class RatingManager extends SyncManager<Rating> {
 		          });
 	}
 
+	@Override
+	public void clean() {
+		super.clean();
+		if (mRtd.isConnected()) {
+			mRtd.unsubTableUpdate("Rating");
+		}
+	}
 
 	@Override
 	protected int getAddSuccessText() {
@@ -158,7 +189,7 @@ public final class RatingManager extends SyncManager<Rating> {
 		return R.drawable.ic_save;
 	}
 
-	public static interface RatingUI {
+	public interface RatingUI {
 		void setRating(float rate);
 
 		void setRating(Rating rate);

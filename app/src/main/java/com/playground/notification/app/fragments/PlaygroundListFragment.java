@@ -6,6 +6,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -92,6 +93,15 @@ public final class PlaygroundListFragment extends Fragment {
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		mBinding.rl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+			@Override
+			public void onRefresh() {
+				if(mPlaygroundListAdapter != null) {
+					mPlaygroundListAdapter.notifyDataSetChanged();
+					mBinding.rl.setRefreshing(false);
+				}
+			}
+		});
 		mBinding.playgroundListRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 		if (getArguments() != null) {
 			mBinding.playgroundListRv.setAdapter(mPlaygroundListAdapter = new PlaygroundListAdapter((List<? extends  Playground>) getArguments().getSerializable(EXTRAS_PLAYGROUND_LIST)));
