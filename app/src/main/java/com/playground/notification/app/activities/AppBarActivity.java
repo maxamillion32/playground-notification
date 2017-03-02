@@ -22,6 +22,7 @@ import com.playground.notification.databinding.AppBarLayoutBinding;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
+import com.playground.notification.sync.RatingManager;
 import com.playground.notification.utils.Utils;
 
 
@@ -168,6 +169,8 @@ public abstract class AppBarActivity extends AppActivity {
 		               .init();
 		MyLocationManager.getInstance()
 		                 .init();
+		RatingManager.getInstance()
+		             .init();
 	}
 
 	/**

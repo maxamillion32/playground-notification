@@ -13,4 +13,9 @@ public abstract class SyncPlayground extends Playground {
 	public SyncPlayground(Playground ground) {
 		super(ground.getId(), ground.getLatitude(), ground.getLongitude());
 	}
+
+
+	public String getUID() {
+		return mUID;
+	}
 }

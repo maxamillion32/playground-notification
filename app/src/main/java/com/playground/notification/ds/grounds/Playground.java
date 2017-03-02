@@ -10,9 +10,9 @@ import com.google.maps.android.clustering.ClusterItem;
 import cn.bmob.v3.BmobObject;
 
 public class Playground extends BmobObject implements ClusterItem {
-	@SerializedName(value = "id", alternate = { "mId" }) private String mId;
-	@SerializedName(value = "lat", alternate = { "mLatitude" }) private double mLatitude;
-	@SerializedName(value = "lon", alternate = { "mLongitude" }) private double mLongitude;
+	@SerializedName(value = "mId", alternate = { "id" }) private String mId;
+	@SerializedName(value = "mLatitude", alternate = { "lat" }) private double mLatitude;
+	@SerializedName(value = "mLongitude", alternate = { "lon" }) private double mLongitude;
 
 	public Playground(String id, double latitude, double longitude) {
 		mId = id;

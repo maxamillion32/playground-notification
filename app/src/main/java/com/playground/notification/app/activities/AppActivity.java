@@ -34,10 +34,12 @@ import com.playground.notification.bus.MyLocationLoadingErrorEvent;
 import com.playground.notification.bus.MyLocationLoadingSuccessEvent;
 import com.playground.notification.bus.NearRingListLoadingErrorEvent;
 import com.playground.notification.bus.NearRingListLoadingSuccessEvent;
+import com.playground.notification.bus.RatingOnLocationsLoadingErrorEvent;
 import com.playground.notification.bus.ShowStreetViewEvent;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
+import com.playground.notification.sync.RatingManager;
 import com.playground.notification.utils.Prefs;
 
 import java.lang.ref.WeakReference;
@@ -323,6 +325,17 @@ public abstract class AppActivity extends BaseActivity {
 		public void onEvent(MyLocationLoadingErrorEvent e) {
 			MyLocationManager.getInstance()
 			                 .init();
+		}
+
+
+		/**
+		 * Handler for {@link RatingOnLocationsLoadingErrorEvent}.
+		 *
+		 * @param e Event {@link RatingOnLocationsLoadingErrorEvent}.
+		 */
+		public void onEvent(RatingOnLocationsLoadingErrorEvent e) {
+			RatingManager.getInstance()
+			             .init();
 		}
 
 		//------------------------------------------------

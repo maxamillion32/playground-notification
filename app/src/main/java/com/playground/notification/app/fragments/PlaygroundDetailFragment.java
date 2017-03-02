@@ -59,9 +59,9 @@ import com.playground.notification.ds.sync.Rating;
 import com.playground.notification.ds.sync.SyncPlayground;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.NearRingManager;
+import com.playground.notification.sync.RatingManager;
 import com.playground.notification.ui.RouteCalcClientPicker;
 import com.playground.notification.utils.Prefs;
-import com.playground.notification.utils.RatingUI;
 import com.playground.notification.utils.Utils;
 
 import java.io.Serializable;
@@ -75,6 +75,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import static com.playground.notification.sync.RatingManager.showPersonalRatingOnLocation;
+import static com.playground.notification.sync.RatingManager.showRatingSummaryOnLocation;
 import static com.playground.notification.utils.Utils.getBitmapDescriptor;
 import static com.playground.notification.utils.Utils.streetViewBitmapHasRealContent;
 
@@ -83,7 +85,7 @@ import static com.playground.notification.utils.Utils.streetViewBitmapHasRealCon
  *
  * @author Xinyue Zhao
  */
-public final class PlaygroundDetailFragment extends BottomSheetDialogFragment implements RatingUI {
+public final class PlaygroundDetailFragment extends BottomSheetDialogFragment implements RatingManager.RatingUI {
 	private static final String EXTRAS_GROUND = PlaygroundDetailFragment.class.getName() + ".EXTRAS.playground";
 	private static final String EXTRAS_LAT = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lat";
 	private static final String EXTRAS_LNG = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lng";
@@ -408,7 +410,8 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 
 
 			//Have you rated?
-			Utils.showAllRating(playground, this);
+			showPersonalRatingOnLocation(playground, this);
+			showRatingSummaryOnLocation(playground, this);
 
 			//Preview
 			setPreview();
@@ -425,15 +428,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		mBinding.locationRb.setRating(rate);
 	}
 
-	@Override
-	public void showRating() {
-		mBinding.ratingVg.setVisibility(View.VISIBLE);
-	}
-
-	@Override
-	public void dismissRating() {
-		mBinding.ratingVg.setVisibility(View.GONE);
-	}
 
 
 	private void setPreview() {

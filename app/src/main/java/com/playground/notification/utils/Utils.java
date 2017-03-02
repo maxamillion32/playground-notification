@@ -20,20 +20,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
-import com.playground.notification.ds.grounds.Playground;
-import com.playground.notification.ds.sync.Rating;
 import com.playground.notification.sync.SyncManager;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.List;
-
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.QueryListener;
 
 /**
  * Util-methods of application.
@@ -199,56 +186,4 @@ public final class Utils {
 	}
 
 
-	public static void showAllRating(Playground playground, final RatingUI ratingUI) {
-		showPersonalRatingOnLocation(playground, ratingUI);
-		showRatingSummaryOnLocation(playground, ratingUI);
-	}
-
-
-	public static void showRatingSummaryOnLocation(Playground playground, final RatingUI ratingUI) {
-		BmobQuery q = new BmobQuery<>();
-		q.setCachePolicy(BmobQuery.CachePolicy.CACHE_THEN_NETWORK);
-		q.addWhereEqualTo("mId", playground.getId());
-		q.average(new String[] { "mValue" });
-		q.findStatistics(Rating.class, new QueryListener<JSONArray>() {
-
-			@Override
-			public void done(JSONArray array, BmobException exp) {
-				if (exp != null) {
-					ratingUI.setRating(0f);
-					ratingUI.showRating();
-					return;
-				}
-				if (array != null) {//
-					try {
-						JSONObject obj = array.getJSONObject(0);
-						int avg = obj.getInt("_avgMValue");
-						ratingUI.setRating(avg);
-					} catch (JSONException ignored) {
-					}
-				} else {
-					ratingUI.setRating(0f);
-				}
-				ratingUI.showRating();
-			}
-		});
-	}
-
-
-	public static void showPersonalRatingOnLocation(Playground playground, final RatingUI ratingUI) {
-		BmobQuery<Rating> q = new BmobQuery<>();
-		q.setCachePolicy(BmobQuery.CachePolicy.CACHE_THEN_NETWORK);
-		q.addWhereEqualTo("mUID",
-		                  Prefs.getInstance()
-		                       .getGoogleId());
-		q.addWhereEqualTo("mId", playground.getId());
-		q.findObjects(new FindListener<Rating>() {
-			@Override
-			public void done(List<Rating> list, BmobException exp) {
-				if (list.size() > 0) {
-					ratingUI.setRating(list.get(0));
-				}
-			}
-		});
-	}
 }

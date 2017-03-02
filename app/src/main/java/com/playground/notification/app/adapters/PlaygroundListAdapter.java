@@ -19,8 +19,7 @@ import com.playground.notification.bus.OpenPlaygroundEvent;
 import com.playground.notification.databinding.ItemPlaygroundBinding;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Rating;
-import com.playground.notification.utils.RatingUI;
-import com.playground.notification.utils.Utils;
+import com.playground.notification.sync.RatingManager;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -53,8 +52,6 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 
 	@Override
 	public void onBindViewHolder(final PlaygroundListAdapterViewHolder holder, int position) {
-		holder.mBinding.itemMapRecyclerview.getLayoutParams().width = (int) App.Instance.getListItemWidth();
-		holder.mBinding.itemMapRecyclerview.getLayoutParams().height = (int) App.Instance.getListItemHeight();
 		holder.initializeMapView();
 		holder.mBinding.executePendingBindings();
 	}
@@ -81,7 +78,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 	}
 
 	protected static class PlaygroundListAdapterViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback,
-	                                                                                                  RatingUI {
+	                                                                                                  RatingManager.RatingUI {
 		private final ItemPlaygroundBinding mBinding;
 		private final PlaygroundListAdapter mPlaygroundListAdapter;
 		private GoogleMap mGoogleMap;
@@ -93,6 +90,10 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 		}
 
 		private void initializeMapView() {
+			final ViewGroup.LayoutParams layoutParams = mBinding.itemMapRecyclerview.getLayoutParams();
+			layoutParams.width = (int) App.Instance.getListItemWidth();
+			layoutParams.height = (int) App.Instance.getListItemHeight();
+
 			mBinding.itemMapRecyclerview.onCreate(null);
 			mBinding.itemMapRecyclerview.onStart();
 			mBinding.itemMapRecyclerview.onResume();
@@ -110,7 +111,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 				return;
 			}
 			Playground playground = mPlaygroundListAdapter.mPlaygroundList.get(getAdapterPosition());
-			Utils.showRatingSummaryOnLocation(playground, this);
+			RatingManager.showRatingSummaryOnLocation(playground, this);
 			mGoogleMap = googleMap;
 			mGoogleMap.setBuildingsEnabled(false);
 			mGoogleMap.setIndoorEnabled(false);
@@ -154,14 +155,6 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 		@Override
 		public void setRating(float rate) {
 			mBinding.locationRb.setRating(rate);
-		}
-
-		@Override
-		public void showRating() {
-		}
-
-		@Override
-		public void dismissRating() {
 		}
 	}
 }

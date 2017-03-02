@@ -26,6 +26,7 @@ import com.playground.notification.geofence.GeofenceManagerService;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
+import com.playground.notification.sync.RatingManager;
 import com.playground.notification.utils.Prefs;
 
 import de.greenrobot.event.EventBus;
@@ -96,6 +97,8 @@ public final class GPlusFragment extends BaseFragment {
 			               .clean();
 			MyLocationManager.getInstance()
 			                 .clean();
+			RatingManager.getInstance()
+			             .clean();
 			App.Instance.stopService(new Intent(App.Instance, GeofenceManagerService.class));
 		}
 	}

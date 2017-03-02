@@ -99,6 +99,7 @@ import com.playground.notification.map.PlaygroundClusterManager;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
+import com.playground.notification.sync.RatingManager;
 import com.playground.notification.utils.Prefs;
 import com.readystatesoftware.viewbadger.BadgeView;
 
@@ -554,6 +555,8 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		               .init();
 		MyLocationManager.getInstance()
 		                 .init();
+		RatingManager.getInstance()
+		             .init();
 		LL.d("onYouCanUseApp");
 		requirePermissions();
 		askWeatherBoard(App.Instance.getCurrentLocation());

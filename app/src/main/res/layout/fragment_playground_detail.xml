@@ -266,8 +266,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:onClick="@{handler.onRatingClicked}"
-                    android:orientation="horizontal"
-                    android:visibility="invisible">
+                    android:orientation="horizontal" >
 
                     <RatingBar
                         android:id="@+id/location_rb"
