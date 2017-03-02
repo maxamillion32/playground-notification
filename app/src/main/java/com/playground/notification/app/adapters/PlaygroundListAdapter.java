@@ -110,7 +110,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 				return;
 			}
 			Playground playground = mPlaygroundListAdapter.mPlaygroundList.get(getAdapterPosition());
-			Utils.showRatingSummary(playground, this);
+			Utils.showRatingSummaryOnLocation(playground, this);
 			mGoogleMap = googleMap;
 			mGoogleMap.setBuildingsEnabled(false);
 			mGoogleMap.setIndoorEnabled(false);

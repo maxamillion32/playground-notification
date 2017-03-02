@@ -1,7 +1,6 @@
 package com.playground.notification.app.activities;
 
 import android.databinding.DataBindingUtil;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
@@ -19,7 +18,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.playground.notification.R;
-import com.playground.notification.app.App;
 import com.playground.notification.databinding.AppBarLayoutBinding;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
@@ -221,5 +219,12 @@ public abstract class AppBarActivity extends AppActivity {
 				return true;
 			}
 		});
+	}
+
+	@Override
+	protected void setupCommonUIDelegate(@NonNull CommonUIDelegate commonUIDelegate) {
+		super.setupCommonUIDelegate(commonUIDelegate);
+		commonUIDelegate.setDrawerLayout(mBinding.drawerLayout);
+		commonUIDelegate.setNavigationView(mBinding.navView);
 	}
 }

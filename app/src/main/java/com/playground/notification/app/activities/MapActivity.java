@@ -43,7 +43,6 @@ import android.widget.ArrayAdapter;
 
 import com.bumptech.glide.Glide;
 import com.chopping.application.LL;
-import com.chopping.bus.CloseDrawerEvent;
 import com.chopping.utils.Utils;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -84,14 +83,6 @@ import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.AppListImpFragment;
 import com.playground.notification.app.fragments.MyLocationFragment;
 import com.playground.notification.app.fragments.PlaygroundListFragment;
-import com.playground.notification.bus.EULAConfirmedEvent;
-import com.playground.notification.bus.EULARejectEvent;
-import com.playground.notification.bus.FavoriteListLoadingErrorEvent;
-import com.playground.notification.bus.FavoriteListLoadingSuccessEvent;
-import com.playground.notification.bus.MyLocationLoadingErrorEvent;
-import com.playground.notification.bus.MyLocationLoadingSuccessEvent;
-import com.playground.notification.bus.NearRingListLoadingErrorEvent;
-import com.playground.notification.bus.NearRingListLoadingSuccessEvent;
 import com.playground.notification.databinding.MainBinding;
 import com.playground.notification.ds.google.Geobound;
 import com.playground.notification.ds.google.Geocode;
@@ -211,99 +202,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 */
 	private @Nullable PlaygroundListFragment mPlaygroundListFragment;
 
-	//------------------------------------------------
-	//Subscribes, event-handlers
-	//------------------------------------------------
 
-	/**
-	 * Handler for {@link com.chopping.bus.CloseDrawerEvent}.
-	 *
-	 * @param e Event {@link com.chopping.bus.CloseDrawerEvent}.
-	 */
-	public void onEvent(CloseDrawerEvent e) {
-		mBinding.drawerLayout.closeDrawers();
-	}
-
-
-	/**
-	 * Handler for {@link  EULARejectEvent}.
-	 *
-	 * @param e Event {@link  EULARejectEvent}.
-	 */
-	public void onEvent(EULARejectEvent e) {
-		finish();
-	}
-
-	/**
-	 * Handler for {@link  EULAConfirmedEvent}.
-	 *
-	 * @param e Event {@link  EULAConfirmedEvent}.
-	 */
-	public void onEvent(EULAConfirmedEvent e) {
-		ConnectGoogleActivity.showInstance(this);
-	}
-
-
-	/**
-	 * Handler for {@link FavoriteListLoadingErrorEvent}.
-	 *
-	 * @param e Event {@link FavoriteListLoadingErrorEvent}.
-	 */
-	public void onEvent(FavoriteListLoadingErrorEvent e) {
-		FavoriteManager.getInstance()
-		               .init();
-	}
-
-	/**
-	 * Handler for {@link NearRingListLoadingErrorEvent}.
-	 *
-	 * @param e Event {@link NearRingListLoadingErrorEvent}.
-	 */
-	public void onEvent(NearRingListLoadingErrorEvent e) {
-		NearRingManager.getInstance()
-		               .init();
-	}
-
-	/**
-	 * Handler for {@link MyLocationLoadingErrorEvent}.
-	 *
-	 * @param e Event {@link MyLocationLoadingErrorEvent}.
-	 */
-	public void onEvent(MyLocationLoadingErrorEvent e) {
-		MyLocationManager.getInstance()
-		                 .init();
-	}
-
-
-	/**
-	 * Handler for {@link FavoriteListLoadingSuccessEvent}.
-	 *
-	 * @param e Event {@link FavoriteListLoadingSuccessEvent}.
-	 */
-	public void onEvent(FavoriteListLoadingSuccessEvent e) {
-		com.playground.notification.utils.Utils.updateDrawerMenuItem(mBinding.navView, R.id.action_favorite, R.string.action_favorite, FavoriteManager.getInstance());
-	}
-
-	/**
-	 * Handler for {@link NearRingListLoadingSuccessEvent}.
-	 *
-	 * @param e Event {@link NearRingListLoadingSuccessEvent}.
-	 */
-	public void onEvent(NearRingListLoadingSuccessEvent e) {
-		com.playground.notification.utils.Utils.updateDrawerMenuItem(mBinding.navView, R.id.action_near_ring, R.string.action_near_ring, NearRingManager.getInstance());
-	}
-
-	/**
-	 * Handler for {@link MyLocationLoadingSuccessEvent}.
-	 *
-	 * @param e Event {@link MyLocationLoadingSuccessEvent}.
-	 */
-	public void onEvent(MyLocationLoadingSuccessEvent e) {
-		com.playground.notification.utils.Utils.updateDrawerMenuItem(mBinding.navView, R.id.action_my_location_list, R.string.action_my_location_list, MyLocationManager.getInstance());
-	}
-
-
-	//------------------------------------------------
 
 	/**
 	 * Show single instance of {@link MapActivity}
@@ -378,11 +277,12 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	}
 
 	private void initPlaygroundsListIfNeeds() {
-		boolean isSmall = App.Instance.getResources().getBoolean(R.bool.is_small_screen);
+		boolean isSmall = App.Instance.getResources()
+		                              .getBoolean(R.bool.is_small_screen);
 		if (!isSmall) {
-			mBinding.playGroundsListContainer.getLayoutParams().width = (int)App.Instance.getListItemWidth();
+			mBinding.playGroundsListContainer.getLayoutParams().width = (int) App.Instance.getListItemWidth();
 			mBinding.playGroundsListContainer.requestLayout();
-}
+		}
 	}
 
 	@Override
@@ -1165,7 +1065,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	/**
 	 * {@link #refreshPlaygroundList(List)} Only works for large screen like tablet to get list of {@link Playground}s.
 	 */
-	private void refreshPlaygroundList(List<? extends  Playground> list) {
+	private void refreshPlaygroundList(List<? extends Playground> list) {
 		if (mPlaygroundListFragment == null) {
 			mBinding.playGroundsListContainer.setVisibility(View.VISIBLE);
 			mPlaygroundListFragment = (PlaygroundListFragment) (getSupportFragmentManager().findFragmentById(R.id.play_grounds_list));
@@ -1493,5 +1393,12 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		if (mInterstitialAd.isLoaded()) {
 			mInterstitialAd.show();
 		}
+	}
+
+	@Override
+	protected void setupCommonUIDelegate(@NonNull CommonUIDelegate commonUIDelegate) {
+		super.setupCommonUIDelegate(commonUIDelegate);
+		commonUIDelegate.setDrawerLayout(mBinding.drawerLayout);
+		commonUIDelegate.setNavigationView(mBinding.navView);
 	}
 }

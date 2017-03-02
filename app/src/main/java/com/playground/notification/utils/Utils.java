@@ -200,12 +200,12 @@ public final class Utils {
 
 
 	public static void showAllRating(Playground playground, final RatingUI ratingUI) {
-		showPersonalRating(playground, ratingUI);
-		showRatingSummary(playground, ratingUI);
+		showPersonalRatingOnLocation(playground, ratingUI);
+		showRatingSummaryOnLocation(playground, ratingUI);
 	}
 
 
-	public static void showRatingSummary(Playground playground, final RatingUI ratingUI) {
+	public static void showRatingSummaryOnLocation(Playground playground, final RatingUI ratingUI) {
 		BmobQuery q = new BmobQuery<>();
 		q.setCachePolicy(BmobQuery.CachePolicy.CACHE_THEN_NETWORK);
 		q.addWhereEqualTo("mId", playground.getId());
@@ -235,7 +235,7 @@ public final class Utils {
 	}
 
 
-	public static void showPersonalRating(Playground playground, final RatingUI ratingUI) {
+	public static void showPersonalRatingOnLocation(Playground playground, final RatingUI ratingUI) {
 		BmobQuery<Rating> q = new BmobQuery<>();
 		q.setCachePolicy(BmobQuery.CachePolicy.CACHE_THEN_NETWORK);
 		q.addWhereEqualTo("mUID",
