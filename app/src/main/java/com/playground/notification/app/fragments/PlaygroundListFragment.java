@@ -93,6 +93,7 @@ public final class PlaygroundListFragment extends Fragment {
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		mBinding.rl.setColorSchemeResources(R.color.primary_color,R.color.primary_dark_color, R.color.brown_500, R.color.yellow, R.color.common_blue_50);
 		mBinding.rl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 			@Override
 			public void onRefresh() {

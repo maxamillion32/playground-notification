@@ -1249,7 +1249,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 */
 	private void movedToUpdatedLocation(Location location) {
 		if (mMap != null && mVisible) {
-			CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 16);
+			CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14);
 			mMap.moveCamera(update);
 			LL.d("method: movedToUpdatedLocation");
 		}
