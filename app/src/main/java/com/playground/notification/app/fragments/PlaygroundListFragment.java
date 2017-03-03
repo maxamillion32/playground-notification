@@ -19,9 +19,12 @@ import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.app.adapters.PlaygroundListAdapter;
 import com.playground.notification.bus.BackPressedEvent;
+import com.playground.notification.bus.DetailClosedEvent;
+import com.playground.notification.bus.DetailShownEvent;
 import com.playground.notification.bus.OpenPlaygroundEvent;
 import com.playground.notification.databinding.PlaygroundListBinding;
 import com.playground.notification.ds.grounds.Playground;
+import com.playground.notification.ui.ib.IBBackgroundRecyclerView;
 import com.playground.notification.ui.ib.IBLayoutBase;
 
 import java.io.Serializable;
@@ -76,7 +79,7 @@ public final class PlaygroundListFragment extends Fragment {
 	}
 	//------------------------------------------------
 
-	public static PlaygroundListFragment newInstance(Context cxt, List<? extends  Playground> playgroundList) {
+	public static PlaygroundListFragment newInstance(Context cxt, List<? extends Playground> playgroundList) {
 		Bundle args = new Bundle();
 		args.putSerializable(EXTRAS_PLAYGROUND_LIST, (Serializable) playgroundList);
 		return (PlaygroundListFragment) PlaygroundListFragment.instantiate(cxt, PlaygroundListFragment.class.getName(), args);
@@ -93,11 +96,11 @@ public final class PlaygroundListFragment extends Fragment {
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		mBinding.rl.setColorSchemeResources(R.color.primary_color,R.color.primary_dark_color, R.color.brown_500, R.color.yellow, R.color.common_blue_50);
+		mBinding.rl.setColorSchemeResources(R.color.primary_color, R.color.primary_dark_color, R.color.brown_500, R.color.yellow, R.color.common_blue_50);
 		mBinding.rl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 			@Override
 			public void onRefresh() {
-				if(mPlaygroundListAdapter != null) {
+				if (mPlaygroundListAdapter != null) {
 					mPlaygroundListAdapter.notifyDataSetChanged();
 					mBinding.rl.setRefreshing(false);
 				}
@@ -105,7 +108,7 @@ public final class PlaygroundListFragment extends Fragment {
 		});
 		mBinding.playgroundListRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 		if (getArguments() != null) {
-			mBinding.playgroundListRv.setAdapter(mPlaygroundListAdapter = new PlaygroundListAdapter((List<? extends  Playground>) getArguments().getSerializable(EXTRAS_PLAYGROUND_LIST)));
+			mBinding.playgroundListRv.setAdapter(mPlaygroundListAdapter = new PlaygroundListAdapter((List<? extends Playground>) getArguments().getSerializable(EXTRAS_PLAYGROUND_LIST)));
 		} else {
 			mBinding.playgroundListRv.setAdapter(mPlaygroundListAdapter = new PlaygroundListAdapter(new ArrayList<Playground>()));
 		}
@@ -113,6 +116,20 @@ public final class PlaygroundListFragment extends Fragment {
 		dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.divider_drawable));
 		mBinding.playgroundListRv.addItemDecoration(dividerItemDecoration);
 
+		mBinding.playgroundListRv.setCallback(new IBBackgroundRecyclerView.Callback() {
+			@Override
+			public void onClose(IBBackgroundRecyclerView v) {
+				EventBus.getDefault()
+				        .post(new DetailClosedEvent());
+			}
+
+			@Override
+			public void onOpen(IBBackgroundRecyclerView v) {
+				EventBus.getDefault()
+				        .post(new DetailShownEvent());
+			}
+
+		});
 		mBinding.playgroundDetailContainerIbLayout.setIBBackground(mBinding.playgroundListRv);
 		mBinding.playgroundDetailContainerIbLayout.setCloseDistance((int) getResources().getDimension(R.dimen.drag_close_distance));
 		mBinding.playgroundDetailContainerIbLayout.setOnDragStateChangeListener(new IBLayoutBase.OnDragStateChangeListener() {
@@ -131,7 +148,7 @@ public final class PlaygroundListFragment extends Fragment {
 
 	}
 
-	public void refresh(List<? extends  Playground> data) {
+	public void refresh(List<? extends Playground> data) {
 		mPlaygroundListAdapter.refresh(data);
 	}
 

@@ -282,13 +282,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		initView(view);
 	}
 
-	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-		EventBus.getDefault()
-		        .post(new DetailClosedEvent());
-	}
-
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -301,8 +294,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	}
 
 	private void initView(View view) {
-		EventBus.getDefault()
-		        .post(new DetailShownEvent());
 		Bundle args = getArguments();
 		final Playground playground = (Playground) args.getSerializable(EXTRAS_GROUND);
 		LL.d("Ground ID: " + playground.getId());
