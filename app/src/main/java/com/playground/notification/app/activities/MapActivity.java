@@ -501,13 +501,15 @@ public final class MapActivity extends AppActivity implements LocationListener,
 
 	@Override
 	public void onBackPressed() {
-		if (mShowcaseMyLocationV != null) {
-			closeShowcaseMyLocation();
-		} else {
-			if (mBinding.drawerLayout.isDrawerOpen(mBinding.navView)) {
-				mBinding.drawerLayout.closeDrawer(mBinding.navView);
+		if (shouldDoBackPressed()) {
+			if (mShowcaseMyLocationV != null) {
+				closeShowcaseMyLocation();
 			} else {
-				super.onBackPressed();
+				if (mBinding.drawerLayout.isDrawerOpen(mBinding.navView)) {
+					mBinding.drawerLayout.closeDrawer(mBinding.navView);
+				} else {
+					super.onBackPressed();
+				}
 			}
 		}
 	}

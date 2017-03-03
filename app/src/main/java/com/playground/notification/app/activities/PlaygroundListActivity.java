@@ -41,33 +41,8 @@ public final class PlaygroundListActivity extends AppBarActivity {
 	 */
 	private static final int MENU = R.menu.menu_list;
 
-	private boolean mItemSelected;
-
 	private PlaygroundListFragment mPlaygroundListFragment;
 
-	//------------------------------------------------
-	//Subscribes, event-handlers
-	//------------------------------------------------
-
-	/**
-	 * Handler for {@link DetailShownEvent}.
-	 *
-	 * @param e Event {@link DetailShownEvent}.
-	 */
-	public void onEvent(DetailShownEvent e) {
-		mItemSelected = true;
-	}
-
-
-	/**
-	 * Handler for {@link DetailClosedEvent}.
-	 *
-	 * @param e Event {@link DetailClosedEvent}.
-	 */
-	public void onEvent(DetailClosedEvent e) {
-		mItemSelected = false;
-	}
-	//------------------------------------------------
 
 	/**
 	 * Show single instance of {@link PlaygroundListActivity}
@@ -141,13 +116,5 @@ public final class PlaygroundListActivity extends AppBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	@Override
-	public void onBackPressed() {
-		if (mItemSelected) {
-			EventBus.getDefault()
-			        .post(new BackPressedEvent());
-		} else {
-			super.onBackPressed();
-		}
-	}
+
 }

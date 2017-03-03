@@ -26,6 +26,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.playground.notification.R;
 import com.playground.notification.app.fragments.AboutDialogFragment.EulaConfirmationDialog;
+import com.playground.notification.bus.BackPressedEvent;
+import com.playground.notification.bus.DetailClosedEvent;
+import com.playground.notification.bus.DetailShownEvent;
 import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
 import com.playground.notification.bus.FavoriteListLoadingErrorEvent;
@@ -202,6 +205,28 @@ public abstract class AppActivity extends BaseActivity {
 	}
 
 	/**
+	 * {@link #shouldDoBackPressed()} tells {@link AppActivity} that we should allow process back-press.
+	 *
+	 * @return {@code true} It's allowed.
+	 */
+	protected boolean shouldDoBackPressed() {
+		if (mCommonUIDelegate.mItemSelected) {
+			EventBus.getDefault()
+			        .post(new BackPressedEvent());
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (shouldDoBackPressed()) {
+			super.onBackPressed();
+		}
+	}
+
+	/**
 	 * Different {@link AppActivity} might have same UI elements like  {@link NavigationView}, {@link DrawerLayout} and the logical on these elements should be the same , and the
 	 * {@link CommonUIDelegate} uses {@link de.greenrobot.event.EventBus} to share the logical.
 	 *
@@ -211,6 +236,8 @@ public abstract class AppActivity extends BaseActivity {
 		private @Nullable DrawerLayout mDrawerLayout;
 		private @Nullable NavigationView mNavigationView;
 		private @Nullable WeakReference<Activity> mActivityWeakReference;
+
+		private boolean mItemSelected;
 
 		//------------------------------------------------
 		//Subscribes, event-handlers
@@ -336,6 +363,26 @@ public abstract class AppActivity extends BaseActivity {
 		public void onEvent(RatingOnLocationsLoadingErrorEvent e) {
 			RatingManager.getInstance()
 			             .init();
+		}
+
+
+		/**
+		 * Handler for {@link DetailShownEvent}.
+		 *
+		 * @param e Event {@link DetailShownEvent}.
+		 */
+		public void onEvent(DetailShownEvent e) {
+			mItemSelected = true;
+		}
+
+
+		/**
+		 * Handler for {@link DetailClosedEvent}.
+		 *
+		 * @param e Event {@link DetailClosedEvent}.
+		 */
+		public void onEvent(DetailClosedEvent e) {
+			mItemSelected = false;
 		}
 
 		//------------------------------------------------
