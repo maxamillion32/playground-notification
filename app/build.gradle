@@ -26,6 +26,7 @@ android {
 
     configurations{
         all*.exclude module: 'okio'
+        all*.exclude module: 'gson'
     }
 
     compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
