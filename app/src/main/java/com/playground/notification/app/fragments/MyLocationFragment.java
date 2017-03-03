@@ -22,6 +22,7 @@ import com.playground.notification.ds.google.Matrix;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.MyLocation;
 import com.playground.notification.sync.MyLocationManager;
+import com.playground.notification.utils.PlaygroundIdUtils;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.utils.Utils;
 
@@ -240,7 +241,7 @@ public final class MyLocationFragment extends DialogFragment {
 				if( Utils.validateStr( App.Instance, name ) ) {
 					InputMethodManager imm = (InputMethodManager) App.Instance.getSystemService( Context.INPUT_METHOD_SERVICE );
 					imm.hideSoftInputFromWindow( mBinding.myLocationNameTv.getWindowToken(), 0 );
-					mGround.setId( "my_" + mGround.getLatitude() + "," + mGround.getLongitude() );
+					mGround.setId(PlaygroundIdUtils.getId(mGround));
 					manager.addMyLocation( mGround, name, mBinding.saveMyLocationIv, mBinding.myLocationVg );
 					mBinding.shareGroundBtn.setVisibility( View.VISIBLE );
 				}

@@ -23,6 +23,7 @@ import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.playground.notification.ds.sync.NearRing;
 import com.playground.notification.sync.NearRingManager;
+import com.playground.notification.utils.PlaygroundIdUtils;
 import com.playground.notification.utils.Prefs;
 
 /**
@@ -112,7 +113,7 @@ public final class GeofenceManagerService extends Service implements ConnectionC
 
 
 	private void addGeofence( NearRing nearRing ) {
-		mGeofenceList.add( new Geofence.Builder().setRequestId( nearRing.getId() ).setCircularRegion(
+		mGeofenceList.add( new Geofence.Builder().setRequestId(PlaygroundIdUtils.getId(nearRing) ).setCircularRegion(
 				nearRing.getLatitude(), nearRing.getLongitude(), Prefs.getInstance().getAlarmArea() ).setExpirationDuration(
 				AlarmManager.INTERVAL_DAY ).setTransitionTypes( Geofence.GEOFENCE_TRANSITION_ENTER ).build() );
 	}

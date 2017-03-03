@@ -270,9 +270,10 @@
 
                     <RatingBar
                         android:id="@+id/location_rb"
-                        style="?android:attr/ratingBarStyleIndicator"
+                        style="?attr/ratingBarStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:isIndicator="true"
                         android:layout_gravity="center_vertical"
                         android:layout_marginBottom="@dimen/common_padding"
                         android:layout_marginTop="@dimen/common_padding"

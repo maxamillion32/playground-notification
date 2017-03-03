@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -39,6 +40,7 @@ import static com.playground.notification.utils.Utils.getBitmapDescriptor;
 public final class PlaygroundListAdapter extends RecyclerView.Adapter<PlaygroundListAdapter.PlaygroundListAdapterViewHolder> {
 	private static final int ITEM_LAYOUT = R.layout.item_playground_list;
 	private List<Playground> mPlaygroundList = new ArrayList<>();
+	private int mLastSelectedPosition = Adapter.NO_SELECTION;
 
 	public PlaygroundListAdapter(List<? extends Playground> playgroundList) {
 		mPlaygroundList.addAll(playgroundList);
@@ -114,7 +116,8 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 			Playground playground = mPlaygroundListAdapter.mPlaygroundList.get(getAdapterPosition());
 
 			RatingManager.showRatingSummaryOnLocation(playground, this);
-			mBinding.setFavorited(FavoriteManager.getInstance().isCached(playground));
+			mBinding.setFavorited(FavoriteManager.getInstance()
+			                                     .isCached(playground));
 
 			mGoogleMap = googleMap;
 			mGoogleMap.setBuildingsEnabled(false);
@@ -129,14 +132,34 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 			googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 				@Override
 				public void onMapClick(LatLng latLng) {
-					if (getAdapterPosition() >= 0) {
-						Playground playground = mPlaygroundListAdapter.mPlaygroundList.get(getAdapterPosition());
-						EventBus.getDefault()
-						        .post(new OpenPlaygroundEvent(playground, getAdapterPosition(), new WeakReference<>(itemView)));
-					}
+					openItem();
 				}
 			});
+			mBinding.itemContainerFl.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					openItem();
+				}
+			});
+			mBinding.itemBarFl.setSelected(getAdapterPosition() == mPlaygroundListAdapter.mLastSelectedPosition);
 			mBinding.loadingPb.setVisibility(View.GONE);
+		}
+
+		private void openItem() {
+			if (getAdapterPosition() >= 0) {
+				Playground playground = mPlaygroundListAdapter.mPlaygroundList.get(getAdapterPosition());
+				EventBus.getDefault()
+				        .post(new OpenPlaygroundEvent(playground, getAdapterPosition(), new WeakReference<>(itemView)));
+
+				int previousLastSelectedPosition = mPlaygroundListAdapter.mLastSelectedPosition;
+				mPlaygroundListAdapter.mLastSelectedPosition = getAdapterPosition();
+				if (previousLastSelectedPosition != Adapter.NO_SELECTION) {
+					mPlaygroundListAdapter.notifyItemChanged(previousLastSelectedPosition);
+				}
+				if (mPlaygroundListAdapter.mLastSelectedPosition != Adapter.NO_SELECTION) {
+					mPlaygroundListAdapter.notifyItemChanged(mPlaygroundListAdapter.mLastSelectedPosition );
+				}
+			}
 		}
 
 		private void onViewRecycled() {

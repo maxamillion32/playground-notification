@@ -13,6 +13,7 @@ import com.playground.notification.R;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Favorite;
 import com.playground.notification.ds.sync.SyncPlayground;
+import com.playground.notification.utils.PlaygroundIdUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
@@ -51,6 +52,7 @@ public abstract class SyncManager<T extends SyncPlayground> {
 
 
 	protected void add(T newT, ImageView v, View viewForSnack) {
+		newT.setId(PlaygroundIdUtils.getId(newT));
 		//Same bookmark should not be added again.
 		if (mCachedList.contains(newT)) {
 			return;
@@ -113,6 +115,7 @@ public abstract class SyncManager<T extends SyncPlayground> {
 	}
 
 	protected void remove(T oldT, ImageView v, View viewForSnack) {
+		oldT.setId(PlaygroundIdUtils.getId(oldT));
 		boolean isCached = isCached(oldT);
 		if (isCached) {
 			for (T cached : mCachedList) {

@@ -24,6 +24,7 @@ import com.playground.notification.app.App;
 import com.playground.notification.app.activities.MapActivity;
 import com.playground.notification.ds.sync.NearRing;
 import com.playground.notification.sync.NearRingManager;
+import com.playground.notification.utils.PlaygroundIdUtils;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.utils.Utils;
 import com.tinyurl4j.data.Response;
@@ -69,7 +70,7 @@ public final class GeofenceTransitionsIntentService extends Service {
 			for( Geofence geofence : geofences ) {
 				List<NearRing> rings = nearRingManager.getCachedList();
 				for( final NearRing ring : rings ) {
-					if( ring.getId().equals( geofence.getRequestId() ) ) {
+					if(PlaygroundIdUtils.getId(ring).equals(geofence.getRequestId() ) ) {
 						final String url = Prefs.getInstance().getGoogleMapSearchHost() + ring.getLatitude() + "," + ring.getLongitude();
 						com.tinyurl4j.Api.getTinyUrl( url, new Callback<Response>() {
 							@Override

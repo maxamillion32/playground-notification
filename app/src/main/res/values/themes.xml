@@ -15,12 +15,13 @@
         <item name="android:textColorSecondary">@color/brown_500</item>
         <item name="android:actionMenuTextColor">@color/primary_color</item>
         <item name="android:dropDownListViewStyle">@style/OverflowDropDown</item>
-
+        <item name="android:windowActionModeOverlay">false</item>
         <!--##########Support library compatibility##########-->
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_dark_color</item>
         <item name="colorAccent">@color/brown_500</item>
         <item name="actionModeBackground">@color/primary_color</item>
+        <item name="windowActionModeOverlay">false</item>
         <!--
             android:actionMenuTextColor is the color of the text of
             action (menu) items in the Toolbar,

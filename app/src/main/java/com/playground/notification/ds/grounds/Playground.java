@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
 import com.google.maps.android.clustering.ClusterItem;
+import com.playground.notification.utils.PlaygroundIdUtils;
 
 import cn.bmob.v3.BmobObject;
 
@@ -48,7 +49,7 @@ public class Playground extends BmobObject implements ClusterItem {
 				return false;
 			}
 			Playground other = (Playground) o;
-			return !TextUtils.isEmpty(other.getId()) && getId().equals(other.getId());
+			return TextUtils.equals(PlaygroundIdUtils.getId(this), PlaygroundIdUtils.getId(other));
 		} catch (NullPointerException e) {
 			return false;
 		}

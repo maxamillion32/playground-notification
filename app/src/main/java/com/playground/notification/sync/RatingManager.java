@@ -8,6 +8,7 @@ import com.playground.notification.bus.RatingOnLocationsLoadingErrorEvent;
 import com.playground.notification.bus.RatingOnLocationsLoadingSuccessEvent;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Rating;
+import com.playground.notification.utils.PlaygroundIdUtils;
 import com.playground.notification.utils.Prefs;
 
 import org.json.JSONObject;
@@ -136,7 +137,7 @@ public final class RatingManager extends SyncManager<Rating> {
 		          .filter(new Predicate<Rating>() {
 			          @Override
 			          public boolean test(Rating rating) throws Exception {
-				          return TextUtils.equals(rating.getId(), playground.getId());
+				          return TextUtils.equals(PlaygroundIdUtils.getId(rating), PlaygroundIdUtils.getId(playground));
 			          }
 		          })
 		          .toList()

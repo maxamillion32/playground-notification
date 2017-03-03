@@ -61,6 +61,7 @@ import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.sync.RatingManager;
 import com.playground.notification.ui.RouteCalcClientPicker;
+import com.playground.notification.utils.PlaygroundIdUtils;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.utils.Utils;
 
@@ -174,6 +175,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 				    public void onClick(View v) {
 					    dismiss();
 					    Playground playground = (Playground) getArguments().getSerializable("ground");
+					    playground.setId(PlaygroundIdUtils.getId(playground));
 					    Rating rating = ((Rating) getArguments().getSerializable("rating"));
 					    if (rating == null) {
 						    Rating newRating = new Rating(Prefs.getInstance()
@@ -303,6 +305,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		        .post(new DetailShownEvent());
 		Bundle args = getArguments();
 		final Playground playground = (Playground) args.getSerializable(EXTRAS_GROUND);
+		LL.d("Ground ID: " + playground.getId());
 		if (playground != null) {
 
 			final double lat = args.getDouble(EXTRAS_LAT);

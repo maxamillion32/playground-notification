@@ -9,7 +9,7 @@
     <color name="primary_color">#F48FB1</color>
     <color name="primary_dark_color">#E91E63</color>
     <color name="primary_accent">#E91E63</color>
-
+    <color name="primary_accent_transparent">#80E91E63</color>
     <color name="common_white_50">#80FFFFFF</color>
     <color name="common_blue_50">#803F51B5</color>
     <color name="common_black">#000000</color>
