@@ -19,6 +19,7 @@ import com.playground.notification.bus.OpenPlaygroundEvent;
 import com.playground.notification.databinding.ItemPlaygroundBinding;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Rating;
+import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.RatingManager;
 
 import java.lang.ref.WeakReference;
@@ -111,7 +112,10 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 				return;
 			}
 			Playground playground = mPlaygroundListAdapter.mPlaygroundList.get(getAdapterPosition());
+
 			RatingManager.showRatingSummaryOnLocation(playground, this);
+			mBinding.setFavorited(FavoriteManager.getInstance().isCached(playground));
+
 			mGoogleMap = googleMap;
 			mGoogleMap.setBuildingsEnabled(false);
 			mGoogleMap.setIndoorEnabled(false);

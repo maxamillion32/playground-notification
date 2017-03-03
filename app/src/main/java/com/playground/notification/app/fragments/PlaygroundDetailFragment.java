@@ -103,7 +103,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	/**
 	 * {@code true} if we show map here, otherwise we show streetview.
 	 */
-	private boolean mShowMap = false;
+	private boolean mShowMap = true;
 	private SupportMapFragment mMapFragment;
 	private SupportStreetViewPanoramaFragment mStreetViewPanoramaFragment;
 	private BottomSheetBehavior mBehavior;

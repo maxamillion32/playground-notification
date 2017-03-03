@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto" >
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data class="ItemPlaygroundBinding">
 
         <import type="com.playground.notification.ds.sync.Rating"/>
 
+        <import type="android.view.View"/>
 
         <variable
             name="ratedValue"
             type="float"/>
+
+        <variable
+            name="favorited"
+            type="boolean"/>
     </data>
 
 
@@ -31,26 +36,38 @@
                 android:id="@+id/item_map_recyclerview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-               app:cameraZoom="16"
-               app:liteMode="true"
-               app:mapType="normal"
-               app:uiCompass="false"
-               app:uiRotateGestures="false"
-               app:uiScrollGestures="false"
-               app:uiTiltGestures="false"
-               app:uiZoomControls="false"
-               app:uiZoomGestures="false"/>
+                app:cameraZoom="16"
+                app:liteMode="true"
+                app:mapType="normal"
+                app:uiCompass="false"
+                app:uiRotateGestures="false"
+                app:uiScrollGestures="false"
+                app:uiTiltGestures="false"
+                app:uiZoomControls="false"
+                app:uiZoomGestures="false"/>
 
 
-            <RatingBar
-                android:id="@+id/location_rb"
-                style="?android:attr/ratingBarStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginBottom="@dimen/common_padding"
-                android:layout_marginTop="@dimen/common_padding"
-                android:rating="@{ratedValue}"/>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RatingBar
+                    android:id="@+id/location_rb"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="@dimen/common_padding"
+                    android:layout_marginTop="@dimen/common_padding"
+                    android:rating="@{ratedValue}"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|right|center_vertical"
+                    android:background="@drawable/ic_favorited"
+                    android:visibility="@{!favorited ? View.INVISIBLE : View.VISIBLE}"/>
+            </FrameLayout>
 
 
         </LinearLayout>
