@@ -55,7 +55,7 @@ public final class PlaygroundClusterManager extends ClusterManager<Playground> i
 	public boolean onClusterItemClick(Playground playground) {
 		if (!App.Instance.getResources()
 		                 .getBoolean(R.bool.is_small_screen)) {
-			return true;
+			return false;
 		}
 
 		if (mHost.get() == null) {

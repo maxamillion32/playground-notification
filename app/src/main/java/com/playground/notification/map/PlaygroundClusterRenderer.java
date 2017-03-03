@@ -54,7 +54,7 @@ final class PlaygroundClusterRenderer extends DefaultClusterRenderer<Playground>
 
 	@Override
 	protected boolean shouldRenderAsCluster(Cluster<Playground> cluster) {
-		return cluster.getSize() > 20;
+		return cluster.getSize() >= Prefs.getInstance().getClusterLimit();
 	}
 
 	@Override
