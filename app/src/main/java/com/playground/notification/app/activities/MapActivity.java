@@ -223,7 +223,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		if (getResources().getBoolean(R.bool.is_small_screen)) {
 			Location location = App.Instance.getCurrentLocation();
 			LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-			PlaygroundDetailFragment.newInstance(App.Instance, currentLatLng.latitude, currentLatLng.longitude, e.getPlayground(), false)
+			PlaygroundDetailFragment.newInstance(App.Instance, currentLatLng.latitude, currentLatLng.longitude, e.getPlayground())
 			                        .show(getSupportFragmentManager(), null);
 			return;
 		}

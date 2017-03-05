@@ -63,7 +63,7 @@ public final class PlaygroundListFragment extends Fragment implements GoogleMap.
 			Location location = App.Instance.getCurrentLocation();
 			LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 			getChildFragmentManager().beginTransaction()
-			                         .replace(R.id.playground_detail_container, PlaygroundDetailFragment.newInstance(App.Instance, currentLatLng.latitude, currentLatLng.longitude, playground, false))
+			                         .replace(R.id.playground_detail_container, PlaygroundDetailFragment.newInstance(App.Instance, currentLatLng.latitude, currentLatLng.longitude, playground))
 			                         .addToBackStack(null)
 			                         .commit();
 		}

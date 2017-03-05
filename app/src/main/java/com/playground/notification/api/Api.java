@@ -1,10 +1,5 @@
 package com.playground.notification.api;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,6 +10,11 @@ import com.playground.notification.ds.grounds.Playgrounds;
 import com.playground.notification.ds.grounds.Request;
 import com.playground.notification.ds.weather.Weather;
 import com.squareup.okhttp.OkHttpClient;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import retrofit.Callback;
 import retrofit.RequestInterceptor;
@@ -127,7 +127,7 @@ public final class Api {
 	/**
 	 * Api port for grounds.
 	 */
-	static private interface S {
+	private interface S {
 		@POST("/q/{api}")
 		void getPlaygrounds( @Path("api") String api, @Body Request req, Callback<Playgrounds> callback );
 
@@ -136,7 +136,7 @@ public final class Api {
 	/**
 	 * Api port for Google.
 	 */
-	static private interface G {
+	private interface G {
 		@GET("/maps/api/distancematrix/json")
 		void getMatrix( @Query("origins") String origins, @Query("destinations") String destinations, @Query("language") String language,
 						@Query("mode") String mode, @Query("key") String key, @Query("units") String units, Callback<Matrix> callback
@@ -149,7 +149,7 @@ public final class Api {
 	/**
 	 * Api port for Weather.
 	 */
-	static private interface W {
+	private interface W {
 		@GET("/data/2.5/weather")
 		void getWeather( @Query("lat") double lat, @Query("lon") double lon, @Query("lang") String language, @Query("units") String units,
 						 @Query("APPID") String APPID, Callback<Weather> callback

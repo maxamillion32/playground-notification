@@ -14,7 +14,6 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.content.res.AppCompatResources;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,15 +27,13 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.chopping.application.LL;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
 import com.google.android.gms.maps.StreetViewPanorama;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.StreetViewPanoramaOrientation;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.view.ViewPropertyAnimator;
@@ -46,8 +43,6 @@ import com.playground.notification.api.ApiNotInitializedException;
 import com.playground.notification.app.App;
 import com.playground.notification.app.activities.AppActivity;
 import com.playground.notification.app.activities.MapActivity;
-import com.playground.notification.bus.DetailClosedEvent;
-import com.playground.notification.bus.DetailShownEvent;
 import com.playground.notification.bus.OpenRouteEvent;
 import com.playground.notification.bus.ShowLocationRatingEvent;
 import com.playground.notification.bus.ShowStreetViewEvent;
@@ -90,8 +85,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	private static final String EXTRAS_GROUND = PlaygroundDetailFragment.class.getName() + ".EXTRAS.playground";
 	private static final String EXTRAS_LAT = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lat";
 	private static final String EXTRAS_LNG = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lng";
-	private static final String EXTRAS_CLICKABLE = MyLocationFragment.class.getName() + ".EXTRAS.clickable";
-	private static final String EXTRAS_PAGE = MyLocationFragment.class.getName() + ".EXTRAS.page";
 	/**
 	 * Main layout for this component.
 	 */
@@ -104,9 +97,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	/**
 	 * {@code true} if we show map here, otherwise we show streetview.
 	 */
-	private boolean mShowMap = true;
-	private SupportMapFragment mMapFragment;
-	private SupportStreetViewPanoramaFragment mStreetViewPanoramaFragment;
+	private boolean mShowMap = false;
 	private BottomSheetBehavior mBehavior;
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -211,20 +202,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		}
 	}
 
-	/**
-	 * New an instance of {@link PlaygroundDetailFragment}.
-	 *
-	 * @param context    {@link android.content.Context}.
-	 * @param fromLat    The latitude of "from" position to {@code playground}.
-	 * @param fromLng    The longitude of "from" position to {@code playground}.
-	 * @param playground {@link Playground}.
-	 * @param clickable  {@code true} if the preview map can be clicked and show marker on main map.
-	 * @return An instance of {@link PlaygroundDetailFragment}.
-	 */
-	public static PlaygroundDetailFragment newInstance(Context context, double fromLat, double fromLng, Playground playground, boolean clickable) {
-		return newInstance(context, fromLat, fromLng, playground, clickable, false);
-	}
-
 
 	/**
 	 * New an instance of {@link PlaygroundDetailFragment}.
@@ -233,17 +210,13 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	 * @param fromLat    The latitude of "from" position to {@code playground}.
 	 * @param fromLng    The longitude of "from" position to {@code playground}.
 	 * @param playground {@link Playground}.
-	 * @param clickable  {@code true} if the preview map can be clicked and show marker on main map.
-	 * @param page       The host of this {@link PlaygroundDetailFragment} is {@link com.playground.notification.app.activities.ViewPagerActivity}.
 	 * @return An instance of {@link PlaygroundDetailFragment}.
 	 */
-	public static PlaygroundDetailFragment newInstance(Context context, double fromLat, double fromLng, Playground playground, boolean clickable, boolean page) {
+	public static PlaygroundDetailFragment newInstance(Context context, double fromLat, double fromLng, Playground playground) {
 		Bundle args = new Bundle();
 		args.putDouble(EXTRAS_LAT, fromLat);
 		args.putDouble(EXTRAS_LNG, fromLng);
 		args.putSerializable(EXTRAS_GROUND, (Serializable) playground);
-		args.putBoolean(EXTRAS_CLICKABLE, clickable);
-		args.putBoolean(EXTRAS_PAGE, page);
 		return (PlaygroundDetailFragment) PlaygroundDetailFragment.instantiate(context, PlaygroundDetailFragment.class.getName(), args);
 	}
 
@@ -269,7 +242,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		        .unregister(this);
 		super.onPause();
 	}
-
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -304,6 +276,13 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 
 			Prefs prefs = Prefs.getInstance();
 			mBinding = DataBindingUtil.bind(view.findViewById(R.id.playground_detail_vg));
+
+
+			mBinding.map.onCreate(null);
+			mBinding.map.onResume();
+			mBinding.streetview.onCreate(null);
+			mBinding.streetview.onResume();
+
 			if (!prefs.isShowcaseShown(Prefs.KEY_SHOWCASE_NEAR_RING)) {
 				mBinding.showcaseVg.setVisibility(View.VISIBLE);
 				mBinding.closeBtn.setOnClickListener(new OnClickListener() {
@@ -324,18 +303,15 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 				});
 				prefs.setShowcase(Prefs.KEY_SHOWCASE_NEAR_RING, true);
 			}
-
+			updateSwitchButton();
 			mBinding.viewSwitchIbtn.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View view) {
 					view.setVisibility(View.INVISIBLE);
 					mBinding.loadingImgPb.setVisibility(View.VISIBLE);
 					mShowMap = !mShowMap;
-					mBinding.viewSwitchIbtn.setImageDrawable(AppCompatResources.getDrawable(App.Instance,
-					                                                                        mShowMap ?
-					                                                                        R.drawable.ic_streetview :
-					                                                                        R.drawable.ic_map));
-					setPreview();
+					updateSwitchButton();
+					setGoogleMapOrStreetView();
 				}
 			});
 
@@ -408,8 +384,15 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			showRatingSummaryOnLocation(playground, this);
 
 			//Preview
-			setPreview();
+			setGoogleMapOrStreetView();
 		}
+	}
+
+	private void updateSwitchButton() {
+		mBinding.viewSwitchIbtn.setImageDrawable(AppCompatResources.getDrawable(App.Instance,
+		                                                                        mShowMap ?
+		                                                                        R.drawable.ic_streetview :
+		                                                                        R.drawable.ic_map));
 	}
 
 	@Override
@@ -423,8 +406,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	}
 
 
-
-	private void setPreview() {
+	private void setGoogleMapOrStreetView() {
 		Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
 		if (playground == null) {
 			return;
@@ -442,6 +424,8 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	private void showStreetView() {
 		mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
 		mBinding.loadingImgPb.setVisibility(View.GONE);
+		mBinding.streetview.setVisibility(View.VISIBLE);
+		mBinding.map.setVisibility(View.INVISIBLE);
 		Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
 		String url = Prefs.getInstance()
 		                  .getApiStreetView(700, 350, playground.getPosition());
@@ -456,7 +440,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 				     super.onLoadFailed(e, errorDrawable);
 				     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
 				     mBinding.loadingImgPb.setVisibility(View.GONE);
-				     com.chopping.utils.Utils.showLongToast(getContext(), R.string.streetview_not_available);
+				     mBinding.viewSwitchIbtn.setVisibility(View.INVISIBLE);
 				     mBinding.viewSwitchIbtn.performClick();
 			     }
 
@@ -466,34 +450,15 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 				     mBinding.loadingImgPb.setVisibility(View.GONE);
 				     boolean streetViewAvail = streetViewBitmapHasRealContent(resource);
 				     if (!streetViewAvail) {
-					     com.chopping.utils.Utils.showLongToast(getContext(), R.string.streetview_not_available);
+					     mBinding.viewSwitchIbtn.setVisibility(View.INVISIBLE);
 					     mBinding.viewSwitchIbtn.performClick();
 				     } else {
-					     if (mStreetViewPanoramaFragment == null) {
-						     mStreetViewPanoramaFragment = SupportStreetViewPanoramaFragment.newInstance();
-					     }
-					     FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-					     fragmentTransaction.replace(R.id.location_container, mStreetViewPanoramaFragment);
-					     fragmentTransaction.commit();
-					     mStreetViewPanoramaFragment.getStreetViewPanoramaAsync(new OnStreetViewPanoramaReadyCallback() {
+					     mBinding.streetview.getStreetViewPanoramaAsync(new OnStreetViewPanoramaReadyCallback() {
 						     @Override
 						     public void onStreetViewPanoramaReady(StreetViewPanorama streetViewPanorama) {
 							     Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
 							     streetViewPanorama.setPosition(playground.getPosition());
-						     }
-					     });
-					     mBinding.locationContainer.setOnClickListener(new OnClickListener() {
-						     @Override
-						     public void onClick(View v) {
-							     Matrix matrix = mBinding.getMatrix();
-							     Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-							     if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
-							                                                                                                        .size() > 0 && matrix.getDestination()
-							                                                                                                                             .get(0) != null) {
-								     EventBus.getDefault()
-								             .post(new ShowStreetViewEvent(matrix.getDestination()
-								                                                 .get(0), playground.getPosition()));
-							     }
+							     streetViewPanorama.setOnStreetViewPanoramaClickListener(mOnStreetViewPanoramaClickListener);
 						     }
 					     });
 				     }
@@ -504,44 +469,59 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	private void showMapLite() {
 		mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
 		mBinding.loadingImgPb.setVisibility(View.GONE);
-		if (mMapFragment == null) {
-			mMapFragment = SupportMapFragment.newInstance(new GoogleMapOptions().liteMode(true)
-			                                                                    .rotateGesturesEnabled(false)
-			                                                                    .zoomControlsEnabled(false)
-			                                                                    .zoomGesturesEnabled(false)
-			                                                                    .scrollGesturesEnabled(false));
-		}
-		FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-		fragmentTransaction.replace(R.id.location_container, mMapFragment);
-		fragmentTransaction.commit();
-		mMapFragment.getMapAsync(new OnMapReadyCallback() {
+		mBinding.streetview.setVisibility(View.INVISIBLE);
+		mBinding.map.setVisibility(View.VISIBLE);
+		mBinding.map.getMapAsync(new OnMapReadyCallback() {
 			@Override
 			public void onMapReady(GoogleMap googleMap) {
 				Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
 				googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 16));
 				Marker marker = googleMap.addMarker(new MarkerOptions().position(playground.getPosition()));
 				marker.setIcon(getBitmapDescriptor(App.Instance, R.drawable.ic_pin_500));
-
-				googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-					@Override
-					public void onMapClick(LatLng latLng) {
-						//Nothing , just prevent from opening extra map apps.
-					}
-				});
-				if (getArguments().getBoolean(EXTRAS_CLICKABLE)) {
-					googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-						@Override
-						public void onMapClick(LatLng latLng) {
-							Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-							MapActivity.showInstance((Activity) mBinding.locationContainer.getContext(), playground);
-						}
-					});
-				}
+				googleMap.setOnMapClickListener(mOnMapClickListener);
 			}
 		});
-
-
 	}
+
+
+	/**
+	 * Click on streetview.
+	 */
+	private StreetViewPanorama.OnStreetViewPanoramaClickListener mOnStreetViewPanoramaClickListener = new StreetViewPanorama.OnStreetViewPanoramaClickListener() {
+		@Override
+		public void onStreetViewPanoramaClick(StreetViewPanoramaOrientation streetViewPanoramaOrientation) {
+			Matrix matrix = mBinding.getMatrix();
+			Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+			if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
+			                                                                                                   .size() > 0 && matrix.getDestination()
+			                                                                                                                        .get(0) != null) {
+				EventBus.getDefault()
+				        .post(new ShowStreetViewEvent(matrix.getDestination()
+				                                            .get(0), playground.getPosition()));
+			}
+		}
+	};
+
+	/**
+	 * Click on map.
+	 */
+	private GoogleMap.OnMapClickListener mOnMapClickListener = new GoogleMap.OnMapClickListener() {
+		@Override
+		public void onMapClick(LatLng latLng) {
+			if(getResources().getBoolean(R.bool.is_small_screen)) {
+				Activity activity = getActivity();
+				if (activity == null) {
+					return;
+				}
+				dismiss();
+				Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+				MapActivity.showInstance(activity, playground);
+			}
+		}
+	};
+
+
+
 
 
 	/**
