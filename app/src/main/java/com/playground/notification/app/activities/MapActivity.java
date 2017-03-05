@@ -82,6 +82,7 @@ import com.playground.notification.app.SearchSuggestionProvider;
 import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.AppListImpFragment;
 import com.playground.notification.app.fragments.MyLocationFragment;
+import com.playground.notification.app.fragments.PlaygroundDetailFragment;
 import com.playground.notification.app.fragments.PlaygroundListFragment;
 import com.playground.notification.bus.OpenPlaygroundEvent;
 import com.playground.notification.databinding.MainBinding;
@@ -219,6 +220,14 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * @param e Event {@link OpenPlaygroundEvent}.
 	 */
 	public void onEvent(OpenPlaygroundEvent e) {
+		if (getResources().getBoolean(R.bool.is_small_screen)) {
+			Location location = App.Instance.getCurrentLocation();
+			LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+			PlaygroundDetailFragment.newInstance(App.Instance, currentLatLng.latitude, currentLatLng.longitude, e.getPlayground(), false)
+			                        .show(getSupportFragmentManager(), null);
+			return;
+		}
+
 		if (mMap != null) {
 			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(e.getPlayground()
 			                                                      .getPosition(), 18));
@@ -984,7 +993,9 @@ public final class MapActivity extends AppActivity implements LocationListener,
 
 
 		boolean isSmall = getResources().getBoolean(R.bool.is_small_screen);
-		mMap.setPadding(!isSmall ? (int) App.Instance.getListItemWidth()  +  getResources().getDimensionPixelSize(R.dimen.list_padding_left) : 0, getAppBarHeight(), 0, 0);
+		mMap.setPadding(!isSmall ?
+		                (int) App.Instance.getListItemWidth() + getResources().getDimensionPixelSize(R.dimen.list_padding_left) :
+		                0, getAppBarHeight(), 0, 0);
 		mMap.setOnMyLocationButtonClickListener(new OnMyLocationButtonClickListener() {
 			@Override
 			public boolean onMyLocationButtonClick() {

@@ -16,35 +16,30 @@
 
 package com.playground.notification.map;
 
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.MarkerManager;
 import com.google.maps.android.clustering.ClusterManager;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
-import com.playground.notification.app.fragments.PlaygroundDetailFragment;
+import com.playground.notification.bus.OpenPlaygroundEvent;
 import com.playground.notification.bus.PinSelectedEvent;
 import com.playground.notification.ds.grounds.Playground;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
 
 public final class PlaygroundClusterManager extends ClusterManager<Playground> implements ClusterManager.OnClusterItemClickListener<Playground> {
-	private WeakReference<FragmentActivity> mHost;
 
 	private PlaygroundClusterManager(@NonNull FragmentActivity host, @NonNull GoogleMap map) {
 		super(host.getApplicationContext(), map, new MarkerManager(map));
 		map.setOnMarkerClickListener(this);
 		setRenderer(new PlaygroundClusterRenderer(host.getApplicationContext(), map, this));
 		setOnClusterItemClickListener(this);
-		mHost = new WeakReference<>(host);
 	}
 
 	public static PlaygroundClusterManager showAvailablePlaygrounds(@NonNull FragmentActivity host, @NonNull GoogleMap googleMap, @NonNull List<Playground> playgroundList) {
@@ -61,16 +56,7 @@ public final class PlaygroundClusterManager extends ClusterManager<Playground> i
 			EventBus.getDefault().post(new PinSelectedEvent(playground));
 			return true;
 		}
-
-		if (mHost.get() == null) {
-			return false;
-		}
-		Location location = App.Instance.getCurrentLocation();
-		LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-		PlaygroundDetailFragment.newInstance(App.Instance, currentLatLng.latitude, currentLatLng.longitude, playground, false)
-		                        .show(mHost.get()
-		                                   .getSupportFragmentManager(), null);
-
+		EventBus.getDefault().post(new OpenPlaygroundEvent(playground));
 		return true;
 	}
 }
