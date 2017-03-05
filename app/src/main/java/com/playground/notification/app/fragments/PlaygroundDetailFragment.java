@@ -444,7 +444,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		mBinding.loadingImgPb.setVisibility(View.GONE);
 		Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
 		String url = Prefs.getInstance()
-		                  .getApiStreetView(700, 350, new LatLng(playground.getLatitude(), playground.getLongitude()));
+		                  .getApiStreetView(700, 350, playground.getPosition());
 		Glide.with(App.Instance)
 		     .load(url)
 		     .asBitmap()
@@ -628,7 +628,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 
 		public void onGoClicked(@SuppressWarnings("UnusedParameters") View v) {
 			EventBus.getDefault()
-			        .post(new OpenRouteEvent(com.playground.notification.utils.Utils.getMapWeb(new LatLng(mLat, mLng), new LatLng(mGround.getLatitude(), mGround.getLongitude()))));
+			        .post(new OpenRouteEvent(com.playground.notification.utils.Utils.getMapWeb(new LatLng(mLat, mLng), mGround.getPosition())));
 		}
 
 

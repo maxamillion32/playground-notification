@@ -79,7 +79,7 @@ final class PlaygroundClusterRenderer extends DefaultClusterRenderer<Playground>
 		//Geofence-ring.
 		NearRingManager nearRingMgr = NearRingManager.getInstance();
 		if (nearRingMgr.isInit() && nearRingMgr.isCached(playground)) {
-			mGoogleMap.addCircle(new CircleOptions().center(new LatLng(playground.getLatitude(), playground.getLongitude()))
+			mGoogleMap.addCircle(new CircleOptions().center(playground.getPosition())
 			                                        .radius(Prefs.getInstance()
 			                                                     .getAlarmArea())
 			                                        .strokeWidth(1)

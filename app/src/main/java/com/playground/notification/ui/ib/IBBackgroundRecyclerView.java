@@ -238,4 +238,9 @@ public final class IBBackgroundRecyclerView extends RecyclerView implements IBBa
 
 		void onClose(IBBackgroundRecyclerView v);
 	}
+
+
+	public boolean isOpened() {
+		return mInboxExpanded;
+	}
 }

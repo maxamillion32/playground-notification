@@ -2,12 +2,16 @@ package com.playground.notification.app.adapters;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 
+import com.chopping.application.LL;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -17,6 +21,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.bus.OpenPlaygroundEvent;
+import com.playground.notification.bus.ScrollToPlaygroundEvent;
 import com.playground.notification.databinding.ItemPlaygroundBinding;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Rating;
@@ -42,7 +47,57 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 	private List<Playground> mPlaygroundList = new ArrayList<>();
 	private int mLastSelectedPosition = Adapter.NO_SELECTION;
 
-	public PlaygroundListAdapter(List<? extends Playground> playgroundList) {
+	private Playground mPlaygroundScrolledTo = null;
+	private LinearLayoutManager mLinearLayoutManager;
+
+	public RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
+		public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+			if (mPlaygroundScrolledTo == null) {
+				LL.w("ignore onScrolled because mPlaygroundScrolledTo is null");
+				return;
+			}
+			int visiPosition = mLinearLayoutManager.findFirstCompletelyVisibleItemPosition();
+			View visiView = mLinearLayoutManager.findViewByPosition(visiPosition);
+			if (visiView != null) {
+				EventBus.getDefault()
+				        .post(new OpenPlaygroundEvent(mPlaygroundScrolledTo, visiPosition, new WeakReference<>(visiView)));
+				LL.i("open detail at onScrolled because mPlaygroundScrolledTo");
+			} else {
+				LL.w("visiView is null");
+			}
+			mPlaygroundScrolledTo = null;
+		}
+	};
+
+	//------------------------------------------------
+	//Subscribes, event-handlers
+	//------------------------------------------------
+
+	/**
+	 * Handler for {@link ScrollToPlaygroundEvent}.
+	 *
+	 * @param e Event {@link ScrollToPlaygroundEvent}.
+	 */
+	public void onEvent(ScrollToPlaygroundEvent e) {
+		mPlaygroundScrolledTo = e.getPlayground();
+		for (int i = 0, cnt = getItemCount();
+				i < cnt;
+				i++) {
+			final Playground item = mPlaygroundList.get(i);
+			if (item.equals(mPlaygroundScrolledTo)) {
+				notifySelectedItemChanged(i);
+				mLinearLayoutManager.scrollToPositionWithOffset(i, 1);
+				return;
+			}
+		}
+	}
+
+	//------------------------------------------------
+	public PlaygroundListAdapter(@NonNull LinearLayoutManager linearLayoutManager, @Nullable List<? extends Playground> playgroundList) {
+		mLinearLayoutManager = linearLayoutManager;
+		if (playgroundList == null) {
+			playgroundList = new ArrayList<>();
+		}
 		mPlaygroundList.addAll(playgroundList);
 	}
 
@@ -55,8 +110,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 
 	@Override
 	public void onBindViewHolder(final PlaygroundListAdapterViewHolder holder, int position) {
-		holder.initializeMapView();
-		holder.mBinding.executePendingBindings();
+		holder.onBindViewHolder();
 	}
 
 	@Override
@@ -72,12 +126,26 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 		       mPlaygroundList.size();
 	}
 
-	public void refresh(List<? extends Playground> data) {
+	public void refresh(@Nullable List<? extends Playground> data) {
 		if (mPlaygroundList.size() > 0) {
 			mPlaygroundList.clear();
 		}
+		if (data == null) {
+			data = new ArrayList<>();
+		}
 		mPlaygroundList.addAll(data);
 		notifyDataSetChanged();
+	}
+
+	private void notifySelectedItemChanged(int newPosition) {
+		int previousLastSelectedPosition = mLastSelectedPosition;
+		mLastSelectedPosition = newPosition;
+		if (previousLastSelectedPosition != Adapter.NO_SELECTION) {
+			notifyItemChanged(previousLastSelectedPosition);
+		}
+		if (mLastSelectedPosition != Adapter.NO_SELECTION) {
+			notifyItemChanged(mLastSelectedPosition);
+		}
 	}
 
 	protected static class PlaygroundListAdapterViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback,
@@ -92,7 +160,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 			mBinding = binding;
 		}
 
-		private void initializeMapView() {
+		private void onBindViewHolder() {
 			final ViewGroup.LayoutParams layoutParams = mBinding.itemMapRecyclerview.getLayoutParams();
 			layoutParams.width = (int) App.Instance.getListItemWidth();
 			layoutParams.height = (int) App.Instance.getListItemHeight();
@@ -101,6 +169,8 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 			mBinding.itemMapRecyclerview.onStart();
 			mBinding.itemMapRecyclerview.onResume();
 			mBinding.itemMapRecyclerview.getMapAsync(this);
+
+			mBinding.executePendingBindings();
 		}
 
 
@@ -151,14 +221,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 				EventBus.getDefault()
 				        .post(new OpenPlaygroundEvent(playground, getAdapterPosition(), new WeakReference<>(itemView)));
 
-				int previousLastSelectedPosition = mPlaygroundListAdapter.mLastSelectedPosition;
-				mPlaygroundListAdapter.mLastSelectedPosition = getAdapterPosition();
-				if (previousLastSelectedPosition != Adapter.NO_SELECTION) {
-					mPlaygroundListAdapter.notifyItemChanged(previousLastSelectedPosition);
-				}
-				if (mPlaygroundListAdapter.mLastSelectedPosition != Adapter.NO_SELECTION) {
-					mPlaygroundListAdapter.notifyItemChanged(mPlaygroundListAdapter.mLastSelectedPosition );
-				}
+				mPlaygroundListAdapter.notifySelectedItemChanged(getAdapterPosition());
 			}
 		}
 
@@ -173,6 +236,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 			}
 			mBinding.locationRb.setRating(0f);
 			mBinding.loadingPb.setVisibility(View.VISIBLE);
+			mBinding.itemBarFl.setSelected(false);
 		}
 
 		@Override

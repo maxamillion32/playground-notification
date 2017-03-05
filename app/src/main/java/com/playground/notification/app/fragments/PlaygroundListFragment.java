@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
@@ -38,7 +39,7 @@ import de.greenrobot.event.EventBus;
  *
  * @author Xinyue Zhao
  */
-public final class PlaygroundListFragment extends Fragment {
+public final class PlaygroundListFragment extends Fragment implements GoogleMap.OnCameraMoveStartedListener {
 	private static final String EXTRAS_PLAYGROUND_LIST = PlaygroundListFragment.class.getName() + ".EXTRAS.playground.list";
 	private static final int LAYOUT = R.layout.fragment_playground_list;
 	private PlaygroundListBinding mBinding;
@@ -106,12 +107,15 @@ public final class PlaygroundListFragment extends Fragment {
 				}
 			}
 		});
-		mBinding.playgroundListRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+		mBinding.playgroundListRv.setLayoutManager(linearLayoutManager);
 		if (getArguments() != null) {
-			mBinding.playgroundListRv.setAdapter(mPlaygroundListAdapter = new PlaygroundListAdapter((List<? extends Playground>) getArguments().getSerializable(EXTRAS_PLAYGROUND_LIST)));
+			mBinding.playgroundListRv.setAdapter(mPlaygroundListAdapter = new PlaygroundListAdapter(linearLayoutManager,
+			                                                                                        (List<? extends Playground>) getArguments().getSerializable(EXTRAS_PLAYGROUND_LIST)));
 		} else {
-			mBinding.playgroundListRv.setAdapter(mPlaygroundListAdapter = new PlaygroundListAdapter(new ArrayList<Playground>()));
+			mBinding.playgroundListRv.setAdapter(mPlaygroundListAdapter = new PlaygroundListAdapter(linearLayoutManager, new ArrayList<Playground>()));
 		}
+		mBinding.playgroundListRv.addOnScrollListener(mPlaygroundListAdapter.recyclerViewOnScrollListener);
 		final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
 		dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.divider_drawable));
 		mBinding.playgroundListRv.addItemDecoration(dividerItemDecoration);
@@ -157,12 +161,31 @@ public final class PlaygroundListFragment extends Fragment {
 		super.onResume();
 		EventBus.getDefault()
 		        .register(this);
+		EventBus.getDefault()
+		        .register(mPlaygroundListAdapter);
 	}
 
 	@Override
 	public void onPause() {
 		EventBus.getDefault()
+		        .unregister(mPlaygroundListAdapter);
+		EventBus.getDefault()
 		        .unregister(this);
 		super.onPause();
+	}
+
+	@Override
+	public void onDestroyView() {
+		if (mPlaygroundListAdapter != null) {
+			mBinding.playgroundListRv.removeOnScrollListener(mPlaygroundListAdapter.recyclerViewOnScrollListener);
+		}
+		super.onDestroyView();
+	}
+
+	@Override
+	public void onCameraMoveStarted(int i) {
+		if (mBinding.playgroundListRv.isOpened()) {
+			mBinding.playgroundDetailContainerIbLayout.close();
+		}
 	}
 }

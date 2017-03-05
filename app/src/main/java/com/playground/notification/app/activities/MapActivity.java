@@ -83,6 +83,7 @@ import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.AppListImpFragment;
 import com.playground.notification.app.fragments.MyLocationFragment;
 import com.playground.notification.app.fragments.PlaygroundListFragment;
+import com.playground.notification.bus.ScrollToPlaygroundEvent;
 import com.playground.notification.databinding.MainBinding;
 import com.playground.notification.ds.google.Geobound;
 import com.playground.notification.ds.google.Geocode;
@@ -117,6 +118,7 @@ import retrofit.client.Response;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
+import static com.playground.notification.R.dimen.list_padding_left;
 import static pub.devrel.easypermissions.AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE;
 
 
@@ -203,7 +205,28 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 */
 	private @Nullable PlaygroundListFragment mPlaygroundListFragment;
 
+	/**
+	 * If this event has been selected that means on tablet the user has selected a pin on map.
+	 */
+	private ScrollToPlaygroundEvent mScrollToPlaygroundEvent;
 
+	//------------------------------------------------
+	//Subscribes, event-handlers
+	//------------------------------------------------
+
+	/**
+	 * Handler for {@link ScrollToPlaygroundEvent}.
+	 *
+	 * @param e Event {@link ScrollToPlaygroundEvent}.
+	 */
+	public void onEvent(ScrollToPlaygroundEvent e) {
+		if (mMap != null) {
+			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(e.getPlayground()
+			                                                      .getPosition(), 18));
+		}
+		mScrollToPlaygroundEvent = e;
+	}
+	//------------------------------------------------
 
 	/**
 	 * Show single instance of {@link MapActivity}
@@ -333,8 +356,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		if (!TextUtils.equals(intent.getAction(), Intent.ACTION_SEARCH)) {
 			if (intent.getSerializableExtra(EXTRAS_GROUND) != null) {
 				Playground playground = (Playground) intent.getSerializableExtra(EXTRAS_GROUND);
-				LatLng to = new LatLng(playground.getLatitude(), playground.getLongitude());
-				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(to, 18));
+				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 18));
 			}
 		} else {
 			mKeyword = intent.getStringExtra(SearchManager.QUERY);
@@ -745,18 +767,9 @@ public final class MapActivity extends AppActivity implements LocationListener,
 			@Override
 			public void onMapReady(GoogleMap googleMap) {
 				mMap = googleMap;
-
 				initDrawerContent();
-
-				// Check if we were successful in obtaining the map.
-				if (mMap != null) {
-					setUpMap();
-				}
-
-
-				if (mMap != null) {
-					mapSettings();
-				}
+				setUpMap();
+				mapSettings();
 
 				//Location request.
 				if (mLocationRequest == null) {
@@ -971,7 +984,8 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		uiSettings.setAllGesturesEnabled(true);
 
 
-		mMap.setPadding(0, getAppBarHeight(), 0, 0);
+		boolean isSmall = getResources().getBoolean(R.bool.is_small_screen);
+		mMap.setPadding(!isSmall ? (int) App.Instance.getListItemWidth()  +  getResources().getDimensionPixelSize(R.dimen.list_padding_left) : 0, getAppBarHeight(), 0, 0);
 		mMap.setOnMyLocationButtonClickListener(new OnMyLocationButtonClickListener() {
 			@Override
 			public boolean onMyLocationButtonClick() {
@@ -983,6 +997,10 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
 			@Override
 			public void onCameraIdle() {
+				if (mScrollToPlaygroundEvent != null) {
+					mScrollToPlaygroundEvent = null;
+					return;
+				}
 				mForcedToLoad = true;
 				populateGrounds();
 			}
@@ -1074,6 +1092,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		if (mPlaygroundListFragment == null) {
 			mBinding.playGroundsListContainer.setVisibility(View.VISIBLE);
 			mPlaygroundListFragment = (PlaygroundListFragment) (getSupportFragmentManager().findFragmentById(R.id.play_grounds_list));
+			mMap.setOnCameraMoveStartedListener(mPlaygroundListFragment);
 		}
 		mPlaygroundListFragment.refresh(list);
 	}
