@@ -83,7 +83,7 @@ import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.AppListImpFragment;
 import com.playground.notification.app.fragments.MyLocationFragment;
 import com.playground.notification.app.fragments.PlaygroundListFragment;
-import com.playground.notification.bus.ScrollToPlaygroundEvent;
+import com.playground.notification.bus.OpenPlaygroundEvent;
 import com.playground.notification.databinding.MainBinding;
 import com.playground.notification.ds.google.Geobound;
 import com.playground.notification.ds.google.Geocode;
@@ -118,7 +118,6 @@ import retrofit.client.Response;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
-import static com.playground.notification.R.dimen.list_padding_left;
 import static pub.devrel.easypermissions.AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE;
 
 
@@ -206,25 +205,25 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	private @Nullable PlaygroundListFragment mPlaygroundListFragment;
 
 	/**
-	 * If this event has been selected that means on tablet the user has selected a pin on map.
+	 * {@link OpenPlaygroundEvent} means here a flag that a detail of  {@link Playground} will being opened.
 	 */
-	private ScrollToPlaygroundEvent mScrollToPlaygroundEvent;
+	private OpenPlaygroundEvent mOpeningPlayground;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
 
 	/**
-	 * Handler for {@link ScrollToPlaygroundEvent}.
+	 * Handler for {@link OpenPlaygroundEvent}.
 	 *
-	 * @param e Event {@link ScrollToPlaygroundEvent}.
+	 * @param e Event {@link OpenPlaygroundEvent}.
 	 */
-	public void onEvent(ScrollToPlaygroundEvent e) {
+	public void onEvent(OpenPlaygroundEvent e) {
 		if (mMap != null) {
 			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(e.getPlayground()
 			                                                      .getPosition(), 18));
 		}
-		mScrollToPlaygroundEvent = e;
+		mOpeningPlayground = e;
 	}
 	//------------------------------------------------
 
@@ -997,8 +996,8 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
 			@Override
 			public void onCameraIdle() {
-				if (mScrollToPlaygroundEvent != null) {
-					mScrollToPlaygroundEvent = null;
+				if (mOpeningPlayground != null) {
+					mOpeningPlayground = null;
 					return;
 				}
 				mForcedToLoad = true;

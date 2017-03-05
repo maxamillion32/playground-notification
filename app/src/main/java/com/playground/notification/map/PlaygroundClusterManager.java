@@ -27,7 +27,7 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.app.fragments.PlaygroundDetailFragment;
-import com.playground.notification.bus.ScrollToPlaygroundEvent;
+import com.playground.notification.bus.PinSelectedEvent;
 import com.playground.notification.ds.grounds.Playground;
 
 import java.lang.ref.WeakReference;
@@ -58,7 +58,7 @@ public final class PlaygroundClusterManager extends ClusterManager<Playground> i
 	public boolean onClusterItemClick(Playground playground) {
 		if (!App.Instance.getResources()
 		                 .getBoolean(R.bool.is_small_screen)) {
-			EventBus.getDefault().post(new ScrollToPlaygroundEvent(playground));
+			EventBus.getDefault().post(new PinSelectedEvent(playground));
 			return true;
 		}
 

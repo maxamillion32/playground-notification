@@ -3,11 +3,11 @@ package com.playground.notification.bus;
 
 import com.playground.notification.ds.grounds.Playground;
 
-public final class ScrollToPlaygroundEvent {
+public final class PinSelectedEvent {
 	private final Playground mPlayground;
 
 
-	public ScrollToPlaygroundEvent(Playground playground) {
+	public PinSelectedEvent(Playground playground) {
 		mPlayground = playground;
 	}
 

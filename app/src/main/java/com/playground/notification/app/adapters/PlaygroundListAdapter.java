@@ -21,7 +21,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.bus.OpenPlaygroundEvent;
-import com.playground.notification.bus.ScrollToPlaygroundEvent;
+import com.playground.notification.bus.PinSelectedEvent;
 import com.playground.notification.databinding.ItemPlaygroundBinding;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Rating;
@@ -74,11 +74,11 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 	//------------------------------------------------
 
 	/**
-	 * Handler for {@link ScrollToPlaygroundEvent}.
+	 * Handler for {@link PinSelectedEvent}.
 	 *
-	 * @param e Event {@link ScrollToPlaygroundEvent}.
+	 * @param e Event {@link PinSelectedEvent}.
 	 */
-	public void onEvent(ScrollToPlaygroundEvent e) {
+	public void onEvent(PinSelectedEvent e) {
 		mPlaygroundScrolledTo = e.getPlayground();
 		for (int i = 0, cnt = getItemCount();
 				i < cnt;
