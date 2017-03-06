@@ -256,7 +256,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		initView(view);
+		initView(view, savedInstanceState);
 	}
 
 	@NonNull
@@ -270,7 +270,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		return dialog;
 	}
 
-	private void initView(View view) {
+	private void initView(View view, @Nullable Bundle savedInstanceState) {
 		Bundle args = getArguments();
 		final Playground playground = (Playground) args.getSerializable(EXTRAS_GROUND);
 		LL.d("Ground ID: " + playground.getId());
@@ -499,6 +499,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
 			                                                                                                   .size() > 0 && matrix.getDestination()
 			                                                                                                                        .get(0) != null) {
+				dismiss();
 				EventBus.getDefault()
 				        .post(new ShowStreetViewEvent(matrix.getDestination()
 				                                            .get(0), playground.getPosition()));
