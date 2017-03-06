@@ -227,6 +227,8 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	public void onResume() {
 		EventBus.getDefault()
 		        .register(this);
+		mBinding.map.onResume();
+		mBinding.streetview.onResume();
 		super.onResume();
 	}
 
@@ -234,7 +236,16 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	public void onPause() {
 		EventBus.getDefault()
 		        .unregister(this);
+		mBinding.map.onPause();
+		mBinding.streetview.onPause();
 		super.onPause();
+	}
+
+	@Override
+	public void onLowMemory() {
+		mBinding.map.onLowMemory();
+		mBinding.streetview.onLowMemory();
+		super.onLowMemory();
 	}
 
 	@Override
@@ -273,9 +284,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 
 
 			mBinding.map.onCreate(null);
-			mBinding.map.onResume();
 			mBinding.streetview.onCreate(null);
-			mBinding.streetview.onResume();
 
 			if (!prefs.isShowcaseShown(Prefs.KEY_SHOWCASE_NEAR_RING)) {
 				mBinding.showcaseVg.setVisibility(View.VISIBLE);
