@@ -54,13 +54,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/operating_bar_vg"
-            android:layout_alignParentTop="true">
+            android:layout_alignParentTop="true"
+            android:scrollbars="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-            >
+                >
 
 
                 <TextView
@@ -150,11 +151,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/common_padding"
                     android:layout_marginTop="@dimen/common_padding"
+                    android:checkedButton="@+id/ic_walking_rb"
+                    android:orientation="vertical"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
                     android:paddingTop="@dimen/activity_vertical_margin"
-                    android:checkedButton="@+id/ic_walking_rb"
-                    android:orientation="vertical"
                     android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}">
 
                     <FrameLayout
@@ -258,20 +259,20 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/common_padding"
                     android:layout_marginTop="@dimen/common_padding"
+                    android:orientation="horizontal"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:paddingTop="@dimen/activity_vertical_margin"
-                    android:orientation="horizontal">
+                    android:paddingTop="@dimen/activity_vertical_margin">
 
                     <TextView
                         android:id="@+id/duration_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/common_padding"
-                        android:layout_marginLeft="@dimen/common_padding"
-                        android:layout_marginStart="@dimen/common_padding"
                         android:layout_marginEnd="@dimen/common_padding"
+                        android:layout_marginLeft="@dimen/common_padding"
                         android:layout_marginRight="@dimen/common_padding"
+                        android:layout_marginStart="@dimen/common_padding"
                         android:text="@{matrix.rows.get(0).elements.get(0).duration.text}"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
                         android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
@@ -297,11 +298,11 @@
                     android:id="@+id/rating_vg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:onClick="@{handler.onRatingClicked}"
+                    android:orientation="horizontal"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:paddingTop="@dimen/activity_vertical_margin"
-                    android:onClick="@{handler.onRatingClicked}"
-                    android:orientation="horizontal">
+                    android:paddingTop="@dimen/activity_vertical_margin">
 
                     <RatingBar
                         android:id="@+id/location_rb"
