@@ -214,6 +214,19 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		return (PlaygroundDetailFragment) PlaygroundDetailFragment.instantiate(context, PlaygroundDetailFragment.class.getName(), args);
 	}
 
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		mBinding.map.onSaveInstanceState(outState);
+		mBinding.streetview.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public void onDestroy() {
+		mBinding.map.onDestroy();
+		mBinding.streetview.onDestroy();
+		super.onDestroy();
+	}
 
 	@Override
 	public void onStart() {
