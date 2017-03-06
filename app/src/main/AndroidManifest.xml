@@ -78,8 +78,7 @@
 
 
         <activity
-            android:name=".app.activities.StreetViewActivity"
-            android:screenOrientation="landscape"/>
+            android:name=".app.activities.StreetViewActivity" />
 
         <activity
             android:name=".app.activities.PlaygroundListActivity"

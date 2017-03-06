@@ -283,8 +283,8 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			mBinding = DataBindingUtil.bind(view.findViewById(R.id.playground_detail_vg));
 
 
-			mBinding.map.onCreate(null);
-			mBinding.streetview.onCreate(null);
+			mBinding.map.onCreate(savedInstanceState);
+			mBinding.streetview.onCreate(savedInstanceState);
 
 			if (!prefs.isShowcaseShown(Prefs.KEY_SHOWCASE_NEAR_RING)) {
 				mBinding.showcaseVg.setVisibility(View.VISIBLE);
@@ -499,7 +499,9 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
 			                                                                                                   .size() > 0 && matrix.getDestination()
 			                                                                                                                        .get(0) != null) {
-				dismiss();
+				if (mBehavior != null) {
+					dismiss();
+				}
 				EventBus.getDefault()
 				        .post(new ShowStreetViewEvent(matrix.getDestination()
 				                                            .get(0), playground.getPosition()));
