@@ -266,10 +266,14 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		return inflater.inflate(LAYOUT, container, false);
 	}
 
+
 	@Override
-	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		initView(view, savedInstanceState);
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		View view = getView();
+		if (view != null) {
+			initView(view, savedInstanceState);
+		}
 	}
 
 	@NonNull
@@ -277,7 +281,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
 		View view = View.inflate(getContext(), LAYOUT, null);
-
 		dialog.setContentView(view);
 		mBehavior = BottomSheetBehavior.from((View) view.getParent());
 		return dialog;
