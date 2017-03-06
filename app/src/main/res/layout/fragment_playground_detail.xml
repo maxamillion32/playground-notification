@@ -60,10 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin">
+            >
 
 
                 <TextView
@@ -75,6 +72,9 @@
                     android:lines="3"
                     android:maxLines="3"
                     android:minLines="3"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingTop="@dimen/activity_vertical_margin"
                     android:text="@{matrix.destination.get(0)}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
                     android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
@@ -150,6 +150,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/common_padding"
                     android:layout_marginTop="@dimen/common_padding"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingTop="@dimen/activity_vertical_margin"
                     android:checkedButton="@+id/ic_walking_rb"
                     android:orientation="vertical"
                     android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}">
@@ -255,6 +258,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/common_padding"
                     android:layout_marginTop="@dimen/common_padding"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingTop="@dimen/activity_vertical_margin"
                     android:orientation="horizontal">
 
                     <TextView
@@ -262,6 +268,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/common_padding"
+                        android:layout_marginLeft="@dimen/common_padding"
+                        android:layout_marginStart="@dimen/common_padding"
                         android:layout_marginEnd="@dimen/common_padding"
                         android:layout_marginRight="@dimen/common_padding"
                         android:text="@{matrix.rows.get(0).elements.get(0).duration.text}"
@@ -289,6 +297,9 @@
                     android:id="@+id/rating_vg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingTop="@dimen/activity_vertical_margin"
                     android:onClick="@{handler.onRatingClicked}"
                     android:orientation="horizontal">
 
