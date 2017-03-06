@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,10 +18,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.chopping.application.LL;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -33,6 +27,7 @@ import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.StreetViewPanoramaLocation;
 import com.google.android.gms.maps.model.StreetViewPanoramaOrientation;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
@@ -74,7 +69,6 @@ import retrofit.client.Response;
 import static com.playground.notification.sync.RatingManager.showPersonalRatingOnLocation;
 import static com.playground.notification.sync.RatingManager.showRatingSummaryOnLocation;
 import static com.playground.notification.utils.Utils.getBitmapDescriptor;
-import static com.playground.notification.utils.Utils.streetViewBitmapHasRealContent;
 
 /**
  * Show details of a playground, address, rating.
@@ -422,72 +416,73 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	}
 
 	private void showStreetView() {
-		mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
-		mBinding.loadingImgPb.setVisibility(View.GONE);
-		mBinding.streetview.setVisibility(View.VISIBLE);
-		mBinding.map.setVisibility(View.INVISIBLE);
-		Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-		String url = Prefs.getInstance()
-		                  .getApiStreetView(700, 350, playground.getPosition());
-		Glide.with(App.Instance)
-		     .load(url)
-		     .asBitmap()
-		     .skipMemoryCache(false)
-		     .diskCacheStrategy(DiskCacheStrategy.ALL)
-		     .into(new SimpleTarget<Bitmap>() {
-			     @Override
-			     public void onLoadFailed(Exception e, Drawable errorDrawable) {
-				     super.onLoadFailed(e, errorDrawable);
-				     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
-				     mBinding.loadingImgPb.setVisibility(View.GONE);
-				     mBinding.viewSwitchIbtn.setVisibility(View.INVISIBLE);
-				     mBinding.viewSwitchIbtn.performClick();
-			     }
-
-			     @Override
-			     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-				     mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
-				     mBinding.loadingImgPb.setVisibility(View.GONE);
-				     boolean streetViewAvail = streetViewBitmapHasRealContent(resource);
-				     if (!streetViewAvail) {
-					     mBinding.viewSwitchIbtn.setVisibility(View.INVISIBLE);
-					     mBinding.viewSwitchIbtn.performClick();
-				     } else {
-					     mBinding.streetview.getStreetViewPanoramaAsync(new OnStreetViewPanoramaReadyCallback() {
-						     @Override
-						     public void onStreetViewPanoramaReady(StreetViewPanorama streetViewPanorama) {
-							     Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-							     streetViewPanorama.setPosition(playground.getPosition());
-							     streetViewPanorama.setOnStreetViewPanoramaClickListener(mOnStreetViewPanoramaClickListener);
-						     }
-					     });
-				     }
-			     }
-		     });
+		mBinding.loadingImgPb.setVisibility(View.VISIBLE);
+		mBinding.streetview.getStreetViewPanoramaAsync(mOnStreetViewPanoramaReadyCallback);
 	}
 
 	private void showMapLite() {
-		mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
-		mBinding.loadingImgPb.setVisibility(View.GONE);
-		mBinding.streetview.setVisibility(View.INVISIBLE);
-		mBinding.map.setVisibility(View.VISIBLE);
-		mBinding.map.getMapAsync(new OnMapReadyCallback() {
-			@Override
-			public void onMapReady(GoogleMap googleMap) {
-				Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-				googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 16));
-				Marker marker = googleMap.addMarker(new MarkerOptions().position(playground.getPosition()));
-				marker.setIcon(getBitmapDescriptor(App.Instance, R.drawable.ic_pin_500));
-				googleMap.setOnMapClickListener(mOnMapClickListener);
-			}
-		});
+		mBinding.loadingImgPb.setVisibility(View.VISIBLE);
+		mBinding.map.getMapAsync(mOnMapReadyCallback);
 	}
 
+	/**
+	 * Streeview can show photo correctly or not.
+	 */
+	private final StreetViewPanorama.OnStreetViewPanoramaChangeListener mOnStreetViewPanoramaChangeListener = new StreetViewPanorama.OnStreetViewPanoramaChangeListener() {
+		@Override
+		public void onStreetViewPanoramaChange(StreetViewPanoramaLocation streetViewPanoramaLocation) {
+			mStreetViewPanoramaLocation = streetViewPanoramaLocation;
+			if (mStreetViewPanoramaLocation != null && mStreetViewPanoramaLocation.links != null) {
+				mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
+				mBinding.streetview.setVisibility(View.VISIBLE);
+				mBinding.map.setVisibility(View.INVISIBLE);
+			} else {
+				mBinding.viewSwitchIbtn.performClick();
+			}
+			mBinding.loadingImgPb.setVisibility(View.GONE);
+		}
+	};
+
+	private StreetViewPanoramaLocation mStreetViewPanoramaLocation;
+
+	/**
+	 * Streeview can be loaded successfully or not.
+	 */
+	private final OnStreetViewPanoramaReadyCallback mOnStreetViewPanoramaReadyCallback = new OnStreetViewPanoramaReadyCallback() {
+		@Override
+		public void onStreetViewPanoramaReady(StreetViewPanorama streetViewPanorama) {
+			streetViewPanorama.setOnStreetViewPanoramaClickListener(mOnStreetViewPanoramaClickListener);
+			streetViewPanorama.setOnStreetViewPanoramaChangeListener(mOnStreetViewPanoramaChangeListener);
+			Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+			streetViewPanorama.setPosition(playground.getPosition());
+		}
+	};
+
+	/**
+	 * Map can be loaded successfully or not.
+	 */
+	private final OnMapReadyCallback mOnMapReadyCallback = new OnMapReadyCallback() {
+		@Override
+		public void onMapReady(GoogleMap googleMap) {
+			Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 16));
+			Marker marker = googleMap.addMarker(new MarkerOptions().position(playground.getPosition()));
+			marker.setIcon(getBitmapDescriptor(App.Instance, R.drawable.ic_pin_500));
+			googleMap.setOnMapClickListener(mOnMapClickListener);
+
+			if (mStreetViewPanoramaLocation != null) {
+				mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
+			}
+			mBinding.streetview.setVisibility(View.INVISIBLE);
+			mBinding.map.setVisibility(View.VISIBLE);
+			mBinding.loadingImgPb.setVisibility(View.GONE);
+		}
+	};
 
 	/**
 	 * Click on streetview.
 	 */
-	private StreetViewPanorama.OnStreetViewPanoramaClickListener mOnStreetViewPanoramaClickListener = new StreetViewPanorama.OnStreetViewPanoramaClickListener() {
+	private final StreetViewPanorama.OnStreetViewPanoramaClickListener mOnStreetViewPanoramaClickListener = new StreetViewPanorama.OnStreetViewPanoramaClickListener() {
 		@Override
 		public void onStreetViewPanoramaClick(StreetViewPanoramaOrientation streetViewPanoramaOrientation) {
 			Matrix matrix = mBinding.getMatrix();
@@ -505,10 +500,10 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	/**
 	 * Click on map.
 	 */
-	private GoogleMap.OnMapClickListener mOnMapClickListener = new GoogleMap.OnMapClickListener() {
+	private final GoogleMap.OnMapClickListener mOnMapClickListener = new GoogleMap.OnMapClickListener() {
 		@Override
 		public void onMapClick(LatLng latLng) {
-			if(getResources().getBoolean(R.bool.is_small_screen)) {
+			if (getResources().getBoolean(R.bool.is_small_screen)) {
 				Activity activity = getActivity();
 				if (activity == null) {
 					return;
@@ -519,9 +514,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			}
 		}
 	};
-
-
-
 
 
 	/**

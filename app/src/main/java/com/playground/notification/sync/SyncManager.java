@@ -6,9 +6,9 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.chopping.application.LL;
+import com.chopping.utils.Utils;
 import com.playground.notification.R;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Favorite;
@@ -80,8 +80,7 @@ public abstract class SyncManager<T extends SyncPlayground> {
 				if (anchorV != null) {
 					Snackbar.make(anchorV, getAddSuccessText(), Snackbar.LENGTH_SHORT)
 					        .show();
-					Toast.makeText(anchorV.getContext(), getAddSuccessText(), Toast.LENGTH_SHORT)
-					     .show();
+					Utils.showShortToast(anchorV.getContext(), getAddSuccessText());
 				}
 				if (btn != null) {
 					btn.setEnabled(true);
@@ -103,8 +102,7 @@ public abstract class SyncManager<T extends SyncPlayground> {
 						        }
 					        })
 					        .show();
-					Toast.makeText(anchorV.getContext(), R.string.meta_load_error, Toast.LENGTH_LONG)
-					     .show();
+					Utils.showLongToast(anchorV.getContext(), R.string.meta_load_error);
 				}
 				if (btn != null) {
 					btn.setEnabled(true);
@@ -146,8 +144,7 @@ public abstract class SyncManager<T extends SyncPlayground> {
 				if (anchorV != null) {
 					Snackbar.make(anchorV, getRemoveSuccessText(), Snackbar.LENGTH_SHORT)
 					        .show();
-					Toast.makeText(anchorV.getContext(), getRemoveSuccessText(), Toast.LENGTH_SHORT)
-					     .show();
+					Utils.showShortToast(anchorV.getContext(), getRemoveSuccessText());
 				}
 				if (btn != null) {
 					btn.setEnabled(true);
@@ -170,8 +167,7 @@ public abstract class SyncManager<T extends SyncPlayground> {
 						        }
 					        })
 					        .show();
-					Toast.makeText(anchorV.getContext(), R.string.meta_load_error, Toast.LENGTH_LONG)
-					     .show();
+					Utils.showLongToast(anchorV.getContext(), R.string.meta_load_error);
 				}
 				if (btn != null) {
 					btn.setEnabled(true);
